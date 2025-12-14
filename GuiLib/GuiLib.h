@@ -1,0 +1,86 @@
+#pragma once
+
+#include "pch.h"
+
+
+namespace gui {
+	class Igui {
+	public:
+		Igui() = default;
+		virtual ~Igui() = default;
+
+		virtual void update(float delta_time) = 0;
+		virtual void draw(SDL_Renderer* render) = 0;
+		virtual void input(const SDL_Event* event) = 0;
+	};
+
+	class clickable_object {
+	protected:
+		bool mouse_hover = false, left_click = false, right_click = false;
+	public: 
+		std::function<void()> on_mouse_left_click, on_mouse_right_click, on_mouse_hover;
+	};
+
+	class base : public Igui {
+	public:
+		SDL_FRect box;
+
+		base() = default;
+		~base() = default;
+	};
+
+	class page : public Igui {
+	private:
+		std::vector<base*> elements;
+
+		bool active = false;
+	public:
+		page() = default;
+		~page();
+
+		void update(float delta_time) override;
+		void draw(SDL_Renderer* render) override;
+		void input(const SDL_Event* event) override;
+
+		/// <summary>
+		/// It's important that the argument be a pointer created with NEW, not an address. Page will then clear all elements 
+		/// </summary>
+		/// <param name="el"></param>
+		/// <returns></returns>
+		page& add(base* el);
+
+		size_t size();
+
+		void activate();
+		void deactivate();
+		bool is_active();
+	};
+
+	class context : public Igui {
+	private:
+		std::map<std::string, page*> pages;
+		SDL_Texture* target = nullptr;
+	public:
+		context() = default;
+		context(SDL_Renderer* renderer);
+		~context();
+
+		void update(float delta_time) override;
+		void draw(SDL_Renderer* render) override;
+		void input(const SDL_Event* event) override;
+
+		/// <summary>
+		/// It's important that the argument be a pointer created with NEW, not an address. Context will then clear all pages 
+		/// </summary>
+		/// <param name="el"></param>
+		/// <returns></returns>
+		context& add(std::string name, page* pg);
+
+		page* operator[](std::string name);
+		size_t size();
+
+		void activate();
+		void deactivate();
+		
+	};
+}

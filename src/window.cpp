@@ -1,0 +1,407 @@
+#include "window.h"
+
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <format>
+#include <iostream>
+
+#include <utils.h>
+#include "SDL3/SDL_rect.h"
+
+//Window
+
+SDL_Window* window::sdl_window = nullptr;
+with_default_value<vec2> window::size = vec2(1280, 720);
+int window::fps = 60;
+bool window::fullscreen = false;
+
+window::window()
+{
+	print::loading("Creating window");
+	using json = nlohmann::json;
+	std::ifstream json_file(path("configs\\window.conf"));
+	auto parsed_options = json::parse(json_file);
+	json_file.close();
+
+	std::string window_name;
+	std::vector<int> resolution;
+	bool vsync;
+	bool resizeable;
+
+	parsed_options.at("window_name").get_to(window_name);
+	parsed_options.at("resolution").get_to(resolution);
+	parsed_options.at("vsync").get_to(vsync);
+	parsed_options.at("fps").get_to(fps);
+	parsed_options.at("fullscreen").get_to(fullscreen);
+	parsed_options.at("resizeable").get_to(resizeable);
+
+	if (vsync) {
+		fps = -1;
+	}
+
+	auto window_flags = NULL | (SDL_WINDOW_FULLSCREEN * fullscreen) | (SDL_WINDOW_RESIZABLE * resizeable);
+	sdl_window = SDL_CreateWindow(window_name.c_str(), size.get_default().x(), size.get_default().y(), window_flags);
+	if (!sdl_window) {
+		throw std::format("Window creating error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
+	}
+	
+	SDL_SetWindowSize(sdl_window, resolution[0], resolution[1]);
+	SDL_SetWindowMinimumSize(sdl_window, size.get_default().x(), size.get_default().y());
+
+	print::loaded("Window created!");
+}
+
+window::~window()
+{
+	print::info("Destroying window");
+	SDL_DestroyWindow(sdl_window);
+}
+
+SDL_AppResult window::update(float delta_time)
+{
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult window::input(const SDL_Event* event)
+{
+	if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+		int w, h;
+		SDL_GetWindowSizeInPixels(sdl_window, &w, &h);
+
+		(*size).vec.x = w;
+		(*size).vec.y = h;
+	}
+
+	if (event->type == SDL_EVENT_QUIT) {
+		return SDL_APP_SUCCESS;
+	}
+
+	if (event->type == SDL_EVENT_KEY_DOWN) {
+		switch (event->key.key)
+		{
+		case SDLK_F11: {
+			fullscreen = !fullscreen;
+			SDL_SetWindowFullscreen(sdl_window, fullscreen);
+		} break;
+		default:
+			break;
+		}
+	}
+
+	return SDL_APP_CONTINUE;
+}
+
+void window::set_pos(vec2 pos)
+{
+	auto int_pos = pos.get_int();
+	SDL_SetWindowPosition(sdl_window, int_pos.x, int_pos.y);
+}
+
+void window::move_on(vec2 velocity)
+{
+	auto summ = velocity + get_pos();
+	set_pos(summ);
+}
+
+void window::set_size(vec2 size)
+{
+	auto int_size = size.get_int();
+	SDL_SetWindowSize(sdl_window, int_size.x, int_size.y);
+}
+
+vec2 window::get_pos()
+{
+	int x, y;
+	SDL_GetWindowPosition(sdl_window, &x, &y);
+	return vec2(x, y);
+}
+
+vec2 window::get_size()
+{
+	int w, h;
+	SDL_GetWindowSize(sdl_window, &w, &h);
+	return vec2(w,h);
+}
+
+float window::get_ratio()
+{
+	auto size = get_size();
+	return size.x() / size.y();
+}
+
+SDL_Window *window::get()
+{
+    return sdl_window;
+}
+
+OBJECT::TYPE window::get_type()
+{
+	return type;
+}
+
+int window::get_fps()
+{
+	return fps;
+}
+
+//Camera
+
+SDL_Renderer* camera::sdl_renderer = nullptr;
+vec2 camera::pos = vec2(0,0);
+with_default_value<vec2> camera::size = vec2(1366, 768);
+std::shared_ptr<game_object> camera::connected_object = nullptr;
+SDL_FRect camera::viewport = { 0 };
+bool camera::show_gui = true;
+
+camera::camera()
+{
+	print::loading("Creating renderer");
+
+	using json = nlohmann::json;
+	std::ifstream json_file(path("configs\\window.conf"));
+	auto parsed_options = json::parse(json_file);
+	json_file.close();
+
+	bool vsync;
+
+	parsed_options.at("vsync").get_to(vsync);
+
+	sdl_renderer = SDL_CreateRenderer(window::get_instance().get(), NULL);
+	if (!sdl_renderer) {
+		throw std::format("Renderer creating error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
+	}
+
+	if (!SDL_SetRenderVSync(sdl_renderer, vsync)) {
+		throw std::format("Renderer vsync error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
+	}
+
+	this->size = get_size();
+
+	
+	viewport = pos.get_frect(size);
+	print::loaded("Renderer created!");
+}
+
+camera::~camera()
+{
+	print::info("Destroying camera");
+	SDL_DestroyRenderer(sdl_renderer);
+}
+
+SDL_AppResult camera::update(float delta_time)
+{
+	auto win_resolution = window::get_instance().get_size();
+	set_size(win_resolution);
+	set_scale(win_resolution);
+
+	if (connected_object.get() != nullptr) {
+		auto new_pos = connected_object->get_pos() + (connected_object->get_size() / 2.0f)
+				    	- (size.get_default() / 2.0f);
+		new_pos = vec2(-new_pos.x(), -new_pos.y());
+		set_pos(new_pos);
+	}
+
+	viewport = pos.get_frect(size);
+
+    return SDL_APP_SUCCESS;
+}
+
+SDL_AppResult camera::input(const SDL_Event *event)
+{
+	if (event->type == SDL_EVENT_KEY_DOWN) {
+		auto camera_velocity = 5;
+		switch (event->key.key)
+		{
+		case SDLK_F1: {
+			show_gui = !show_gui;
+		} break;
+		default:
+			break;
+		}
+
+		if (connected_object.get() == nullptr) {
+			switch (event->key.key)
+			{
+			case SDLK_W: {
+				move_on(vec2(0, camera_velocity));
+			} break;
+			case SDLK_S: {
+				move_on(vec2(0, -camera_velocity));
+			} break;
+			case SDLK_D: {
+				move_on(vec2(-camera_velocity, 0));
+			} break;
+			case SDLK_A: {
+				move_on(vec2(camera_velocity, 0));
+			} break;
+			default:
+				break;
+			}
+		}
+	}
+	else if (event->type == SDL_EVENT_KEY_UP) {
+		switch (event->key.key)
+		{
+		default:
+			break;
+		}
+	}
+    return SDL_APP_SUCCESS;
+}
+
+void camera::set_pos(vec2 pos_)
+{
+	pos = pos_;
+}
+
+void camera::move_on(vec2 velocity_)
+{
+	set_pos(get_pos() + velocity_);
+}
+
+void camera::set_size(vec2 size_)
+{
+	size = size_;
+	auto viewport_ = vec2().get_rect(size);
+
+	SDL_SetRenderViewport(sdl_renderer, &viewport_);
+}
+
+void camera::set_scale(vec2 size_)
+{
+	SDL_SetRenderScale(sdl_renderer, size_.x() / size.get_default().x(), 
+		size_.y() / size.get_default().y());
+
+	viewport = pos.get_frect(size);
+}
+
+void camera::rotate(double angle)
+{
+}
+
+vec2 camera::get_scale()
+{
+	float w, h;
+
+    SDL_GetRenderScale(sdl_renderer, &w, &h);
+
+	return vec2(w,h);
+}
+
+vec2 camera::get_size()
+{
+	size = window::get_instance().get_size();
+	return size;
+}
+
+vec2 camera::get_pos()
+{
+	return pos;
+}
+
+float camera::get_ratio()
+{
+	auto size = get_size();
+	return size.x() / size.y();
+}
+
+OBJECT::TYPE camera::get_type()
+{
+    return type;
+}
+
+SDL_Renderer *camera::get()
+{
+    return sdl_renderer;
+}
+
+void camera::connect_object(std::shared_ptr<game_object> object)
+{
+	connected_object = object;
+}
+
+void camera::clear()
+{
+	clear(colors::BLACK);
+}
+
+void camera::clear(unsigned int color)
+{
+	clear(rgba(color));
+}
+
+void camera::clear(rgba color)
+{
+	set_color(color);
+	
+	reset_viewport();
+	SDL_RenderClear(sdl_renderer);
+	restore_viewport();
+
+	set_color(colors::WHITE);
+}
+
+void camera::set_color(unsigned int color)
+{
+	set_color(rgba(color));
+}
+
+void camera::set_color(rgba color)
+{
+	SDL_SetRenderDrawColor(sdl_renderer, color.color.r, color.color.g, color.color.b, color.color.a);
+}
+
+void camera::present()
+{
+	SDL_RenderPresent(sdl_renderer);
+}
+
+void camera::set_viewport(SDL_FRect viewport)
+{
+	//pos = ;
+	size = { viewport.w, viewport.h };
+
+	viewport = { viewport.x, viewport.y,viewport.w, viewport.h  };
+}
+
+void camera::reset_viewport()
+{
+	SDL_SetRenderViewport(sdl_renderer, NULL);
+	SDL_SetRenderScale(sdl_renderer, 1.0f, 1.0f);
+
+	viewport = pos.get_frect(size);
+}
+
+void camera::restore_viewport()
+{
+	auto size_ = get_size();
+	set_size(size_);
+	set_scale(size_);
+
+	viewport = pos.get_frect(size);
+}
+
+SDL_FRect camera::get_viewport()
+{
+	return viewport;
+}
+
+SDL_FRect* camera::get_viewport_ptr()
+{
+	return &viewport;
+}
+
+vec2 camera::get_mouse_relative_pos(float m_x, float m_y)
+{
+	auto res = get_pos();
+	res.vec.x = -res.vec.x + m_x;
+	res.vec.y = -res.vec.y + m_y;
+	return res;
+}
+
+void camera::draw_debug_text(std::string text, vec2 pos)
+{
+	if (show_gui) {
+		SDL_RenderDebugText(sdl_renderer, pos.x(), pos.y(), text.c_str());
+	}
+}

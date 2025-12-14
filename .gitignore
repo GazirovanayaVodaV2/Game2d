@@ -1,0 +1,7 @@
+.vs
+GuiLib/x64
+x64
+packages
+SDL_ttf
+SDLgit
+cloc.exe

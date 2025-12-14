@@ -1,0 +1,41 @@
+{
+    "idle": [
+        {
+            "frame": "entity\\player\\idle\\PlayerStill.png",
+            "time" : null
+        }
+    ],
+    "move": [
+        {
+            "frame": "entity\\player\\move\\PlayerMoveFrame1.png",
+            "time" : 350
+        },
+        {
+            "frame": "entity\\player\\move\\PlayerMoveFrame2.png",
+            "time" : 350
+        }
+
+    ],
+    "crouch_still": [
+        {
+            "frame": "entity\\player\\crouch\\PlayerCrouchStill.png",
+            "time" : null
+        }
+    ],
+    "crouch": [
+        {
+            "frame": "entity\\player\\crouch\\PlayerCrouchFrame1.png",
+            "time" : 650
+        },
+        {
+            "frame": "entity\\player\\crouch\\PlayerCrouchFrame2.png",
+            "time" : 650
+        }
+    ],
+    "fall": [
+        {
+            "frame": "entity\\player\\flying\\PlayerFlying.png",
+            "time" : null
+        }
+    ]
+}
