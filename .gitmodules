@@ -1,10 +1,10 @@
 [submodule "SDLgit"]
 	path = SDLgit
-	url = https://github.com/libsdl-org/SDL.git
+	url = https://github.com/GazirovanayaVodaV2/SDL.git
 
 [submodule "SDL_ttf"]
 	path = SDL_ttf
-	url = https://github.com/libsdl-org/SDL_ttf.git
+	url = https://github.com/GazirovanayaVodaV2/SDL_ttf.git
 [submodule "SDLImageGit"]
 	path = SDLImageGit
-	url = https://github.com/libsdl-org/SDL_image.git
+	url = https://github.com/GazirovanayaVodaV2/SDL_image.git

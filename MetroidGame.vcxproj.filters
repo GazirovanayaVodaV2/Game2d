@@ -57,7 +57,7 @@
     <ClCompile Include="src\headers\base_object.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="raycast.cpp">
+    <ClCompile Include="src\raycast.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,13 +107,13 @@
     <ClInclude Include="src\headers\window.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="map_interaction.h">
+    <ClInclude Include="src\headers\raycast.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="background_sprite.h">
+    <ClInclude Include="src\headers\background_sprite.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="raycast.h">
+    <ClInclude Include="src\headers\map_interaction.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
