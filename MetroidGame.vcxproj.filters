@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="entity">
+      <UniqueIdentifier>{1d86ac8d-b0bf-4985-a926-3fbceedb6cd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="entity\headers">
+      <UniqueIdentifier>{60783fe9-1289-4fa5-a01a-4de0030c9040}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="entity\code">
+      <UniqueIdentifier>{14458d20-4387-452d-a28e-b481ebb92297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interactive objects">
+      <UniqueIdentifier>{cea4fa9e-88c1-49f9-ae75-ba57da7b43d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interactive objects\code">
+      <UniqueIdentifier>{410b2d86-6fb6-472c-9894-cf707b6969b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interactive objects\headers">
+      <UniqueIdentifier>{be7b75f4-1539-42ff-9d18-2954a6e73368}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MetroidGame.cpp">
@@ -21,16 +39,10 @@
     <ClCompile Include="src\animation.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\entity.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\game.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\game_object.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\interactive_object.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\light_system.cpp">
@@ -54,10 +66,25 @@
     <ClCompile Include="src\window.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\headers\base_object.cpp">
+    <ClCompile Include="src\raycast.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\raycast.cpp">
+    <ClCompile Include="src\entity.cpp">
+      <Filter>entity\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\player.cpp">
+      <Filter>entity\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dummy.cpp">
+      <Filter>entity\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interactive_object.cpp">
+      <Filter>interactive objects\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectile.cpp">
+      <Filter>interactive objects\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base_object.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,16 +101,10 @@
     <ClInclude Include="src\headers\base_object.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\headers\entity.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\headers\game.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\headers\game_object.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\headers\interactive_object.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\headers\light_system.h">
@@ -113,8 +134,23 @@
     <ClInclude Include="src\headers\background_sprite.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="src\headers\entity.h">
+      <Filter>entity\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\player.h">
+      <Filter>entity\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\dummy.h">
+      <Filter>entity\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\interactive_object.h">
+      <Filter>interactive objects\headers</Filter>
+    </ClInclude>
     <ClInclude Include="src\headers\map_interaction.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>interactive objects\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\projectile.h">
+      <Filter>interactive objects\headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

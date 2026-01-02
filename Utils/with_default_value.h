@@ -19,6 +19,10 @@ public:
     with_default_value& operator=(const with_default_value&) = default;
     with_default_value& operator=(with_default_value&&) = default;
 
+    inline void set_new_defaults(value_t new_def) {
+        default_value = std::move(new_def);
+    }
+
     inline value_t get_default() {
         return default_value;
     }

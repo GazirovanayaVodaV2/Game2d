@@ -4,16 +4,13 @@
 
 struct vec2
 {
-	SDL_FPoint vec = { 0.0f, 0.0f };
+	float x = 0.0f, y = 0.0f;
 
 	vec2() {};
 	vec2(SDL_FPoint sdl_fpoint);
 	vec2(SDL_Point sdl_point);
 	vec2(int x, int y);
 	vec2(float x, float y);
-
-	float x();
-	float y();
 
 	SDL_Point get_int();
 
@@ -38,4 +35,8 @@ struct vec2
 
 	SDL_Rect get_rect(const vec2& _vec);
 	SDL_FRect get_frect(const vec2& _vec);
+
+	operator SDL_FPoint() {
+		return { x, y };
+	}
 };

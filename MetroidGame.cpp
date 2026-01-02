@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <game.h>
-static game* game_ = nullptr;
+game* game_ = nullptr;
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
@@ -48,6 +48,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
     delete game_;
+
+    level_manager::unload_all();
 
     TTF_Quit();
 }

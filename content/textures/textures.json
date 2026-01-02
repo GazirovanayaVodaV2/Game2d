@@ -1,5 +1,7 @@
 {
     "brick": "brick.png",
     "mitas": "text2.png",
-    "lamp":"lamp.png"
+    "lamp":"lamp.png",
+    "dummy":"dummy.png",
+    "bullet":"bullet.png"
 }

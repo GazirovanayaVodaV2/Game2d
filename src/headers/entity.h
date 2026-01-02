@@ -26,7 +26,6 @@ class entity :
 {
 protected:
 	std::shared_ptr<animation::player> animations;
-	static inline const OBJECT::TYPE type = OBJECT::TYPE::ENTITY;
 
 	ENTITY::ACTION action = ENTITY::ACTION::IDLE;
 	ENTITY::STATUSES statuses;
@@ -36,68 +35,43 @@ protected:
 	with_default_value<int> hp = 100;
 	
 	virtual void death() {
+		on_hp_change();
 		hp.reset();
 	};
+
+	virtual void on_hp_change() {};
 public:
 	~entity() = default;
 
 	virtual void set_hp(int hp) {
 		this->hp = hp;
+		on_hp_change();
 	};
 	virtual void damage(int damage) {
-		this->hp -= hp;
-
-		if (this->hp < 0) {
+		this->hp -= damage;
+		on_hp_change();
+		if (this->hp <= 0) {
 			death();
 		}
 	};
 	virtual void heal(int hp) {
 		this->hp += hp;
+		on_hp_change();
 	};
-	virtual int get_hp() {
+	int get_hp() {
 		return hp;
 	};
+
+
+	vec2 get_direction() {
+		auto dir = vec2(cosf((float)angle),
+						sinf((float)angle));
+		if (this->dir == OBJECT_DIRECTION::RIGHT) dir.x *= -1;
+
+		return dir;
+	}
+
+	OBJECT::TYPE get_type() override { return OBJECT::TYPE::ENTITY; }
 };
 
-class player : public entity {
-private:
-	bool fly = false;
-	bool noclip = false;
-protected:
-	OBJECT::TYPE type = OBJECT::TYPE::PLAYER;
-	float default_speed = 10.0f;
-
-	void death() override {
-		entity::death();
-	};
-public:
-	player(SDL_Renderer* render, std::string animation_config);
-	~player() override;
-
-	SDL_AppResult update(float delta_time) override;
-	SDL_AppResult input(const SDL_Event* event) override;
-
-	void set_pos(vec2 pos);
-	void move_on(vec2 velocity);
-
-	void set_size(vec2 size);
-
-	void rotate(double angle);
-
-	vec2 get_size();
-	vec2 get_pos();
-
-	float get_ratio();
-
-	void draw() override;
-	bool check_collision(std::shared_ptr<game_object> object) override;
-	void clear_collision_buffer() override;
-
-	OBJECT::TYPE get_type() override;
-
-	void set_hp(int hp) override;
-	void damage(int damage) override;
-	void heal(int hp) override;
-	int get_hp() override;
-};
-
+ 

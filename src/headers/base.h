@@ -27,11 +27,13 @@ namespace OBJECT {
 		LIGHT_SYSTEM,
 		ENTITY,
 		PLAYER,
+		DUMMY_ENTITY,
 		WALL,
 		INTERACTIVE_OBJECT,
 		BACKGROUND_SPRITE,
 		MAP_INTERACTION,
-		LEVEL_SWITCHER
+		LEVEL_SWITCHER,
+		PROJECTILE,
 	};
 
 	namespace MAP {
@@ -42,14 +44,27 @@ namespace OBJECT {
 			light,
 			background_sprite,
 			level_switcher,
+			dummy_entity
 		};
 	}
 };
 
+inline bool is_subtype_of(OBJECT::TYPE type, OBJECT::TYPE base_type) {
+    if (type == base_type) return true;
+    
+    switch (base_type) {
+        case OBJECT::TYPE::ENTITY:
+            return type == OBJECT::TYPE::PLAYER || 
+                   type == OBJECT::TYPE::DUMMY_ENTITY;
+        case OBJECT::TYPE::INTERACTIVE_OBJECT:
+            return type == OBJECT::TYPE::PROJECTILE;
+        default:
+            return false;
+    }
+}
+
 class base
 {
-protected:
-	static inline const OBJECT::TYPE type = OBJECT::TYPE::NULL_OBJECT;
 public:
 	base() = default;
 	virtual ~base() = default;
@@ -60,7 +75,9 @@ public:
 	//base(const base&) = default;
 	//base& operator=(const base&) = default;
 
-	virtual OBJECT::TYPE get_type() = 0;
+	virtual OBJECT::TYPE get_type() {
+		return OBJECT::TYPE::NULL_OBJECT;
+	};
 
 	bool is_null() {
 		return get_type() == OBJECT::TYPE::NULL_OBJECT;

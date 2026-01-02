@@ -17,8 +17,6 @@ private:
 
     window();
     ~window();
-protected:
-    static inline const OBJECT::TYPE type = OBJECT::TYPE::WINDOW;
 public:
     static window& get_instance() {
         static window inst;
@@ -54,8 +52,6 @@ private:
 
     camera();
     ~camera();
-protected:
-    static inline const OBJECT::TYPE type = OBJECT::TYPE::CAMERA;
 public:
     static camera& get_instance() {
         static camera inst;

@@ -71,17 +71,12 @@ float animation::frame::get_ratio()
 	return txt->get_ratio();
 }
 
-OBJECT::TYPE animation::frame::get_type()
-{
-	return type;
-}
-
 void animation::frame::draw()
 {
 	txt->draw();
 }
 
-bool animation::frame::check_collision(std::shared_ptr<game_object> object)
+bool animation::frame::check_collision(game_object* object)
 {
 	return txt->check_collision(object);
 }
@@ -209,12 +204,7 @@ vec2 animation::cycle::get_pos()
 
 float animation::cycle::get_ratio()
 {
-	return size.x() / size.y();
-}
-
-OBJECT::TYPE animation::cycle::get_type()
-{
-	return type;
+	return size.x / size.y;
 }
 
 std::shared_ptr<animation::frame> animation::cycle::get()
@@ -227,7 +217,7 @@ void animation::cycle::draw()
 	get()->draw();
 }
 
-bool animation::cycle::check_collision(std::shared_ptr<game_object> object)
+bool animation::cycle::check_collision(game_object* object)
 {
 	return false;
 }
@@ -386,12 +376,7 @@ vec2 animation::player::get_pos()
 
 float animation::player::get_ratio()
 {
-	return size.x() / size.y();
-}
-
-OBJECT::TYPE animation::player::get_type()
-{
-	return type;
+	return size.x / size.y;
 }
 
 std::shared_ptr<animation::cycle> animation::player::get()
@@ -404,7 +389,7 @@ void animation::player::draw()
 	get()->draw();
 }
 
-bool animation::player::check_collision(std::shared_ptr<game_object> object)
+bool animation::player::check_collision(game_object* object)
 {
 	return false;
 }

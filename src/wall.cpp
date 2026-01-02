@@ -54,24 +54,20 @@ void wall::draw()
 	restore_txt_state();
 }
 
-bool wall::check_collision(std::shared_ptr<game_object> object)
+bool wall::check_collision(game_object* object)
 {
-	save_txt_state();
+	if (physic) {
+		collided = global_check_collision(this, object);
 
-	txt->set_physic(physic);
-	auto res = txt->check_collision(object);
-	txt->set_physic(false);
+		if (collided) {
+			collided_objects.push_back(object);
+		}
 
-	restore_txt_state();
-	return res;
+		return collided;
+	} return false;
 }
 
 void wall::clear_collision_buffer()
 {
 	txt->clear_collision_buffer();
-}
-
-OBJECT::TYPE wall::get_type()
-{
-	return type;
 }

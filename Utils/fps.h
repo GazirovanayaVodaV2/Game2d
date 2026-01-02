@@ -12,6 +12,7 @@ private:
     fps();
     ~fps() = default;
 public:
+
     static fps& get_instance() {
         static fps inst;
         return inst;
@@ -20,6 +21,10 @@ public:
     static void update();
 
     static float get();
+    /// <summary>
+    /// Return delta time in nanoseconds
+    /// </summary>
+    /// <returns></returns>
     static float delta();
     static float mult();
 

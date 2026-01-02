@@ -4,6 +4,7 @@
 #include <window.h>
 #include <texture.h>
 #include <entity.h>
+#include <player.h>
 #include <light_system.h>
 
 #include <vector>
@@ -16,6 +17,9 @@ class map :
 {
 private:
     std::vector<std::shared_ptr<game_object>> objects;
+    std::vector<std::shared_ptr<game_object>> new_obj_buffer;
+
+    std::shared_ptr<atlas> atl;
 
     SDL_Texture* scene = nullptr;
     std::shared_ptr<player> pl;
@@ -28,10 +32,11 @@ private:
     int W = 0, H = 0, tile_size = 64;
 
     bool loaded = false;
+    bool draw_debug_info = DEBUG_VAL(true, false);
 
     void load_level_format(std::string path_, std::shared_ptr<atlas>& txt_context);
 protected:
-    static inline const OBJECT::TYPE type = OBJECT::TYPE::MAP;
+    const OBJECT::TYPE type = OBJECT::TYPE::MAP;
 public:
     map() {
         NULL_OBJECT_PTR = std::make_shared<NULL_OBJECT>();
@@ -44,6 +49,9 @@ public:
     void add(std::shared_ptr<game_object> obj);
 
     std::shared_ptr<player>& get_player();
+    const std::vector<std::shared_ptr<game_object>>& get_objects() {
+        return objects;
+    }
 
     void load(std::string path_, std::shared_ptr<atlas>& txt_context);
     void unload();
@@ -51,7 +59,9 @@ public:
     SDL_AppResult update(float delta_time);
     SDL_AppResult input(const SDL_Event* event);
 
-    OBJECT::TYPE get_type() override;
+    std::shared_ptr<atlas> get_atlas() { return atl; };
+
+    OBJECT::TYPE get_type() override { return OBJECT::TYPE::MAP; }
 };
 
 /*

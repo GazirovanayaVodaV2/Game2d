@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="concepts.h" />
     <ClInclude Include="convert.h" />
+    <ClInclude Include="custom_warning.h" />
     <ClInclude Include="fps.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="path.h" />

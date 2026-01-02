@@ -45,7 +45,7 @@ namespace gui {
 		
 		SDL_Texture* txt = nullptr;
 
-		SDL_Renderer** renderer_ptr;
+		SDL_Renderer* renderer_ptr;
 
 		std::string text = "Sample Text";
 		SDL_Color color = { 255 , 255, 255, 255};
@@ -57,9 +57,10 @@ namespace gui {
 		text_box() = default;
 		~text_box();
 
-		text_box(SDL_Renderer** render, std::string path_, std::string content, SDL_Color color);
+		text_box(SDL_Renderer* render, std::string path_, std::string content, SDL_Color color);
 
 		void allign(SDL_FRect parent_rect);
+		void resize_parent(SDL_FRect* parent_rect, bool move_parent = false);
 
 		void update(float delta_time) override {};
 		void draw(SDL_Renderer* render) override;

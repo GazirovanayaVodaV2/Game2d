@@ -93,7 +93,7 @@ void gui::image_rect::set_image(SDL_Renderer* render, std::string path_)
 }
 
 
-void gui::button_base::input(const const SDL_Event* event) {
+void gui::button_base::input(const SDL_Event* event) {
 	if (event->type == SDL_EVENT_MOUSE_MOTION) {
 		float x, y;
 		SDL_GetMouseState(&x, &y);
@@ -148,10 +148,10 @@ void gui::colored_button::draw(SDL_Renderer* render) {
 	}
 }
 
-static SDL_Texture* text_creator_and_color_setter_impl(TTF_Font* font, SDL_Renderer** render,
+static SDL_Texture* text_creator_and_color_setter_impl(TTF_Font* font, SDL_Renderer* render,
 													  std::string content, SDL_Color color) {
 	auto surf = TTF_RenderText_Blended(font, content.c_str(), content.size(), color);
-	auto res = SDL_CreateTextureFromSurface(*render, surf);
+	auto res = SDL_CreateTextureFromSurface(render, surf);
 	SDL_DestroySurface(surf);
 	return res;
 }
@@ -182,7 +182,7 @@ gui::text_box::~text_box()
 	text_deleter();
 }
 
-gui::text_box::text_box(SDL_Renderer** render, std::string path_, std::string content, SDL_Color color)
+gui::text_box::text_box(SDL_Renderer* render, std::string path_, std::string content, SDL_Color color)
 {
 	renderer_ptr = render;
 	auto path__ = path(path_);
@@ -205,6 +205,22 @@ void gui::text_box::allign(SDL_FRect parent_rect)
 	box = parent_rect;
 
 	SDL_GetTextureSize(txt, &box.w, &box.h);
+}
+
+void gui::text_box::resize_parent(SDL_FRect* parent_rect, bool move_parent)
+{
+	SDL_FRect diff{0};
+	diff.x = parent_rect->x - this->box.x;
+	diff.y = parent_rect->y - this->box.y;
+	diff.w = parent_rect->w - this->box.w;
+	diff.h = parent_rect->h - this->box.h;
+
+	*parent_rect = this->box;
+
+	if (move_parent) {
+		parent_rect->x += diff.w / 2;
+		this->box.x += diff.w / 2;
+	}
 }
 
 void gui::text_box::draw(SDL_Renderer* render)

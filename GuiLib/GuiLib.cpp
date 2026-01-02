@@ -32,7 +32,7 @@ void gui::page::draw(SDL_Renderer* render)
 	}
 }
 
-void gui::page::input(const const SDL_Event* event)
+void gui::page::input(const SDL_Event* event)
 {
 	if (active) {
 		for (auto& element : elements) {

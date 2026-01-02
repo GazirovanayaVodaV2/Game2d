@@ -12,6 +12,8 @@
 #include "wall.h"
 #include "animation.h"
 
+#include "raycast.h"
+
 game::game()
 {
 	print::loading("Starting game");
@@ -36,7 +38,7 @@ game::game()
 		camera::connect_object(level_manager::get()->get_player());
 		main_menu->deactivate();
 		};
-	new_game->label = new gui::text_box(&renderer, "fonts\\NotoSans.ttf", "New game", { 0 });
+	new_game->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "New game", { 0 });
 	new_game->label->allign(new_game->box);
 	
 	main_menu->add(new_game);
@@ -49,9 +51,9 @@ game::game()
 	main_menu_quit->on_mouse_left_click = [this, main_menu]() {
 		exit(0);
 		};
-	main_menu_quit->label = new gui::text_box(&renderer, "fonts\\NotoSans.ttf", "Quit", { 0 });
+	main_menu_quit->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Quit", { 0 });
 	main_menu_quit->label->allign(main_menu_quit->box);
-
+	
 	main_menu->add(main_menu_quit);
 	main_menu->activate();
 
@@ -69,7 +71,7 @@ game::game()
 		pause_page->deactivate();
 		};
 
-	resume_button->label = new gui::text_box(&renderer, "fonts\\NotoSans.ttf", "Resume", {0});
+	resume_button->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Resume", {0});
 	resume_button->label->allign(resume_button->box);
 	pause_page->add(resume_button);
 
@@ -88,8 +90,10 @@ game::game()
 		pause_page->deactivate();
 		};
 
-	quit_to_main_menu_button->label = new gui::text_box(&renderer, "fonts\\NotoSans.ttf", "Quit to main menu", { 0 });
+	quit_to_main_menu_button->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Quit to main menu", { 0 });
 	quit_to_main_menu_button->label->allign(quit_to_main_menu_button->box);
+	quit_to_main_menu_button->label->resize_parent(&quit_to_main_menu_button->box, true);
+
 	pause_page->add(quit_to_main_menu_button);
 
 
@@ -125,27 +129,25 @@ SDL_AppResult game::cycle()
 
 	camera::restore_viewport();
 
-	//auto trans = phys_player->update(convert::ns2ms(fps::.delta()), {test_wall->get_pos(), 
-	//																	   test_wall->get_angle()});
-
-	//test_wall->move_on(trans.pos);
-	//test_wall->rotate(trans.angle);
-
-	//test_wall->draw(cam->get(), cam->get_viewport());
-
-	/*
-	End of rendering
-	*/
-
 	Gui.draw(camera::get());
+
+/*#ifdef _DEBUG
+	SDL_RenderLine(camera::get(), camera::get_viewport().w / 2,
+		camera::get_viewport().h / 2,
+		last_raycasted_pos.x + camera::get_viewport().x,
+		last_raycasted_pos.y + camera::get_viewport().y);
+#endif // _DEBUG*/
 
 	camera::present();
 
-	camera::set_viewport({ 0,0, window::get_size().x(), window::get_size().y()});
+	camera::set_viewport({ 0,0, window::get_size().x, window::get_size().y});
 
 	if (not pause) {
 		level_manager::update(delta);
 	}
+
+
+
 
 	camera::update(delta);
 	fps::update();
@@ -172,7 +174,7 @@ SDL_AppResult game::input(const SDL_Event* event)
 		auto win_size = window::get_size();
 
 		SDL_SetRenderLogicalPresentation(camera::get(), 
-			win_size.x(), win_size.y(),
+			convert::f2i(win_size.x), convert::f2i(win_size.y),
 			SDL_LOGICAL_PRESENTATION_LETTERBOX);
 	} else if (event->type == SDL_EVENT_KEY_DOWN) {
 		if (event->key.key == SDLK_F1) {
@@ -199,14 +201,29 @@ SDL_AppResult game::input(const SDL_Event* event)
 			}
 		}
 
+/*#ifdef _DEBUG
 		if (event->key.key == SDLK_E) {
-			if (last_selected_obj) {
-				if (last_selected_obj->get_type() == OBJECT::TYPE::WALL) {
-					//auto new_obj = std::make_shared<wall>(*last_selected_obj);
-					//level_manager::get()->add(new_obj);
+			if (!level_manager::is_level_empty()) {
+
+				auto pl = level_manager::get()->get_player();
+
+				pl_pos = pl->get_pos();
+				raycast::ray player_ray {
+					pl_pos, pl->get_direction(),
+					(float)pl->get_angle()
+				};
+
+				float dist;
+				auto& obj = raycast::cast(player_ray, level_manager::get()->get_objects(), dist);
+				if (obj) {
+					obj->select();
+					last_selected_obj = obj;
+					last_raycasted_pos = player_ray.dir * dist;
 				}
 			}
+			
 		}
+#endif*/
 	}
 #ifdef _DEBUG
 	else if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
@@ -235,10 +252,7 @@ SDL_AppResult game::input(const SDL_Event* event)
 		}
 	}
 #endif
-	return res;
-}
 
-OBJECT::TYPE game::get_type()
-{
-	return type;
+
+	return res;
 }

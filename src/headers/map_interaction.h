@@ -5,7 +5,7 @@
 /// </summary>
 class map_interaction : public interactive_object_base {
 protected:
-	static inline const OBJECT::TYPE type = OBJECT::TYPE::MAP_INTERACTION;
+	void interaction_impl(entity* ent) override {};
 
-	void interaction_impl(std::shared_ptr<entity> ent) override {};
+	OBJECT::TYPE get_type() override { return OBJECT::TYPE::MAP_INTERACTION; }
 };

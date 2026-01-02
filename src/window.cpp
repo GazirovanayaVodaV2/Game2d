@@ -40,13 +40,13 @@ window::window()
 	}
 
 	auto window_flags = NULL | (SDL_WINDOW_FULLSCREEN * fullscreen) | (SDL_WINDOW_RESIZABLE * resizeable);
-	sdl_window = SDL_CreateWindow(window_name.c_str(), size.get_default().x(), size.get_default().y(), window_flags);
+	sdl_window = SDL_CreateWindow(window_name.c_str(), size.get_default().x, size.get_default().y, window_flags);
 	if (!sdl_window) {
 		throw std::format("Window creating error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
 	}
 	
 	SDL_SetWindowSize(sdl_window, resolution[0], resolution[1]);
-	SDL_SetWindowMinimumSize(sdl_window, size.get_default().x(), size.get_default().y());
+	SDL_SetWindowMinimumSize(sdl_window, size.get_default().x, size.get_default().y);
 
 	print::loaded("Window created!");
 }
@@ -68,8 +68,8 @@ SDL_AppResult window::input(const SDL_Event* event)
 		int w, h;
 		SDL_GetWindowSizeInPixels(sdl_window, &w, &h);
 
-		(*size).vec.x = w;
-		(*size).vec.y = h;
+		(*size).x = convert::i2f(w);
+		(*size).y = convert::i2f(h);
 	}
 
 	if (event->type == SDL_EVENT_QUIT) {
@@ -126,7 +126,7 @@ vec2 window::get_size()
 float window::get_ratio()
 {
 	auto size = get_size();
-	return size.x() / size.y();
+	return size.x / size.y;
 }
 
 SDL_Window *window::get()
@@ -136,7 +136,7 @@ SDL_Window *window::get()
 
 OBJECT::TYPE window::get_type()
 {
-	return type;
+	return OBJECT::TYPE::WINDOW;
 }
 
 int window::get_fps()
@@ -151,7 +151,8 @@ vec2 camera::pos = vec2(0,0);
 with_default_value<vec2> camera::size = vec2(1366, 768);
 std::shared_ptr<game_object> camera::connected_object = nullptr;
 SDL_FRect camera::viewport = { 0 };
-bool camera::show_gui = true;
+
+bool camera::show_gui = DEBUG_VAL(true, false);
 
 camera::camera()
 {
@@ -197,7 +198,7 @@ SDL_AppResult camera::update(float delta_time)
 	if (connected_object.get() != nullptr) {
 		auto new_pos = connected_object->get_pos() + (connected_object->get_size() / 2.0f)
 				    	- (size.get_default() / 2.0f);
-		new_pos = vec2(-new_pos.x(), -new_pos.y());
+		new_pos = vec2(-new_pos.x, -new_pos.y);
 		set_pos(new_pos);
 	}
 
@@ -212,7 +213,7 @@ SDL_AppResult camera::input(const SDL_Event *event)
 		auto camera_velocity = 5;
 		switch (event->key.key)
 		{
-		case SDLK_F1: {
+		case SDLK_F5: {
 			show_gui = !show_gui;
 		} break;
 		default:
@@ -269,8 +270,8 @@ void camera::set_size(vec2 size_)
 
 void camera::set_scale(vec2 size_)
 {
-	SDL_SetRenderScale(sdl_renderer, size_.x() / size.get_default().x(), 
-		size_.y() / size.get_default().y());
+	SDL_SetRenderScale(sdl_renderer, size_.x / size.get_default().x, 
+		size_.y / size.get_default().y);
 
 	viewport = pos.get_frect(size);
 }
@@ -302,12 +303,12 @@ vec2 camera::get_pos()
 float camera::get_ratio()
 {
 	auto size = get_size();
-	return size.x() / size.y();
+	return size.x / size.y;
 }
 
 OBJECT::TYPE camera::get_type()
 {
-    return type;
+    return OBJECT::TYPE::CAMERA;
 }
 
 SDL_Renderer *camera::get()
@@ -394,14 +395,14 @@ SDL_FRect* camera::get_viewport_ptr()
 vec2 camera::get_mouse_relative_pos(float m_x, float m_y)
 {
 	auto res = get_pos();
-	res.vec.x = -res.vec.x + m_x;
-	res.vec.y = -res.vec.y + m_y;
+	res.x = -res.x + m_x;
+	res.y = -res.y + m_y;
 	return res;
 }
 
 void camera::draw_debug_text(std::string text, vec2 pos)
 {
 	if (show_gui) {
-		SDL_RenderDebugText(sdl_renderer, pos.x(), pos.y(), text.c_str());
+		SDL_RenderDebugText(sdl_renderer, pos.x, pos.y, text.c_str());
 	}
 }

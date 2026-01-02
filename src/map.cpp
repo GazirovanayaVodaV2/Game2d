@@ -1,6 +1,7 @@
 #include "map.h"
 
 #include <utils.h>
+#include "SDL3/SDL_render.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -10,8 +11,8 @@
 #include <string>
 #include "texture.h"
 #include "background_sprite.h"
-#include "SDL3/SDL_render.h"
 
+#include "dummy.h"
 
 map::~map()
 {
@@ -20,7 +21,7 @@ map::~map()
 
 void map::add(std::shared_ptr<game_object> obj)
 {
-	objects.push_back(obj);
+	new_obj_buffer.push_back(obj);
 }
 
 std::shared_ptr<game_object>& map::get(vec2 pos)
@@ -30,10 +31,13 @@ std::shared_ptr<game_object>& map::get(vec2 pos)
 	}
 
 	size_t i = 0;
-	for (; i < objects.size() - 1; i++) {
-		auto& obj = objects[i];
-		if (obj->in(pos)) {
-			return objects[i];
+	if (objects.size() > 0)
+	{
+		for (; i < objects.size() - 1; i++) {
+			auto& obj = objects[i];
+			if (obj->in(pos)) {
+				return objects[i];
+			}
 		}
 	}
 
@@ -70,7 +74,9 @@ void map::draw()
 
 		pl->draw();
 		for (auto& object : objects) {
-			object->draw();
+			if (object->exist) {
+				object->draw();
+			}
 		}
 
 		SDL_SetRenderScale(render, 1.0f, 1.0f);
@@ -79,6 +85,16 @@ void map::draw()
 		SDL_RenderTexture(render, scene, NULL, &res_viewport);
 
 		light_system->draw();
+
+
+		if (draw_debug_info) {
+			pl->draw_debug();
+			for (auto& object : objects) {
+				if (object->exist) {
+					object->draw_debug();
+				}
+			}
+		}
 	}
 }
 
@@ -234,6 +250,12 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 
 						add(object);
 					}
+					else if (type == keyword_to_string(dummy_entity)) {
+						auto object = std::make_shared<dummy>(txt_context, 100);
+						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
+						object->set_pos(pos);
+						add(object);
+					}
 
 					index++;
 				}
@@ -250,6 +272,7 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 
 void map::load(std::string path_, std::shared_ptr<atlas>& txt_context)
 {
+	atl = txt_context;
 	if (path_.find(".level") != std::string::npos) {
 		load_level_format(path_, txt_context);
 	}
@@ -274,27 +297,49 @@ SDL_AppResult map::update(float delta_time)
 	if (loaded) {
 		for (auto& object : objects) {
 			//pl->check_collision(object);
-			if (pl->check_collision(object)) {
-				//break;
+			if (object->exist) {
+				pl->check_collision(object.get());
+				auto app_res = object->update(delta_time);
+				switch (app_res)
+				{
+				case SDL_APP_CONTINUE:
+					break;
+				case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
+					break;
+				case SDL_APP_FAILURE: return SDL_APP_FAILURE;
+					break;
+				default:
+					break;
+				}
 			}
 		}
 
-		for (auto& object : objects) {
-			auto app_res = object->update(delta_time);
-			switch (app_res)
-			{
-			case SDL_APP_CONTINUE:
-				break;
-			case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
-				break;
-			case SDL_APP_FAILURE: return SDL_APP_FAILURE;
-				break;
-			default:
-				break;
+		
+		for (auto& obj1 : objects) {
+			if (!obj1->exist) continue;
+			for (auto& obj2 : objects) {
+				if (obj1 == obj2 || !obj2->exist) continue;
+				obj1->check_collision(obj2.get());
 			}
 		}
+
+		objects.erase(
+			std::remove_if(objects.begin(), objects.end(),
+				[](const std::shared_ptr<game_object>& obj) {
+					return !obj->exist;
+				}),
+			objects.end());
+
+		if (!new_obj_buffer.empty()) {
+			objects.insert(objects.end(), new_obj_buffer.begin(), new_obj_buffer.end());
+			new_obj_buffer.clear();
+		}
+
 		return pl->update(delta_time);
 	}
+	
+
+
 	return SDL_APP_CONTINUE;
 }
 
@@ -302,17 +347,25 @@ SDL_AppResult map::input(const SDL_Event* event)
 {
 	if (loaded) {
 		for (auto& obj : objects) {
-			obj->input(event);
+			if (obj->exist) {
+				obj->input(event);
+			}
 		}
-			
+		
+		if (event->type == SDL_EVENT_KEY_DOWN) {
+			switch (event->key.key)
+			{
+			case SDLK_F5: {
+				draw_debug_info = !draw_debug_info;
+			} break;
+			default: {
+			} break;
+			}
+		}
+
 		return pl->input(event);
 	}
 	return SDL_APP_CONTINUE;
-}
-
-OBJECT::TYPE map::get_type()
-{
-	return type;
 }
 
 //Level manager
@@ -388,6 +441,7 @@ SDL_AppResult level_manager::input(const SDL_Event* event)
 	if (!current_level.empty()) {
 		return get()->input(event);
 	}
+
 	return SDL_APP_SUCCESS;
 }
 

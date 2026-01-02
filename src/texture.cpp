@@ -61,46 +61,16 @@ void texture::change(std::string path)
 	print::loaded();
 }
 
-void texture::set_pos(vec2 pos)
-{
-	this->pos = pos;
-}
-
 void texture::move_on(vec2 velocity)
 {
-	if (velocity.x() < 0.0f) {
+	if (velocity.x < 0.0f) {
 		dir = OBJECT_DIRECTION::LEFT;
 	}
-	else if (velocity.x() > 0.0f) {
+	else if (velocity.x > 0.0f) {
 		dir = OBJECT_DIRECTION::RIGHT;
 	}
 
 	set_pos(get_pos() + velocity);
-}
-
-void texture::set_size(vec2 size)
-{
-	this->size = size;
-}
-
-void texture::rotate(double angle)
-{
-	this->angle = angle;
-}
-
-vec2 texture::get_size()
-{
-	return size;
-}
-
-vec2 texture::get_pos()
-{
-	return pos;
-}
-
-float texture::get_ratio()
-{
-	return size.x() / size.y();
 }
 
 void texture::set_blend(SDL_BlendMode blend_mode)
@@ -126,8 +96,8 @@ void texture::draw()
 
 	auto dest_rect = pos.get_frect(size);
 
-	dest_rect.x = (pos.x() + viewport.x);
-	dest_rect.y = (pos.y() + viewport.y);
+	dest_rect.x = (pos.x + viewport.x);
+	dest_rect.y = (pos.y + viewport.y);
 
 	auto flip = SDL_FLIP_NONE;
 	if (dir == OBJECT_DIRECTION::RIGHT) {
@@ -138,19 +108,11 @@ void texture::draw()
 	SDL_RenderTextureRotated(render, sdl_texture, NULL, &dest_rect, angle, NULL, flip);
 }
 
-bool texture::check_collision(std::shared_ptr<game_object> object)
+bool texture::check_collision(game_object* object)
 {
 	//TODO
 	if (physic) {
-		auto this_rect = pos.get_frect(size);
-		auto object_rect = object->get_pos().get_frect(object->get_size());
-
-		bool vertical_collision = ((this_rect.y + this_rect.h) > object_rect.y) &&
-			(this_rect.y < (object_rect.y + object_rect.h));
-
-		bool horizontal_collision = ((this_rect.x + this_rect.w) > object_rect.x) &&
-			(this_rect.x < (object_rect.x + object_rect.w));
-		collided = (vertical_collision && horizontal_collision);
+		collided = global_check_collision(this, object);
 
 		if (collided) {
 			collided_objects.push_back(object);
@@ -165,10 +127,6 @@ void texture::clear_collision_buffer()
 	collided_objects.clear();
 }
 
-OBJECT::TYPE texture::get_type()
-{
-	return type;
-}
 
 atlas::atlas()
 {
@@ -204,10 +162,6 @@ atlas::~atlas()
 	print::info("Deleting texture context");
 }
 
-OBJECT::TYPE atlas::get_type()
-{
-	return type;
-}
 
 std::shared_ptr<texture> atlas::get(std::string name)
 {

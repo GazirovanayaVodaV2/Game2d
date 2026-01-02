@@ -113,36 +113,35 @@ namespace animation {
 			std::string path; //for destructor logs
 			int msec = 0;
 			vec2 delta_pos;
-		protected:
-			static inline const OBJECT::TYPE type = OBJECT::TYPE::ANIMATION_FRAME;
 		public:
-
 			frame(SDL_Renderer* render, std::string path, int time);
 			~frame() override;
 
 			SDL_AppResult update(float delta_time) override;
 			SDL_AppResult input(const SDL_Event* event) override;
 
-			void set_pos(vec2 pos) override;
-			void move_on(vec2 velocity) override;
+			void set_pos(vec2 pos);
+			void move_on(vec2 velocity);
 
-			void set_size(vec2 size) override;
+			void set_size(vec2 size);
 
-			void rotate(double angle) override;
+			void rotate(double angle);
 
-			vec2 get_size() override;
-			vec2 get_pos() override;
+			vec2 get_size();
+			vec2 get_pos();
 
-			float get_ratio() override;
+			float get_ratio();
 			 
-			OBJECT::TYPE get_type() override;
-
 			void draw() override;
-			bool check_collision(std::shared_ptr<game_object> object) override;
+			bool check_collision(game_object* object) override;
 			void clear_collision_buffer() override;
 
 			std::shared_ptr<texture> get();
 			int get_time();
+
+			OBJECT::TYPE get_type() override {
+				return OBJECT::TYPE::ANIMATION_FRAME;
+			}
 	};
 
 	class cycle : public game_object {
@@ -151,8 +150,6 @@ namespace animation {
 			size_t current_frame = 0;
 
 			int frames_passed = 0;
-		protected:
-			static inline const OBJECT::TYPE type = OBJECT::TYPE::ANIMATION_CYCLE;
 		public:
 			cycle();
 			~cycle() override;
@@ -162,24 +159,26 @@ namespace animation {
 			SDL_AppResult update(float delta_time) override;
 			SDL_AppResult input(const SDL_Event* event) override;
 
-			void set_pos(vec2 pos) override;
-			void move_on(vec2 velocity) override;
+			void set_pos(vec2 pos);
+			void move_on(vec2 velocity);
 
-			void set_size(vec2 size) override;
+			void set_size(vec2 size);
 
-			void rotate(double angle) override;
+			void rotate(double angle);
 
-			vec2 get_size() override;
-			vec2 get_pos() override;
+			vec2 get_size();
+			vec2 get_pos();
 
-			float get_ratio() override;
+			float get_ratio();
 
-			OBJECT::TYPE get_type() override;
+			OBJECT::TYPE get_type() override {
+				return OBJECT::TYPE::ANIMATION_CYCLE;
+			};
 
 			std::shared_ptr<animation::frame> get();
 
 			void draw() override;
-			bool check_collision(std::shared_ptr<game_object> object) override;
+			bool check_collision(game_object* object) override;
 			void clear_collision_buffer() override;
 
 			void play(float fps);
@@ -189,8 +188,6 @@ namespace animation {
 	private:
 		std::map<std::string, std::shared_ptr<animation::cycle>> animations;
 		std::string current_sprite_animation;
-	protected:
-		static inline const OBJECT::TYPE type = OBJECT::TYPE::ANIMATION_PLAYER;
 	public:
 		player(SDL_Renderer* render, std::string animation_config);
 		~player() override;
@@ -198,27 +195,29 @@ namespace animation {
 		SDL_AppResult update(float delta_time) override;
 		SDL_AppResult input(const SDL_Event* event) override;
 
-		void set_pos(vec2 pos) override;
-		void move_on(vec2 velocity) override;
+		void set_pos(vec2 pos);
+		void move_on(vec2 velocity);
 
-		void set_size(vec2 size) override;
+		void set_size(vec2 size);
 
-		void rotate(double angle) override;
+		void rotate(double angle);
 
-		vec2 get_size() override;
-		vec2 get_pos() override;
+		vec2 get_size();
+		vec2 get_pos();
 
-		float get_ratio() override;
-
-		OBJECT::TYPE get_type() override;
+		float get_ratio();
 
 		std::shared_ptr<animation::cycle> get();
 
 		void draw() override;
-		bool check_collision(std::shared_ptr<game_object> object) override;
+		bool check_collision(game_object* object) override;
 		void clear_collision_buffer() override;
 
 		void play(std::string name, float fps);
+
+		OBJECT::TYPE get_type() override {
+			return OBJECT::TYPE::ANIMATION_PLAYER;
+		}
 	};
 }
 

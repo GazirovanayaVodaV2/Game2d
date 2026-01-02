@@ -9,8 +9,8 @@ void light::source::draw_selection()
 	if (selected) {
 		auto dest_rect = pos.get_frect(size);
 
-		dest_rect.x = (pos.x() + viewport.x - 2);
-		dest_rect.y = (pos.y() + viewport.y - 2);
+		dest_rect.x = (pos.x + viewport.x - 2);
+		dest_rect.y = (pos.y + viewport.y - 2);
 
 		dest_rect.w += 4;
 		dest_rect.h += 4;
@@ -107,7 +107,7 @@ void light::source::draw()
 	auto txt_size = get_size();
 	auto txt_pos = get_pos();
 
-	set_size(vec2(txt_size.x() * radius, txt_size.y() * radius));
+	set_size(vec2(txt_size.x * radius, txt_size.y * radius));
 	set_pos(get_pos() - (get_size() / 2.0f));
 
 	auto sdl_clr = color.color;
@@ -118,11 +118,6 @@ void light::source::draw()
 
 	set_pos(txt_pos);
 	set_size(txt_size);
-}
-
-OBJECT::TYPE light::source::get_type()
-{
-	return type;
 }
 
 float light::source::get_radius()
@@ -192,6 +187,9 @@ SDL_AppResult light::system::input(const SDL_Event* event)
 void light::system::set_pos(vec2 pos)
 {
 	this->pos = pos;
+	for (auto& light : lights) {
+		light->set_pos(pos);
+	}
 }
 
 void light::system::move_on(vec2 velocity)
@@ -222,7 +220,7 @@ vec2 light::system::get_pos()
 
 float light::system::get_ratio()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 /*
@@ -249,9 +247,4 @@ void light::system::draw()
 	SDL_RenderTexture(render, dark, NULL, NULL);
 	
 	SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-}
-
-OBJECT::TYPE light::system::get_type()
-{
-	return type;
 }

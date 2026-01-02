@@ -15,8 +15,6 @@ namespace light {
 			float radius = 1.0f;
 			rgba color = rgba(0xffffffff);
 		protected:
-			static inline const OBJECT::TYPE type = OBJECT::TYPE::LIGHT_SOURCE;
-
 			void draw_selection();
 		public:
 			source(std::string path_, float radius = 1.0f, hex color = 0xffffffff);
@@ -38,10 +36,10 @@ namespace light {
 			float get_ratio();
 			void draw();
 
-			OBJECT::TYPE get_type() override;
-
 			float get_radius();
 			void set_radius(float radius);
+
+			OBJECT::TYPE get_type() override { return OBJECT::TYPE::LIGHT_SOURCE; }
 	};
 
 	class system : public base_object {
@@ -49,9 +47,6 @@ namespace light {
 		std::vector<std::shared_ptr<light::source>> lights;
 
 		SDL_Texture* dark = nullptr;
-
-	protected:
-		static inline const OBJECT::TYPE type = OBJECT::TYPE::LIGHT_SYSTEM;
 
 	public:
 		system();
@@ -65,20 +60,22 @@ namespace light {
 		SDL_AppResult update(float delta_time) override;
 		SDL_AppResult input(const SDL_Event* event) override;
 
-		void set_pos(vec2 pos) override;
-		void move_on(vec2 velocity) override;
+		void set_pos(vec2 pos);
+		void move_on(vec2 velocity);
 
-		void set_size(vec2 size) override;
+		void set_size(vec2 size);
 
-		void rotate(double angle) override;
+		void rotate(double angle);
 
-		vec2 get_size() override;
-		vec2 get_pos() override;
+		float get_ratio();
 
-		float get_ratio() override;
+		vec2 get_size();
+		vec2 get_pos();
 		void draw();
 
-		OBJECT::TYPE get_type() override;
+		SDL_Texture* get_dark() { return dark; }
+
+		OBJECT::TYPE get_type() override { return OBJECT::TYPE::LIGHT_SYSTEM; }
 	};
 }
 

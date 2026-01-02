@@ -15,7 +15,6 @@ protected:
 
 	void save_txt_state();
 	void restore_txt_state();
-	static inline const OBJECT::TYPE type = OBJECT::TYPE::WALL;
 	bool physic = true;
 public:
 	wall(std::shared_ptr<texture> txt);
@@ -25,8 +24,8 @@ public:
 	SDL_AppResult input(const SDL_Event* event) override;
 
 	void draw() override;
-	bool check_collision(std::shared_ptr<game_object> object) override;
+	bool check_collision(game_object* object) override;
 	void clear_collision_buffer() override;
 
-	OBJECT::TYPE get_type() override;
+	OBJECT::TYPE get_type() override { return OBJECT::TYPE::WALL; }
 };

@@ -23,7 +23,7 @@ namespace gui {
 
 	class base : public Igui {
 	public:
-		SDL_FRect box;
+		SDL_FRect box{0};
 
 		base() = default;
 		~base() = default;

@@ -169,13 +169,16 @@
   <ItemGroup>
     <ClCompile Include="MetroidGame.cpp" />
     <ClCompile Include="src\animation.cpp" />
+    <ClCompile Include="src\base_object.cpp" />
+    <ClCompile Include="src\dummy.cpp" />
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_object.cpp" />
-    <ClCompile Include="src\headers\base_object.cpp" />
     <ClCompile Include="src\interactive_object.cpp" />
     <ClCompile Include="src\light_system.cpp" />
     <ClCompile Include="src\map.cpp" />
+    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\projectile.cpp" />
     <ClCompile Include="src\raycast.cpp" />
     <ClCompile Include="src\rgba.cpp" />
     <ClCompile Include="src\texture.cpp" />
@@ -208,6 +211,7 @@
     <ClInclude Include="src\headers\background_sprite.h" />
     <ClInclude Include="src\headers\base.h" />
     <ClInclude Include="src\headers\base_object.h" />
+    <ClInclude Include="src\headers\dummy.h" />
     <ClInclude Include="src\headers\entity.h" />
     <ClInclude Include="src\headers\game.h" />
     <ClInclude Include="src\headers\game_object.h" />
@@ -215,6 +219,8 @@
     <ClInclude Include="src\headers\light_system.h" />
     <ClInclude Include="src\headers\map.h" />
     <ClInclude Include="src\headers\map_interaction.h" />
+    <ClInclude Include="src\headers\player.h" />
+    <ClInclude Include="src\headers\projectile.h" />
     <ClInclude Include="src\headers\raycast.h" />
     <ClInclude Include="src\headers\rgba.h" />
     <ClInclude Include="src\headers\texture.h" />

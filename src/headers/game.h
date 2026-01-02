@@ -27,11 +27,12 @@ private:
 
 	gui::context Gui;
 
+	vec2 last_raycasted_pos, pl_pos;
+
 	bool pause = false;
 	//std::shared_ptr<animation::physic_animation_player> phys_player;
 	//std::shared_ptr<wall> test_wall;
-protected:
-	static inline const OBJECT::TYPE type = OBJECT::TYPE::GAME;
+
 public:
 	game();
 	~game() override;
@@ -39,6 +40,6 @@ public:
 	SDL_AppResult cycle();
 	SDL_AppResult input(const SDL_Event* event);
 
-	OBJECT::TYPE get_type() override;
+	OBJECT::TYPE get_type() override { return OBJECT::TYPE::GAME; }
 };
 
