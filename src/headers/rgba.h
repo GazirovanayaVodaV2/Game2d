@@ -25,6 +25,8 @@ struct rgba
 
 	rgba(hex clr);
 
+	int to_hex();
+
 	~rgba() = default;
 };
 

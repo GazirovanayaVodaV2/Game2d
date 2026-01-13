@@ -24,17 +24,4 @@ void base_object::input_if_selected(const SDL_Event* event)
 	}
 }
 
-bool global_check_collision(base_object* obj1, base_object* obj2)
-{
-	auto this_rect = obj1->get_pos().get_frect(obj1->get_size());
-	auto object_rect = obj2->get_pos().get_frect(obj2->get_size());
 
-	bool vertical_collision = ((this_rect.y + this_rect.h) > object_rect.y) &&
-		(this_rect.y < (object_rect.y + object_rect.h));
-
-	bool horizontal_collision = ((this_rect.x + this_rect.w) > object_rect.x) &&
-		(this_rect.x < (object_rect.x + object_rect.w));
-	auto collided = (vertical_collision && horizontal_collision);
-
-	return collided;
-}

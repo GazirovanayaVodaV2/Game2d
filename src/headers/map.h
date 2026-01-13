@@ -48,6 +48,8 @@ public:
 	void draw();
     void add(std::shared_ptr<game_object> obj);
 
+    void add_bullet(int dmg, vec2 pos, float speed, vec2 vel);
+
     std::shared_ptr<player>& get_player();
     const std::vector<std::shared_ptr<game_object>>& get_objects() {
         return objects;
@@ -118,6 +120,8 @@ public:
     static SDL_AppResult input(const SDL_Event* event);
 
     static std::shared_ptr<map>& get();
+
+    static bool is_any_level_loaded();
 
     static bool is_level_empty();
 };

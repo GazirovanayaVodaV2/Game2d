@@ -156,7 +156,6 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="convert.cpp" />
     <ClCompile Include="fps.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="pch.cpp">

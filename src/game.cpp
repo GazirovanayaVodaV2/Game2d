@@ -21,11 +21,21 @@ game::game()
 
 	auto renderer = camera::get();
 
+	bench::add("gui_draw");
+	bench::add("game_update");
+	bench::add("input");
+	bench::add("game_draw");
+
+#ifdef _DEBUG
+	bench::enable();
+#endif
+
 	txt_context = std::make_shared<atlas>();
 
 	level_manager::add("maps\\test.level", txt_context);
 
 	//main menu
+	
 	auto main_menu = new gui::page();
 
 	auto new_game = new gui::button(camera::get_viewport_ptr());
@@ -117,6 +127,8 @@ game::~game()
 SDL_AppResult game::cycle()
 {
 	auto delta = fps::delta();
+	
+	bench::get("game_draw").start();
 	camera::clear();
 	
 	level_manager::draw();
@@ -124,13 +136,25 @@ SDL_AppResult game::cycle()
 	/* Draw UI */
 
 	camera::reset_viewport();
-
-	camera::draw_debug_text(std::to_string(fps::get()), vec2());
+	camera::draw_debug_info();
 
 	camera::restore_viewport();
+	bench::get("game_draw").stop();
 
+	bench::get("gui_draw").start();
 	Gui.draw(camera::get());
+	/*
+	
+	We should draw players inventory separetly because lightning 
 
+	*/
+	if (level_manager::is_any_level_loaded()) {
+		auto& inv = level_manager::get()->get_player()->get_inventory();
+		inv.draw();
+		in_inventory = inv.is_opened();
+	}
+
+	bench::get("gui_draw").stop();
 /*#ifdef _DEBUG
 	SDL_RenderLine(camera::get(), camera::get_viewport().w / 2,
 		camera::get_viewport().h / 2,
@@ -142,27 +166,34 @@ SDL_AppResult game::cycle()
 
 	camera::set_viewport({ 0,0, window::get_size().x, window::get_size().y});
 
-	if (not pause) {
+	bench::get("game_update").start();
+	if (!pause and !in_inventory) {
 		level_manager::update(delta);
 	}
-
-
-
-
+	
 	camera::update(delta);
 	fps::update();
+	bench::get("game_update").stop();
+
+	
+	bench::stop();
+	camera::debug_text = bench::get_info_str(true);
+
 	if (window::get_fps() != -1) {
-		SDL_DelayNS(static_cast<Uint64>(convert::f2i(
-			convert::fps2delta(static_cast<float>(window::get_fps()))
+		SDL_DelayNS((Uint64)(convert::f2i(
+			convert::fps2delta((float)(window::get_fps()))
 			)));
 	}
+	bench::start();
+	//std::cout << bench::get_info(true);
+	
 
 	return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult game::input(const SDL_Event* event)
 {
-
+	bench::get("input").start();
 	level_manager::input(event);
 	
 	Gui.input(event);
@@ -190,7 +221,7 @@ SDL_AppResult game::input(const SDL_Event* event)
 		if (event->key.key == SDLK_ESCAPE) {
 			if (!Gui["main_menu"]->is_active())
 			{
-				if (pause) {
+				if (pause and !in_inventory) {
 					Gui["pause"]->deactivate();
 					pause = false;
 				}
@@ -233,6 +264,13 @@ SDL_AppResult game::input(const SDL_Event* event)
 		if (!level_manager::is_level_empty()) {
 			auto& obj = level_manager::get()->get(rel_pos);
 
+			if (obj->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT or is_subtype_of(obj->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
+				if (level_manager::is_any_level_loaded()) {
+					auto& inv = level_manager::get()->get_player()->get_inventory();
+					inv.try_add_item(std::static_pointer_cast<inventory::item>(obj));
+				}
+			}
+
 			if (!obj->is_null()) {
 				if (obj->is_selected()) {
 					obj->reject();
@@ -253,6 +291,11 @@ SDL_AppResult game::input(const SDL_Event* event)
 	}
 #endif
 
-
+	bench::get("input").stop();
 	return res;
+}
+
+gui::context& game::get_gui_context()
+{
+	return Gui;
 }

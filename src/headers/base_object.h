@@ -80,6 +80,5 @@ public:
 	}
 };
 
-bool global_check_collision(base_object* obj1, base_object* obj2);
 
  

@@ -9,11 +9,11 @@
 #include "texture.h"
 #include "entity.h"
 
-class interactive_object_base : public game_object {
-private:
-	bool entity_nearby = false;
 
+class interactive_object_base : public game_object {
 protected:
+	bool entity_nearby = false;
+	bool in_inventory_ = false;
 	const float use_dist = 100.0f;
 
 	virtual void interaction_impl(entity* ent) = 0;
@@ -35,5 +35,12 @@ public:
 
 	SDL_AppResult input(const SDL_Event* ev) override { return SDL_APP_CONTINUE; };
 
+	virtual void pick_up();
+	virtual bool is_pickable() {
+		return false;
+	}
+	bool in_inventory();
+
 	OBJECT::TYPE get_type() override { return OBJECT::TYPE::INTERACTIVE_OBJECT; }
+	virtual std::string get_name() { return ""; };
 };

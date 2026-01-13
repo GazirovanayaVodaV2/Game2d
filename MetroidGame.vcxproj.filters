@@ -87,6 +87,12 @@
     <ClCompile Include="src\base_object.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\inventory.cpp">
+      <Filter>entity\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\medkit.cpp">
+      <Filter>interactive objects\code</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -150,6 +156,12 @@
       <Filter>interactive objects\headers</Filter>
     </ClInclude>
     <ClInclude Include="src\headers\projectile.h">
+      <Filter>interactive objects\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\inventory.h">
+      <Filter>entity\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\medkit.h">
       <Filter>interactive objects\headers</Filter>
     </ClInclude>
   </ItemGroup>

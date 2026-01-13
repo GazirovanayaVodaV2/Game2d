@@ -175,8 +175,10 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_object.cpp" />
     <ClCompile Include="src\interactive_object.cpp" />
+    <ClCompile Include="src\inventory.cpp" />
     <ClCompile Include="src\light_system.cpp" />
     <ClCompile Include="src\map.cpp" />
+    <ClCompile Include="src\medkit.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\projectile.cpp" />
     <ClCompile Include="src\raycast.cpp" />
@@ -216,9 +218,11 @@
     <ClInclude Include="src\headers\game.h" />
     <ClInclude Include="src\headers\game_object.h" />
     <ClInclude Include="src\headers\interactive_object.h" />
+    <ClInclude Include="src\headers\inventory.h" />
     <ClInclude Include="src\headers\light_system.h" />
     <ClInclude Include="src\headers\map.h" />
     <ClInclude Include="src\headers\map_interaction.h" />
+    <ClInclude Include="src\headers\medkit.h" />
     <ClInclude Include="src\headers\player.h" />
     <ClInclude Include="src\headers\projectile.h" />
     <ClInclude Include="src\headers\raycast.h" />

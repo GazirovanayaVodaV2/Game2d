@@ -29,7 +29,7 @@ private:
 
 	vec2 last_raycasted_pos, pl_pos;
 
-	bool pause = false;
+	bool pause = false, in_inventory = false;
 	//std::shared_ptr<animation::physic_animation_player> phys_player;
 	//std::shared_ptr<wall> test_wall;
 
@@ -39,6 +39,8 @@ public:
 
 	SDL_AppResult cycle();
 	SDL_AppResult input(const SDL_Event* event);
+
+	gui::context& get_gui_context();
 
 	OBJECT::TYPE get_type() override { return OBJECT::TYPE::GAME; }
 };

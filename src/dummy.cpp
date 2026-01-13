@@ -10,7 +10,7 @@ void dummy::update_hp_box()
 void dummy::death()
 {
 	entity::death();
-	update_hp_box();
+	exist = false;
 }
 
 dummy::dummy(std::shared_ptr<atlas> atl, int hp)

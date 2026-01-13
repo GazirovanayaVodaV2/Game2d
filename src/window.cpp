@@ -153,6 +153,7 @@ std::shared_ptr<game_object> camera::connected_object = nullptr;
 SDL_FRect camera::viewport = { 0 };
 
 bool camera::show_gui = DEBUG_VAL(true, false);
+std::string camera::debug_text = "";
 
 camera::camera()
 {
@@ -215,6 +216,8 @@ SDL_AppResult camera::input(const SDL_Event *event)
 		{
 		case SDLK_F5: {
 			show_gui = !show_gui;
+			if (bench::is_enabled()) bench::disable();
+			else bench::enable();
 		} break;
 		default:
 			break;
@@ -395,8 +398,10 @@ SDL_FRect* camera::get_viewport_ptr()
 vec2 camera::get_mouse_relative_pos(float m_x, float m_y)
 {
 	auto res = get_pos();
-	res.x = -res.x + m_x;
-	res.y = -res.y + m_y;
+	res.x = (-res.x + m_x);
+	res.y = (-res.y + m_y);
+	//std::cout << res.x << " " << res.y << std::endl;
+
 	return res;
 }
 
@@ -404,5 +409,26 @@ void camera::draw_debug_text(std::string text, vec2 pos)
 {
 	if (show_gui) {
 		SDL_RenderDebugText(sdl_renderer, pos.x, pos.y, text.c_str());
+	}
+}
+
+void camera::draw_debug_info()
+{
+	if (show_gui) {
+		draw_debug_text(std::to_string(fps::get()), vec2());
+
+		std::string new_str;
+		float y = 16.0f;
+		for (std::string::iterator ch = debug_text.begin(); ch != debug_text.end(); ch++) {
+			if (*ch != '\n') {
+				new_str += *ch;
+			}
+			else {
+				draw_debug_text(new_str, vec2(0.0f, y));
+				y += 16.0f;
+				new_str.clear();
+			}
+		}
+		
 	}
 }

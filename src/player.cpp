@@ -5,6 +5,7 @@
 #include "headers/projectile.h"
 
 player::player(SDL_Renderer* render, std::string animation_config)
+	:invent(this)
 {
 	print::loading("Spawning player");
 	animations = std::make_shared<animation::player>(render, animation_config);
@@ -20,6 +21,8 @@ player::~player()
 
 SDL_AppResult player::update(float delta_time)
 {
+	invent.update(delta_time);
+
 	statuses.on_floor = false;
 	if ((!fly) && (!noclip)) {
 		movement_velocity = movement_velocity + vec2(0.0f, fps::synch(0.4f));
@@ -128,61 +131,62 @@ SDL_AppResult player::input(const SDL_Event* event)
 {
 	animations->input(event);
 
-	if (event->type == SDL_EVENT_KEY_DOWN) {
-		switch (event->key.key)
-		{
-		case SDLK_W: {
-			if (statuses.can_jump || fly) {
-				action = ENTITY::ACTION::JUMPING;
-				movement_velocity = vec2(movement_velocity.x, -default_speed * 5);
+	if (!invent.input(event)) {
+		if (event->type == SDL_EVENT_KEY_DOWN) {
+			switch (event->key.key)
+			{
+			case SDLK_W: {
+				if (statuses.can_jump || fly) {
+					action = ENTITY::ACTION::JUMPING;
+					movement_velocity = vec2(movement_velocity.x, -default_speed * 5);
+				}
+			} break;
+			case SDLK_S: {
+				if (fly) {
+					action = ENTITY::ACTION::MOVING_BY_KEYBOARD;
+					movement_velocity = vec2(movement_velocity.x, default_speed);
+				}
+			} break;
+			case SDLK_D: {
+				if (action != ENTITY::ACTION::JUMPING) {
+					action = ENTITY::ACTION::MOVING_BY_KEYBOARD;
+					movement_velocity = vec2(default_speed, movement_velocity.y);
+					this->dir = OBJECT_DIRECTION::RIGHT;
+				}
+			} break;
+			case SDLK_A: {
+				if (action != ENTITY::ACTION::JUMPING) {
+					action = ENTITY::ACTION::MOVING_BY_KEYBOARD;
+					movement_velocity = vec2(-default_speed, movement_velocity.y);
+					this->dir = OBJECT_DIRECTION::LEFT;
+				}
+			} break;
+			case SDLK_K: {
+				//temp
+
+				float bullet_speed = 20.0f;
+				bullet_speed = 1.0f;
+				vec2 bullet_vel = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(bullet_speed, 0.0f) : vec2(-bullet_speed, 0.0f);
+				vec2 bullet_spawn_pos = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(80.0f, 0.0f) : vec2(-32.0f, 0.0f);
+				bullet_spawn_pos += this->pos;
+				level_manager::get()->add_bullet(34, bullet_spawn_pos, bullet_speed, bullet_vel);
+			} break;
+			case SDLK_F3: {
+				fly = !fly;
+			} break;
+			case SDLK_F4: {
+				noclip = !noclip;
+			} break;
+			default: {
+			} break;
 			}
-		} break;
-		case SDLK_S: {
-			if (fly) {
-				action = ENTITY::ACTION::MOVING_BY_KEYBOARD;
-				movement_velocity = vec2(movement_velocity.x, default_speed);
-			}
-		} break;
-		case SDLK_D: {
-			if (action != ENTITY::ACTION::JUMPING) {
-				action = ENTITY::ACTION::MOVING_BY_KEYBOARD;
-				movement_velocity = vec2(default_speed, movement_velocity.y);
-				this->dir = OBJECT_DIRECTION::RIGHT;
-			}
-		} break;
-		case SDLK_A: {
-			if (action != ENTITY::ACTION::JUMPING) {
-				action = ENTITY::ACTION::MOVING_BY_KEYBOARD;
-				movement_velocity = vec2(-default_speed, movement_velocity.y);
-				this->dir = OBJECT_DIRECTION::LEFT;
-			}
-		} break;
-		case SDLK_E: {
-			//temp
-			float bullet_speed = 20.0f;
-			bullet_speed = 1.0f;
-			vec2 bullet_vel = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(bullet_speed, 0.0f) : vec2(-bullet_speed, 0.0f);
-			vec2 bullet_spawn_pos = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(80.0f, 0.0f) : vec2(-32.0f, 0.0f);
-			bullet_spawn_pos += this->pos;
-			auto bullet = std::make_shared<projectile>(level_manager::get()->get_atlas()->get("bullet"), bullet_vel, 34);
-			bullet->set_pos(bullet_spawn_pos);
-			level_manager::get()->add(bullet);
-		} break;
-		case SDLK_F3: {
-			fly = !fly;
-		} break;
-		case SDLK_F4: {
-			noclip = !noclip;
-		} break;
-		default: {
-		} break;
 		}
-	}
-	else if (event->type == SDL_EVENT_KEY_UP) {
-		switch (event->key.key)
-		{
-		default: action = ENTITY::ACTION::WALKING;
-			break;
+		else if (event->type == SDL_EVENT_KEY_UP) {
+			switch (event->key.key)
+			{
+			default: action = ENTITY::ACTION::WALKING;
+				break;
+			}
 		}
 	}
 	return SDL_APP_CONTINUE;
@@ -274,4 +278,9 @@ void player::heal(int hp)
 int player::get_hp()
 {
 	return hp;
+}
+
+inventory::inventory& player::get_inventory()
+{
+	return invent;
 }

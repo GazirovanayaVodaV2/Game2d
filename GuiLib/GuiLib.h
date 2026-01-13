@@ -17,13 +17,13 @@ namespace gui {
 	class clickable_object {
 	protected:
 		bool mouse_hover = false, left_click = false, right_click = false;
-	public: 
+	public:
 		std::function<void()> on_mouse_left_click, on_mouse_right_click, on_mouse_hover;
 	};
 
 	class base : public Igui {
 	public:
-		SDL_FRect box{0};
+		SDL_FRect box{ 0 };
 
 		base() = default;
 		~base() = default;
@@ -81,6 +81,6 @@ namespace gui {
 
 		void activate();
 		void deactivate();
-		
+
 	};
-}
+};

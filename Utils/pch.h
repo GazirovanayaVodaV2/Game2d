@@ -19,4 +19,6 @@
 #include <SDL3/SDL.h>
 #include <utility>
 
+#include <map>
+
 #endif //PCH_H

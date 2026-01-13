@@ -68,3 +68,6 @@ public:
 
 	 OBJECT::TYPE get_type() override { return OBJECT::TYPE::NULL_OBJECT; }
 };
+
+
+bool global_check_collision(game_object* obj1, game_object* obj2);

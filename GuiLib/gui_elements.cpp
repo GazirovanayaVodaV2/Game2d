@@ -89,6 +89,8 @@ void gui::image_rect::set_image(SDL_Renderer* render, std::string path_)
 		throw err_str.c_str();
 	}
 
+	SDL_GetTextureSize(image, &box.w, &box.h);
+
 	print::loaded();
 }
 

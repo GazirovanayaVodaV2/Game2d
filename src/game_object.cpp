@@ -87,3 +87,22 @@ bool game_object::get_collide_mode()
 {
 	return collideable;
 }
+
+
+bool global_check_collision(game_object* obj1, game_object* obj2)
+{
+	if (obj1->get_collide_mode() and obj2->get_collide_mode()) {
+		auto this_rect = obj1->get_pos().get_frect(obj1->get_size());
+		auto object_rect = obj2->get_pos().get_frect(obj2->get_size());
+
+		bool vertical_collision = ((this_rect.y + this_rect.h) > object_rect.y) &&
+			(this_rect.y < (object_rect.y + object_rect.h));
+
+		bool horizontal_collision = ((this_rect.x + this_rect.w) > object_rect.x) &&
+			(this_rect.x < (object_rect.x + object_rect.w));
+		auto collided = (vertical_collision && horizontal_collision);
+
+		return collided;
+	}
+
+}

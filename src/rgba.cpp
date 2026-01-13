@@ -25,3 +25,14 @@ rgba::rgba(hex clr)
 
 	*this = rgba(r, g, b, a);
 }
+
+int rgba::to_hex()
+{
+	int res=0;
+	res |= color.r << 24;
+	res |= color.g << 16;
+	res |= color.b << 8;
+	res |= color.a;
+
+	return res;
+}

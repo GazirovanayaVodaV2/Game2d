@@ -56,6 +56,9 @@ public:
 	};
 	virtual void heal(int hp) {
 		this->hp += hp;
+		if (this->hp > this->hp.get_default()) {
+			this->hp.reset();
+		}
 		on_hp_change();
 	};
 	int get_hp() {

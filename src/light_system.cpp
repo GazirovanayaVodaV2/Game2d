@@ -66,11 +66,13 @@ SDL_AppResult light::source::input(const SDL_Event* event)
 
 void light::source::set_pos(vec2 pos)
 {
+	this->pos = pos;
 	light_txt->set_pos(pos);
 }
 
 void light::source::move_on(vec2 velocity)
 {
+	this->pos += velocity;
 	light_txt->move_on(velocity);
 }
 
@@ -107,17 +109,26 @@ void light::source::draw()
 	auto txt_size = get_size();
 	auto txt_pos = get_pos();
 
+	SDL_Color saved_clr;
+	SDL_GetRenderDrawColor(camera::get(), &saved_clr.r,&saved_clr.g,&saved_clr.b,&saved_clr.a);
+
 	set_size(vec2(txt_size.x * radius, txt_size.y * radius));
 	set_pos(get_pos() - (get_size() / 2.0f));
 
-	auto sdl_clr = color.color;
-	SDL_SetRenderDrawColor(camera::get(), sdl_clr.r, sdl_clr.g, sdl_clr.b, 255);
+	light_txt->set_color(color.color);
 
 	draw_selection();
 	light_txt->draw();
 
 	set_pos(txt_pos);
 	set_size(txt_size);
+
+	SDL_SetRenderDrawColor(camera::get(), saved_clr.r, saved_clr.g, saved_clr.b, saved_clr.a);
+}
+
+void light::source::set_color(int clr)
+{
+	color = rgba(clr);
 }
 
 float light::source::get_radius()
@@ -247,4 +258,9 @@ void light::system::draw()
 	SDL_RenderTexture(render, dark, NULL, NULL);
 	
 	SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+}
+
+void light::system::clear()
+{
+	lights.clear();
 }

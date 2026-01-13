@@ -24,6 +24,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
     camera::get_instance();
     fps::get_instance();
     level_manager::get_instance();
+    bench::get_instance();
 
     game_ = new game();
 

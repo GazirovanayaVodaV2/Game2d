@@ -13,6 +13,8 @@
 #include "background_sprite.h"
 
 #include "dummy.h"
+#include "projectile.h"
+#include "medkit.h"
 
 map::~map()
 {
@@ -22,6 +24,13 @@ map::~map()
 void map::add(std::shared_ptr<game_object> obj)
 {
 	new_obj_buffer.push_back(obj);
+}
+
+void map::add_bullet(int dmg, vec2 pos, float speed, vec2 vel)
+{
+	auto bullet = std::make_shared<projectile>(get_atlas()->get("bullet"), vel * speed, dmg);
+	bullet->set_pos(pos);
+	add(bullet);
 }
 
 std::shared_ptr<game_object>& map::get(vec2 pos)
@@ -75,7 +84,15 @@ void map::draw()
 		pl->draw();
 		for (auto& object : objects) {
 			if (object->exist) {
-				object->draw();
+				if (object->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT 
+					or is_subtype_of(object->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
+					if (not std::static_pointer_cast<interactive_object_base>(object)->in_inventory()) {
+						object->draw();
+					}
+				}
+				else {
+					object->draw();
+				}
 			}
 		}
 
@@ -231,7 +248,15 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 
 						float radius;
 						block.data.at("radius").get_to(radius);
-						light_system->add_light("textures\\lightsource.png", radius, 0xffffffff);
+						hex color = 0xffffffff;
+
+						if (block.data.find("color") != block.data.end()) {
+							auto str = block.data.at("color").dump();
+							str = str.substr(2, 8);
+							color = (hex)std::stoul(str, nullptr, 16);
+						}
+
+						light_system->add_light("textures\\lightsource.png", radius, color);
 
 						auto pos = vec2(((index % W) * tile_size) - (tile_size / 2), ((index / W) * tile_size) - (tile_size / 2));
 						//pos = pos * radius;
@@ -252,6 +277,12 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 					}
 					else if (type == keyword_to_string(dummy_entity)) {
 						auto object = std::make_shared<dummy>(txt_context, 100);
+						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
+						object->set_pos(pos);
+						add(object);
+					}
+					else if (type == keyword_to_string(medkit)) {
+						auto object = std::make_shared<medkit>(txt_context);
 						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
 						object->set_pos(pos);
 						add(object);
@@ -452,6 +483,11 @@ std::shared_ptr<map>& level_manager::get()
 	}
 
 	return levels.at(current_level);
+}
+
+bool level_manager::is_any_level_loaded()
+{
+	return current_level.size() > 0;
 }
 
 bool level_manager::is_level_empty()

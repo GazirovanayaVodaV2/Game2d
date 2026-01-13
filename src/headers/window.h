@@ -53,6 +53,8 @@ private:
     camera();
     ~camera();
 public:
+    static std::string debug_text;
+
     static camera& get_instance() {
         static camera inst;
         return inst;
@@ -96,4 +98,5 @@ public:
     static vec2 get_mouse_relative_pos(float m_x, float m_y);
 
     static void draw_debug_text(std::string text, vec2 pos);
+    static void draw_debug_info();
 };

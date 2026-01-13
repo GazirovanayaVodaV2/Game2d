@@ -39,6 +39,8 @@ namespace light {
 			float get_radius();
 			void set_radius(float radius);
 
+			void set_color(int clr);
+
 			OBJECT::TYPE get_type() override { return OBJECT::TYPE::LIGHT_SOURCE; }
 	};
 
@@ -56,6 +58,8 @@ namespace light {
 		std::shared_ptr<light::source> get_light(size_t id);
 		std::shared_ptr<light::source> get_last();
 		size_t get_count();
+		void clear();
+
 
 		SDL_AppResult update(float delta_time) override;
 		SDL_AppResult input(const SDL_Event* event) override;

@@ -2,10 +2,14 @@
 
 #include "entity.h"
 
+#include "inventory.h"
+
 class player : public entity {
 private:
 	bool fly = false;
 	bool noclip = false;
+
+	inventory::inventory invent;
 protected:
 	float default_speed = 10.0f;
 
@@ -37,6 +41,8 @@ public:
 	void damage(int damage) override;
 	void heal(int hp) override;
 	int get_hp();
+
+	inventory::inventory& get_inventory();
 
 	OBJECT::TYPE get_type() override { return OBJECT::TYPE::PLAYER; }
 };

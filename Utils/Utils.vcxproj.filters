@@ -56,9 +56,6 @@
     <ClCompile Include="fps.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="convert.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="path.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>

@@ -34,6 +34,7 @@ namespace OBJECT {
 		MAP_INTERACTION,
 		LEVEL_SWITCHER,
 		PROJECTILE,
+		MEDKIT
 	};
 
 	namespace MAP {
@@ -44,7 +45,8 @@ namespace OBJECT {
 			light,
 			background_sprite,
 			level_switcher,
-			dummy_entity
+			dummy_entity,
+			medkit
 		};
 	}
 };
@@ -57,7 +59,8 @@ inline bool is_subtype_of(OBJECT::TYPE type, OBJECT::TYPE base_type) {
             return type == OBJECT::TYPE::PLAYER || 
                    type == OBJECT::TYPE::DUMMY_ENTITY;
         case OBJECT::TYPE::INTERACTIVE_OBJECT:
-            return type == OBJECT::TYPE::PROJECTILE;
+            return type == OBJECT::TYPE::MEDKIT ||
+				   type == OBJECT::TYPE::PROJECTILE;
         default:
             return false;
     }
