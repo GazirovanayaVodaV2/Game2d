@@ -24,6 +24,7 @@
     <ProjectGuid>{964c514c-01c8-4645-8049-e32d8890bd56}</ProjectGuid>
     <RootNamespace>MetroidGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Game2d</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -167,7 +168,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MetroidGame.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\base_object.cpp" />
     <ClCompile Include="src\dummy.cpp" />

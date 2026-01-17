@@ -10,6 +10,11 @@ void inventory::inventory::try_place_selected_item(int x, int y)
 		if (!items.at(id)) {
 			items[id] = items[selected_item_id];
 			items[selected_item_id] = nullptr;
+
+			if (selected_item_id == item_in_hands_id) {
+				item_in_hands_id = id;
+			}
+
 			selected_item_id = -1;
 		}
 	}
@@ -84,8 +89,14 @@ void inventory::inventory::try_use_item()
 {
 	auto it = get_item(cursor_x, cursor_y);
 	if (it) {
-		it->use(parent);
-		remove_item(cursor_x, cursor_y);
+		if (it->can_hold_in_hands()) {
+			item_in_hands = it;
+			item_in_hands_id = cursor_x + cursor_y * w;
+		}
+		else {
+			it->use(parent);
+			remove_item(cursor_x, cursor_y);
+		}
 
 		update(1.0f);
 	}
@@ -96,10 +107,19 @@ std::shared_ptr<inventory::item> inventory::inventory::get_item(int x, int y)
 	return items.at(x + y * w);
 }
 
+std::shared_ptr<inventory::item> inventory::inventory::get_item_in_hands()
+{
+	return item_in_hands;
+}
+
 void inventory::inventory::remove_item(int x, int y)
 {
 	int i = x + y * w;
 	items[i] = nullptr;
+
+	if (selected_item_id == i) {
+		item_in_hands = nullptr;
+	}
 }
 
 void inventory::inventory::draw()
@@ -125,11 +145,16 @@ void inventory::inventory::draw()
 			cell_size,cell_size };
 		SDL_RenderFillRect(camera::get(), &cursor);
 
-		SDL_SetRenderDrawColor(camera::get(),
-			render_color.r,
-			render_color.g,
-			render_color.b,
-			render_color.a);
+
+		if (item_in_hands_id != -1) {
+			SDL_SetRenderDrawColor(camera::get(), 31, 163, 70, 255);
+
+			SDL_FRect item_in_hands_rect = { (item_in_hands_id % w) * (cell_size + cell_margin) + cell_margin,
+							(item_in_hands_id / w)* (cell_size + cell_margin) + cell_margin,
+							cell_size,cell_size };
+			SDL_RenderFillRect(camera::get(), &item_in_hands_rect);
+		}
+		
 
 		for (int i = 0; i < items.size(); i++) {
 			auto& it = items[i];
@@ -142,6 +167,13 @@ void inventory::inventory::draw()
 			}
 			if(it) it->draw();
 		}
+
+		SDL_SetRenderDrawColor(camera::get(),
+			render_color.r,
+			render_color.g,
+			render_color.b,
+			render_color.a);
+
 
 		lights.draw();
 	}
@@ -229,7 +261,8 @@ bool inventory::inventory::input(const SDL_Event* event)
 			} break;
 			case SDLK_BACKSPACE: {
 				int id = cursor_x + cursor_y * w;
-				if (items[id]) {
+				auto& it = items[id];
+				if (it) {
 					selected_item_id = id;
 				}
 			}break;

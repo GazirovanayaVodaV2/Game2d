@@ -17,6 +17,8 @@ namespace inventory {
 		const int cell_size = 86;
 		int cursor_x = 0, cursor_y = 0;
 		std::vector<std::shared_ptr<item>> items{nullptr};
+		std::shared_ptr<item> item_in_hands = nullptr;
+		int item_in_hands_id = -1;
 		int selected_item_id = -1;
 
 		entity* parent = nullptr;
@@ -44,6 +46,7 @@ namespace inventory {
 		void try_use_item();
 
 		std::shared_ptr<item> get_item(int x, int y);
+		std::shared_ptr<item> get_item_in_hands();
 
 		void update(float delta);
 

@@ -39,6 +39,11 @@ public:
 	virtual bool is_pickable() {
 		return false;
 	}
+
+	virtual bool can_hold_in_hands() {
+		return false;
+	}
+
 	bool in_inventory();
 
 	OBJECT::TYPE get_type() override { return OBJECT::TYPE::INTERACTIVE_OBJECT; }
