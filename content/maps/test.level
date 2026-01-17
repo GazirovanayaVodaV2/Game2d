@@ -12,14 +12,14 @@
             "type": "air"
         },
         "1": {
-            "type": "brick",
+            "type": "wall",
             "sprite_id": "brick"
         },
         "2": {
-            "type": "player_spawn"
+            "type": "player"
         },
         "3": {
-            "type": "light",
+            "type": "light::source",
             "radius": 3.0,
             "color": "#FFB173FF"
         },
@@ -28,7 +28,7 @@
             "sprite_id": "lamp"
         },
         "5": {
-            "type": "dummy_entity",
+            "type": "dummy",
             "sprite_id": "dummy"
         },
         "6": {

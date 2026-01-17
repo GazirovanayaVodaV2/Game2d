@@ -36,19 +36,6 @@ namespace OBJECT {
 		PROJECTILE,
 		MEDKIT
 	};
-
-	namespace MAP {
-		enum TYPE {
-			air,
-			brick,
-			player_spawn,
-			light,
-			background_sprite,
-			level_switcher,
-			dummy_entity,
-			medkit
-		};
-	}
 };
 
 inline bool is_subtype_of(OBJECT::TYPE type, OBJECT::TYPE base_type) {

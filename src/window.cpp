@@ -23,17 +23,14 @@ window::window()
 	auto parsed_options = json::parse(json_file);
 	json_file.close();
 
-	std::string window_name;
-	std::vector<int> resolution;
-	bool vsync;
-	bool resizeable;
-
-	parsed_options.at("window_name").get_to(window_name);
-	parsed_options.at("resolution").get_to(resolution);
-	parsed_options.at("vsync").get_to(vsync);
+	auto window_name = parsed_options.at("window_name").get<std::string>();
+	auto resolution = parsed_options.at("resolution").get<std::vector<int>>();
+	auto vsync = parsed_options.at("vsync").get<bool>();
+	auto resizeable = parsed_options.at("resizeable").get<bool>();
+	
 	parsed_options.at("fps").get_to(fps);
 	parsed_options.at("fullscreen").get_to(fullscreen);
-	parsed_options.at("resizeable").get_to(resizeable);
+	
 
 	if (vsync) {
 		fps = -1;

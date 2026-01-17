@@ -151,10 +151,6 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 		json_level.at("H").get_to(H);
 		json_level.at("tile_size").get_to(tile_size);
 
-		struct id {
-			json data;
-		};
-
 		struct layer {
 			std::string name;
 			std::vector<int> ids;
@@ -164,131 +160,102 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 			std::string id, level_name;
 		};
 
-		std::map<int, id> ids;
 		std::vector<layer> layers;
 		std::vector<level_switcher_data> level_switchers;
 
-		auto& raw_ids = json_level.at("id");
-		auto raw_ids_items = raw_ids.items();
+		//std::map<int, json> ids;
+		//for (auto& [str_id, data] : json_level.at("id").items()) {
+		//	ids[std::stoi(str_id)] = data;
+		//}
 
-		for (auto& raw_id : raw_ids_items) {
-			auto& str_id = raw_id.key();
-			id id_{raw_ids.at(str_id) };
-			ids[std::stoi(str_id)] = id_;
-		}
+		auto ids = json_level.at("id").get<std::map<std::string, json>>();
 
 		if (json_level.find("level_switchers") != json_level.end()) {
-			auto& raw_ls_data = json_level.at("level_switchers");
-			auto raw_ls_items = raw_ls_data.items();
-
-			for (auto& raw_ls : raw_ls_items) {
-				auto ls_id = raw_ls.key();
-
-				level_switcher_data ls_data = {
-					.id = ls_id,
-					.level_name = raw_ls_data.at(ls_id)
-				};
-
-				level_switchers.push_back(ls_data);
+			for (auto& [name, id] : json_level.at("level_switchers").items()) {
+				level_switchers.emplace_back(level_switcher_data{
+					.id = id,
+					.level_name = name
+					});
 			}
 		}
 
 		if (json_level.find("layers") != json_level.end()) {
 			//print::warning("Layers in maps is deprecated!");
 
-			auto& raw_layers = json_level.at("layers");
-			auto raw_layers_items = raw_layers.items();
 
-			for (auto& raw_layer : raw_layers_items) {
-				auto& layer_name = raw_layer.key();
-
-				if (layer_name == "level_switchers") {
-
-				} else {
-					layer layer_;
-					layer_.name = layer_name;
-					raw_layers.at(layer_name).get_to(layer_.ids);
-
-					layers.push_back(layer_);
-				}
-
+			for (auto& [name, data] : json_level.at("layers").items()) {
+				if (name == "level_switchers") continue;
+				layers.emplace_back(layer{
+					.name = name,
+					.ids = data.get<std::vector<int>>()
+					});
 			}
+
 
 			for (auto& layer : layers) {
 				int index = 0;
 				for (auto& id : layer.ids) {
-					auto& block = ids[id];
+					auto& block = ids[std::to_string(id)];
 
-					auto& type = block.data.at("type");
+					auto& type = block.at("type");
 
-					using namespace OBJECT::MAP;
+					auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
+					auto size = vec2(tile_size, tile_size);
+
+					index++;
+
+					std::shared_ptr<game_object> object;
+
 					if (type == keyword_to_string(air)) {
-
+						continue;
 					}
-					else if (type == "brick") {
-						std::string sprite_id;
-						block.data.at("sprite_id").get_to(sprite_id);
+					else if (type == keyword_to_string(wall)) {
+						auto sprite_id = block.at("sprite_id").get<std::string>();
 
-						auto object = std::make_shared<wall>(txt_context->get(sprite_id));
-						//size_t i = (ipos.x * W) + ipos.x;
-						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
-						auto size = vec2(tile_size, tile_size);
+						object = std::make_shared<wall>(txt_context->get(sprite_id));
 						object->set_pos(pos);
 						object->set_size(size);
-
-						add(object);
 					}
-					else if (type == keyword_to_string(player_spawn)) {
-						auto pos = vec2((index % W) + (tile_size), (index / W) + (tile_size));
-						auto size = vec2(tile_size, tile_size * 2);
+					else if (type == keyword_to_string(player)) {
+						size = vec2(tile_size, tile_size * 2);
 						pl->set_pos(pos);
 						pl->set_size(size);
-					}
-					else if (type == keyword_to_string(light)) {
 
-						float radius;
-						block.data.at("radius").get_to(radius);
+						continue;
+					}
+					else if (type == keyword_to_string(light::source)) {
+						auto radius = block.at("radius").get<float>();
 						hex color = 0xffffffff;
 
-						if (block.data.find("color") != block.data.end()) {
-							auto str = block.data.at("color").dump();
+						if (block.find("color") != block.end()) {
+							auto str = block.at("color").dump();
 							str = str.substr(2, 8);
 							color = (hex)std::stoul(str, nullptr, 16);
 						}
 
 						light_system->add_light("textures\\lightsource.png", radius, color);
+						light_system->get_last()->set_pos(pos - vec2((tile_size / 2), (tile_size / 2)));
 
-						auto pos = vec2(((index % W) * tile_size) - (tile_size / 2), ((index / W) * tile_size) - (tile_size / 2));
-						//pos = pos * radius;
-						light_system->get_last()->set_pos(pos);
+						continue;
 					}
 					else if (type == keyword_to_string(background_sprite)) {
-						std::string sprite_id;
-						block.data.at("sprite_id").get_to(sprite_id);
+						auto sprite_id = block.at("sprite_id").get<std::string>();
+
+						object = std::make_shared<background_sprite>(txt_context->get(sprite_id));
 						
-						auto object = std::make_shared<background_sprite>(txt_context->get(sprite_id));
-						//size_t i = (ipos.x * W) + ipos.x;
-						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
-						auto size = vec2(tile_size, tile_size);
 						object->set_pos(pos);
 						object->set_size(size);
-
-						add(object);
 					}
-					else if (type == keyword_to_string(dummy_entity)) {
-						auto object = std::make_shared<dummy>(txt_context, 100);
-						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
+					else if (type == keyword_to_string(dummy)) {
+						object = std::make_shared<dummy>(txt_context, 100);
 						object->set_pos(pos);
-						add(object);
 					}
 					else if (type == keyword_to_string(medkit)) {
-						auto object = std::make_shared<medkit>(txt_context);
-						auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
+						object = std::make_shared<medkit>(txt_context);
 						object->set_pos(pos);
-						add(object);
 					}
 
-					index++;
+					add(object);
 				}
 			}
 		}
