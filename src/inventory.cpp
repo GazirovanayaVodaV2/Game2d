@@ -115,7 +115,11 @@ void inventory::inventory::draw()
 			&render_color.b,
 			&render_color.a);
 
+		
 		SDL_SetRenderDrawColor(camera::get(), 210, 210, 210, 255);
+		if (selected_item_id != -1) {
+			SDL_SetRenderDrawColor(camera::get(), 255, 86, 68, 255);
+		}
 		SDL_FRect cursor = { cursor_x * (cell_size + cell_margin) + cell_margin,
 			cursor_y* (cell_size + cell_margin) + cell_margin,
 			cell_size,cell_size };
@@ -127,7 +131,15 @@ void inventory::inventory::draw()
 			render_color.b,
 			render_color.a);
 
-		for (auto& it : items) {
+		for (int i = 0; i < items.size(); i++) {
+			auto& it = items[i];
+
+
+			if (i == selected_item_id) {
+				auto items_pos = vec2(cursor_x * (cell_size + cell_margin) + cell_margin * 2,
+					cursor_y * (cell_size + cell_margin) + cell_margin * 2) - camera::get_pos();
+				it->set_pos(items_pos);
+			}
 			if(it) it->draw();
 		}
 
@@ -143,8 +155,10 @@ void inventory::inventory::update(float delta)
 			auto pos_ = vec2((float)x + cell_margin, (float)y + cell_margin) - camera::get_pos();
 			auto size_ = vec2((float)cell_size, (float)cell_size);
 			if (items[i]) {
-				auto& item_ = items[i];
-				item_->set_pos(pos_);
+				auto& item_ = items[i]; 
+				if (i != selected_item_id) {
+					item_->set_pos(pos_);
+				}
 				item_->set_size(size_);
 			}
 
@@ -191,7 +205,7 @@ bool inventory::inventory::input(const SDL_Event* event)
 				if (cursor_y > 0) {
 					cursor_y--;
 				}
-			} break; 
+			} break;
 			case SDLK_S: {
 				if (cursor_y < h - 1) {
 					cursor_y++;
@@ -208,8 +222,19 @@ bool inventory::inventory::input(const SDL_Event* event)
 				}
 			} break;
 			case SDLK_RETURN: {
-				try_use_item();
+				if (selected_item_id == -1) {
+					try_use_item();
+				}
+				else {
+					try_place_selected_item(cursor_x, cursor_y);
+				}
 			} break;
+			case SDLK_BACKSPACE: {
+				int id = cursor_x + cursor_y * w;
+				if (items[id]) {
+					selected_item_id = id;
+				}
+			}break;
 			default: {
 			} break;
 			}

@@ -5,3 +5,5 @@ packages
 SDL_ttf
 SDLgit
 cloc.exe
+count_lines.cmd
+processed_files.txt
