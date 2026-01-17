@@ -34,6 +34,8 @@ private:
     bool loaded = false;
     bool draw_debug_info = DEBUG_VAL(true, false);
 
+    int after_load_delay = 0;
+
     void load_level_format(std::string path_, std::shared_ptr<atlas>& txt_context);
 protected:
     const OBJECT::TYPE type = OBJECT::TYPE::MAP;

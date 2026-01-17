@@ -303,6 +303,7 @@ void map::load_level_format(std::string path_, std::shared_ptr<atlas>& txt_conte
 
 void map::load(std::string path_, std::shared_ptr<atlas>& txt_context)
 {
+	after_load_delay = 0;
 	atl = txt_context;
 	if (path_.find(".level") != std::string::npos) {
 		load_level_format(path_, txt_context);
@@ -366,7 +367,13 @@ SDL_AppResult map::update(float delta_time)
 			new_obj_buffer.clear();
 		}
 
-		return pl->update(delta_time);
+		//To prevent player teleport to void after spawn
+		if (after_load_delay < 10) {
+			after_load_delay++;
+		}
+		else {
+			pl->update(delta_time);
+		}
 	}
 	
 
