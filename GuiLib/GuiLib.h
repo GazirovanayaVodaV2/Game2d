@@ -4,6 +4,14 @@
 
 
 namespace gui {
+	enum class types {
+		page,
+		context,
+		rect,
+		text_box,
+		button
+	};
+
 	class Igui {
 	public:
 		Igui() = default;
@@ -12,6 +20,7 @@ namespace gui {
 		virtual void update(float delta_time) = 0;
 		virtual void draw(SDL_Renderer* render) = 0;
 		virtual void input(const SDL_Event* event) = 0;
+		virtual types get_type() = 0;
 	};
 
 	class clickable_object {
@@ -32,6 +41,9 @@ namespace gui {
 	class page : public Igui {
 	private:
 		std::vector<base*> elements;
+
+		size_t keyboard_selected_item = 0;
+		bool enable_keyboard_selection = false;
 
 		bool active = false;
 	public:
@@ -54,6 +66,10 @@ namespace gui {
 		void activate();
 		void deactivate();
 		bool is_active();
+
+		types get_type() override {
+			return types::page;
+		}
 	};
 
 	class context : public Igui {
@@ -82,5 +98,8 @@ namespace gui {
 		void activate();
 		void deactivate();
 
+		types get_type() override {
+			return types::context;
+		}
 	};
 };

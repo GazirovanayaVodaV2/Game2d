@@ -136,6 +136,13 @@ void gui::button_base::input(const SDL_Event* event) {
 	}
 }
 
+void gui::button_base::force_click()
+{
+	on_mouse_left_click();
+}
+
+
+
 void gui::colored_button::draw(SDL_Renderer* render) {
 	rect.box = box;
 	hover.box = box;
@@ -148,6 +155,11 @@ void gui::colored_button::draw(SDL_Renderer* render) {
 	if (left_click or right_click) {
 		clicked.draw(render);
 	}
+}
+
+void gui::colored_button::force_highlight(SDL_Renderer* render)
+{
+	hover.draw(render);
 }
 
 static SDL_Texture* text_creator_and_color_setter_impl(TTF_Font* font, SDL_Renderer* render,

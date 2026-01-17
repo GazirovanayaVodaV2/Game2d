@@ -5,6 +5,8 @@
 #include "pch.h"
 #include "framework.h"
 #include "GuiLib.h"
+#include "gui_elements.h"
+#include <SDL3/SDL_keycode.h>
 
 gui::page::~page()
 {
@@ -29,6 +31,14 @@ void gui::page::draw(SDL_Renderer* render)
 		for (auto& element : elements) {
 			element->draw(render);
 		}
+
+		if (enable_keyboard_selection) {
+			auto item = elements[keyboard_selected_item];
+			if (item->get_type() == gui::types::button) {
+				auto button = (button_base*)item;
+				button->force_highlight(render);
+			}
+		}
 	}
 }
 
@@ -37,6 +47,39 @@ void gui::page::input(const SDL_Event* event)
 	if (active) {
 		for (auto& element : elements) {
 			element->input(event);
+		}
+
+		if (event->type == SDL_EVENT_KEY_DOWN) {
+			
+			if (enable_keyboard_selection) {
+				switch (event->key.key)
+				{
+					case SDLK_DOWN: {
+						if (keyboard_selected_item < elements.size() - 1) {
+							keyboard_selected_item++;
+						}
+					} break;
+					case SDLK_UP: {
+						if (keyboard_selected_item > 0) {
+							keyboard_selected_item--;
+						}
+					} break;
+					case SDLK_RETURN: {
+						auto item = elements[keyboard_selected_item];
+						if (item->get_type() == gui::types::button) {
+							auto button = (button_base*)item;
+							button->force_click();
+						}
+					} break;
+					default: {
+					} break;
+				}
+			}
+
+			enable_keyboard_selection = true;
+		}
+		else if (event->type == SDL_EVENT_MOUSE_MOTION) {
+			enable_keyboard_selection = false;
 		}
 	}
 }

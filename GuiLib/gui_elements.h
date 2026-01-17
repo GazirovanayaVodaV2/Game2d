@@ -17,6 +17,10 @@ namespace gui {
 		void update(float delta_time) override {};
 		void draw(SDL_Renderer* render) override;
 		void input(const SDL_Event* event) override {};
+
+		types get_type() override {
+			return types::rect;
+		}
 	};
 
 	class image_rect : public base {
@@ -36,6 +40,10 @@ namespace gui {
 		void input(const SDL_Event* event) override {};
 
 		void set_image(SDL_Renderer* render, std::string path_);
+
+		types get_type() override {
+			return types::rect;
+		}
 	};
 
 	//add text box
@@ -68,6 +76,10 @@ namespace gui {
 
 		void set_text(std::string text);
 		void set_color(SDL_Color color);
+
+		types get_type() override {
+			return types::text_box;
+		}
 	};
 
 	class button_base : public base, public clickable_object {
@@ -76,6 +88,12 @@ namespace gui {
 		SDL_FRect* viewport = nullptr;
 	public:
 		void input(const SDL_Event* event) override;
+		void force_click();
+		virtual void force_highlight(SDL_Renderer* render) = 0;
+
+		types get_type() override {
+			return types::button;
+		}
 	};
 
 
@@ -92,6 +110,7 @@ namespace gui {
 
 		void update(float delta_time) override {};
 		void draw(SDL_Renderer* render) override;
+		void force_highlight(SDL_Renderer* render) override;
 	};
 
 	class button : public colored_button {
