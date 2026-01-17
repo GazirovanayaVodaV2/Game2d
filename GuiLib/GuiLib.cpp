@@ -76,7 +76,16 @@ void gui::page::input(const SDL_Event* event)
 				}
 			}
 
-			enable_keyboard_selection = true;
+			switch (event->key.key)
+			{
+				case SDLK_DOWN: {
+					enable_keyboard_selection = true;
+				} break;
+				case SDLK_UP: {
+					enable_keyboard_selection = true;
+				} break;
+			}
+			
 		}
 		else if (event->type == SDL_EVENT_MOUSE_MOTION) {
 			enable_keyboard_selection = false;
@@ -100,6 +109,7 @@ void gui::page::activate()
 	active = true;
 
 	SDL_Event empty_event{0};
+	empty_event.type = SDL_EVENT_MOUSE_MOTION;
 	input(&empty_event);
 }
 

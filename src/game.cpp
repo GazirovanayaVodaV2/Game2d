@@ -152,6 +152,10 @@ SDL_AppResult game::cycle()
 		auto& inv = level_manager::get()->get_player()->get_inventory();
 		inv.draw();
 		in_inventory = inv.is_opened();
+
+		if (pause and in_inventory) {
+			inv.close();
+		}
 	}
 
 	bench::get("gui_draw").stop();
@@ -170,6 +174,8 @@ SDL_AppResult game::cycle()
 	if (!pause and !in_inventory) {
 		level_manager::update(delta);
 	}
+
+	
 	
 	camera::update(delta);
 	fps::update();

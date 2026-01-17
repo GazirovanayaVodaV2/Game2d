@@ -184,11 +184,9 @@ bool inventory::inventory::input(const SDL_Event* event)
 		{
 		case SDLK_E: {
 			if (opened) {
-				opened = false;
-				inv_gui.deactivate();
+				close();
 			} else {
-				opened = true;
-				inv_gui.activate();
+				open();
 			}
 		} break;
 		case SDLK_ESCAPE: {
@@ -249,6 +247,18 @@ bool inventory::inventory::input(const SDL_Event* event)
 		}
 	}
 	return opened;
+}
+
+void inventory::inventory::open()
+{
+	opened = true;
+	inv_gui.activate();
+}
+
+void inventory::inventory::close()
+{
+	opened = false;
+	inv_gui.deactivate();
 }
 
 bool inventory::inventory::is_opened()

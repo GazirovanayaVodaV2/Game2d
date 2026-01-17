@@ -53,6 +53,9 @@ namespace inventory {
 		/// <param name="event"></param>
 		/// <returns></returns>
 		bool input(const SDL_Event* event);
+
+		void open();
+		void close();
 		bool is_opened();
 	};
 }
