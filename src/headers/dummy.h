@@ -6,7 +6,7 @@
 class dummy : public entity {
 private:
 	gui::text_box* hp_box = nullptr;
-	std::shared_ptr<texture> txt;
+	texture_from_atlas txt;
 
 private:
 	void update_hp_box();
@@ -17,7 +17,7 @@ protected:
 		update_hp_box();
 	}
 public:
-	dummy(std::shared_ptr<atlas> atl, int hp = 100);
+	dummy(texture_from_atlas atl, int hp = 100);
 	~dummy();
 
 	void draw() override;

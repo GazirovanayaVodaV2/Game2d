@@ -29,6 +29,9 @@ public:
 
 	void set_collide_mode(bool state);
 	bool get_collide_mode();
+	virtual SDL_FRect get_collision_box() {
+		return pos.get_frect(size);
+	}
 
 	OBJECT::TYPE get_type() override { return OBJECT::TYPE::GAME_OBJECT; }
 };
@@ -63,8 +66,6 @@ public:
 	 bool get_physic() {
 		 return false;
 	 };
-
-	
 
 	 OBJECT::TYPE get_type() override { return OBJECT::TYPE::NULL_OBJECT; }
 };

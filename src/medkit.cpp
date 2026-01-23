@@ -1,24 +1,23 @@
 #include "medkit.h"
 
+#include "window.h"
+
 void medkit::use_impl(entity* user)
 {
 	user->heal(20);
 	exist = false;
 }
 
-medkit::medkit(std::shared_ptr<atlas> atl)
+medkit::medkit(texture_from_atlas txt)
 {
-	txt = atl->get("medkit");
+	this->txt = txt;
 	size = txt->get_size();
 	collideable = false;
 }
 
 void medkit::draw()
 {
-	auto saved_pos = txt->get_pos();
-	txt->set_pos(pos);
-	txt->draw();
-	txt->set_pos(saved_pos);
+	txt->draw(camera::get(), camera::get_pos(), pos, size);
 }
 
 SDL_AppResult medkit::update(float delta)

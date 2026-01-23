@@ -107,7 +107,7 @@ namespace animation {
 
 #endif
 
-	class frame : public game_object {
+	class frame {
 		private:
 			std::shared_ptr<texture> txt;
 			std::string path; //for destructor logs
@@ -115,36 +115,13 @@ namespace animation {
 			vec2 delta_pos;
 		public:
 			frame(SDL_Renderer* render, std::string path, int time);
-			~frame() override;
-
-			SDL_AppResult update(float delta_time) override;
-			SDL_AppResult input(const SDL_Event* event) override;
-
-			void set_pos(vec2 pos);
-			void move_on(vec2 velocity);
-
-			void set_size(vec2 size);
-
-			void rotate(double angle);
-
-			vec2 get_size();
-			vec2 get_pos();
-
-			float get_ratio();
+			~frame();
 			 
-			void draw() override;
-			bool check_collision(game_object* object) override;
-			void clear_collision_buffer() override;
-
 			std::shared_ptr<texture> get();
 			int get_time();
-
-			OBJECT::TYPE get_type() override {
-				return OBJECT::TYPE::ANIMATION_FRAME;
-			}
 	};
 
-	class cycle : public game_object {
+	class cycle {
 		private:
 			std::vector<std::shared_ptr<animation::frame>> frames;
 			size_t current_frame = 0;
@@ -152,72 +129,30 @@ namespace animation {
 			int frames_passed = 0;
 		public:
 			cycle();
-			~cycle() override;
+			~cycle();
 
 			void add_frame(std::shared_ptr<animation::frame> frame);
 
-			SDL_AppResult update(float delta_time) override;
-			SDL_AppResult input(const SDL_Event* event) override;
-
-			void set_pos(vec2 pos);
-			void move_on(vec2 velocity);
-
-			void set_size(vec2 size);
-
-			void rotate(double angle);
-
-			vec2 get_size();
-			vec2 get_pos();
-
-			float get_ratio();
-
-			OBJECT::TYPE get_type() override {
-				return OBJECT::TYPE::ANIMATION_CYCLE;
-			};
 
 			std::shared_ptr<animation::frame> get();
-
-			void draw() override;
-			bool check_collision(game_object* object) override;
-			void clear_collision_buffer() override;
 
 			void play(float fps);
 	};
 
-	class player : public game_object {
+	class player {
 	private:
 		std::map<std::string, std::shared_ptr<animation::cycle>> animations;
 		std::string current_sprite_animation;
 	public:
 		player(SDL_Renderer* render, std::string animation_config);
-		~player() override;
+		~player();
 
-		SDL_AppResult update(float delta_time) override;
-		SDL_AppResult input(const SDL_Event* event) override;
-
-		void set_pos(vec2 pos);
-		void move_on(vec2 velocity);
-
-		void set_size(vec2 size);
-
-		void rotate(double angle);
-
-		vec2 get_size();
-		vec2 get_pos();
-
-		float get_ratio();
 
 		std::shared_ptr<animation::cycle> get();
 
-		void draw() override;
-		bool check_collision(game_object* object) override;
-		void clear_collision_buffer() override;
-
 		void play(std::string name, float fps);
 
-		OBJECT::TYPE get_type() override {
-			return OBJECT::TYPE::ANIMATION_PLAYER;
-		}
+
 	};
 }
 

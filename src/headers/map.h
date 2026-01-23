@@ -15,15 +15,24 @@
 class map :
     public base
 {
+public:
+    enum class weather_t {
+        clear,
+        rain,
+        snow,
+        snow_storm,
+        error
+    };
 private:
     std::vector<std::shared_ptr<game_object>> objects;
     std::vector<std::shared_ptr<game_object>> new_obj_buffer;
+    std::vector<float> height_map;
 
-    std::shared_ptr<atlas> atl;
+    atlas* atl;
 
     SDL_Texture* scene = nullptr;
-    std::shared_ptr<player> pl;
-    std::shared_ptr<light::system> light_system;
+    std::unique_ptr<player> pl;
+    std::unique_ptr<light::system> light_system;
 
     std::shared_ptr<game_object> NULL_OBJECT_PTR;
 
@@ -31,18 +40,24 @@ private:
     std::string level_type = "normal";
     int W = 0, H = 0, tile_size = 64;
 
+    float time = 0;
+    bool time_cycle = true;
+    weather_t weather = weather_t::clear;
+
+    std::unique_ptr<texture> sky;
+    std::unique_ptr<texture> sky_texture;
+    std::unique_ptr<texture>stars_texture;
+
     bool loaded = false;
     bool draw_debug_info = DEBUG_VAL(true, false);
 
     int after_load_delay = 0;
 
-    void load_level_format(std::string path_, std::shared_ptr<atlas>& txt_context);
+    void load_level_format(std::string path_);
 protected:
     const OBJECT::TYPE type = OBJECT::TYPE::MAP;
 public:
-    map() {
-        NULL_OBJECT_PTR = std::make_shared<NULL_OBJECT>();
-    };
+    map(atlas* atl);
 	~map() override;
 
     std::shared_ptr<game_object>& get(vec2 pos);
@@ -52,18 +67,18 @@ public:
 
     void add_bullet(int dmg, vec2 pos, float speed, vec2 vel);
 
-    std::shared_ptr<player>& get_player();
+    player* get_player();
     const std::vector<std::shared_ptr<game_object>>& get_objects() {
         return objects;
     }
 
-    void load(std::string path_, std::shared_ptr<atlas>& txt_context);
+    void load(std::string path_);
     void unload();
     
     SDL_AppResult update(float delta_time);
     SDL_AppResult input(const SDL_Event* event);
 
-    std::shared_ptr<atlas> get_atlas() { return atl; };
+    atlas* get_atlas() { return atl; };
 
     OBJECT::TYPE get_type() override { return OBJECT::TYPE::MAP; }
 };
@@ -94,10 +109,11 @@ class level_manager {
 private:
     //object_atlas object_atlas_;
 
-    static std::map<std::string, std::shared_ptr<map>> levels;
+    static atlas* atl;
+
+    static std::map<std::string, std::unique_ptr<map>> levels;
 
     //For easy reloading
-    static std::map<std::string, std::shared_ptr<atlas>> textures;
     static std::map<std::string, std::string> paths;
 
     static std::string current_level;
@@ -112,7 +128,9 @@ public:
         return instance;
     }
 
-    static void add(std::string path_, std::shared_ptr<atlas>& atl);
+    static void set_atlas(atlas* atl_);
+
+    static void add(std::string path_);
 
     static void load(std::string name);
     static void unload_all();
@@ -121,7 +139,7 @@ public:
     static SDL_AppResult update(float delta_time);
     static SDL_AppResult input(const SDL_Event* event);
 
-    static std::shared_ptr<map>& get();
+    static map* get();
 
     static bool is_any_level_loaded();
 

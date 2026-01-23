@@ -13,13 +13,13 @@ void dummy::death()
 	exist = false;
 }
 
-dummy::dummy(std::shared_ptr<atlas> atl, int hp)
+dummy::dummy(texture_from_atlas txt, int hp)
 {
 	this->hp.set_new_defaults(hp);
 
 	hp_box = new gui::text_box(camera::get(), "fonts\\NotoSans.ttf", "0", {255});
 
-	txt = atl->get("dummy");
+	this->txt = txt;
 
 	this->size = txt->get_size();
 
@@ -36,20 +36,12 @@ dummy::~dummy()
 void dummy::draw()
 {
 
-	auto txt_saved_pos = txt->get_pos();
-	auto txt_saved_size = txt->get_size();
+	txt->draw(camera::get(), camera::get_pos(), pos, size);
 
-	txt->set_pos(pos);
-	txt->set_size(size);
-
-	txt->draw();
-
-	auto new_pos = txt->get_pos() + camera::get_pos();
+	auto new_pos = pos + camera::get_pos();
 	hp_box->box = { new_pos.x, new_pos.y - 64, txt->get_size().x, 64};
 	hp_box->draw(camera::get());
 
-	txt->set_pos(txt_saved_pos);
-	txt->set_size(txt_saved_size);
 }
 
 SDL_AppResult dummy::update(float delta_time)

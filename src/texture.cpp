@@ -1,87 +1,74 @@
-#include "texture.h"
-#include <SDL3_image/SDL_image.h>
-#include <nlohmann/json.hpp>
-#include <fstream>
-#include <SDL3/SDL.h>
 #include <format>
-#include <utils.h>
-#include <rgba.h>
+#include <fstream>
 
-#include "window.h"
+#include "texture.h"
 
-void texture::create_texture(std::string path_)
+#include "SDL3_image/SDL_Image.h"
+#include "Utils.h"
+
+#include "nlohmann/json.hpp"
+
+void texture::create_texture(SDL_Renderer* render, std::string path_)
 {
-	print::loading(path_);
-	sdl_texture = IMG_LoadTexture(camera::get() , path(path_).c_str());
-	if (!sdl_texture) {
-		throw std::format("Something wrong with texture. Path: {} Log: {} Error Code: {}",
-			path(path_), SDL_GetError(), static_cast<int>(SDL_APP_FAILURE)).c_str();
-	}
-	float w, h;
-	SDL_GetTextureSize(sdl_texture, &w, &h);
-	size = vec2(w, h);
+	if (!txt) {
+		txt = IMG_LoadTexture(render, path(path_).c_str());
+		if (!txt) {
+			throw std::format("Something wrong with sky texture. Path: {} Log: {} Error Code: {}",
+				path(path_), SDL_GetError(), static_cast<int>(SDL_APP_FAILURE)).c_str();
+		}
 
-	print::loaded();
+	}
+	else {
+		print::warning("Texture already exist!", path_);
+	}
 }
 
 void texture::delete_texture()
 {
-	print::info("Deleting texture");
-	SDL_DestroyTexture(sdl_texture);
+	SDL_DestroyTexture(txt);
+	txt = nullptr;
 }
 
-texture::texture(std::string path_)
+texture::texture(SDL_Renderer* render, std::string path_)
 {
-	create_texture(path_);
+	create_texture(render, path_);
+}
+
+texture::texture(SDL_Renderer* render, SDL_PixelFormat format, SDL_TextureAccess txt_access, int w, int h)
+{
+	txt = SDL_CreateTexture(render, format, txt_access, w, h);
+	if (!txt) {
+		throw "Something wrong with texture!";
+	}
 }
 
 texture::~texture()
 {
 	delete_texture();
+	print::info("Deleting texture");
 }
 
-SDL_AppResult texture::update(float delta_time)
+void texture::change(SDL_Renderer* render, std::string path_)
 {
-	return SDL_APP_CONTINUE;
-}
 
-SDL_AppResult texture::input(const SDL_Event* event)
-{
-	input_if_selected(event);
-	return SDL_APP_CONTINUE;
-}
-
-void texture::change(std::string path)
-{
-	print::loading(std::format("Changing texture: {}", path));
+	print::loading(std::format("Changing texture: {}", path_));
 
 	delete_texture();
-	create_texture(path);
+	create_texture(render, path_);
 
 	print::loaded();
-}
 
-void texture::move_on(vec2 velocity)
-{
-	if (velocity.x < 0.0f) {
-		dir = OBJECT_DIRECTION::LEFT;
-	}
-	else if (velocity.x > 0.0f) {
-		dir = OBJECT_DIRECTION::RIGHT;
-	}
-
-	set_pos(get_pos() + velocity);
 }
 
 void texture::set_blend(SDL_BlendMode blend_mode)
 {
-	SDL_SetTextureBlendMode(sdl_texture, blend_mode);
+	SDL_SetTextureBlendMode(txt, blend_mode);
 }
 
 void texture::set_color(rgba color)
 {
 	auto sdl_clr = color.color;
-	SDL_SetTextureColorMod(sdl_texture, sdl_clr.r, sdl_clr.g, sdl_clr.b);
+	SDL_SetTextureColorMod(txt, sdl_clr.r, sdl_clr.g, sdl_clr.b);
 }
 
 void texture::set_color(hex color)
@@ -89,46 +76,100 @@ void texture::set_color(hex color)
 	set_color(rgba(color));
 }
 
-void texture::draw()
+void texture::set_alpha(uint8_t alpha)
 {
-	auto viewport = camera::get_viewport();
-	auto render = camera::get();
-
-	auto dest_rect = pos.get_frect(size);
-
-	dest_rect.x = (pos.x + viewport.x);
-	dest_rect.y = (pos.y + viewport.y);
-
-	auto flip = SDL_FLIP_NONE;
-	if (dir == OBJECT_DIRECTION::RIGHT) {
-		flip = SDL_FLIP_HORIZONTAL;
-	}
-
-	draw_selection();
-	SDL_RenderTextureRotated(render, sdl_texture, NULL, &dest_rect, angle, NULL, flip);
+	SDL_SetTextureAlphaMod(txt, alpha);
 }
 
-bool texture::check_collision(game_object* object)
+vec2 texture::get_size()
 {
-	//TODO
-	if (physic) {
-		collided = global_check_collision(this, object);
-
-		if (collided) {
-			collided_objects.push_back(object);
-		}
-
-		return collided;
-	} return false;
+	vec2 size;
+	get_size(&size.x, &size.y);
+	return size;
 }
 
-void texture::clear_collision_buffer()
+void texture::get_size(float* w, float* h)
 {
-	collided_objects.clear();
+	SDL_GetTextureSize(txt, w, h);
 }
 
+void texture::draw(SDL_Renderer* render, vec2 pos, vec2 size)
+{
+	auto frect = pos.get_frect(size);
+	draw(render, &frect);
+}
 
-atlas::atlas()
+void texture::draw(SDL_Renderer* render, SDL_FRect* dst)
+{
+	draw(render, NULL, dst);
+}
+
+void texture::draw(SDL_Renderer* render, SDL_FRect* src, SDL_FRect* dst)
+{
+	SDL_RenderTexture(render, txt, src, dst);
+}
+
+void texture::draw_rotated(SDL_Renderer* render, vec2 pos, vec2 size, float angle, SDL_FlipMode flip)
+{
+	auto frect = pos.get_frect(size);
+	draw_rotated(render, &frect, angle, flip);
+}
+
+void texture::draw_rotated(SDL_Renderer* render, SDL_FRect* dst, float angle, SDL_FlipMode flip)
+{
+	draw_rotated(render, NULL, dst, angle, flip);
+}
+
+void texture::draw_rotated(SDL_Renderer* render, SDL_FRect* src, SDL_FRect* dst, float angle, SDL_FlipMode flip)
+{
+	SDL_RenderTextureRotated(render, txt, src, dst, angle, NULL, flip);
+}
+
+void texture::draw(SDL_Renderer* render, vec2 cam_pos, vec2 pos, vec2 size)
+{
+	auto frect = pos.get_frect(size);
+	draw(render, cam_pos, &frect);
+}
+
+void texture::draw(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* dst)
+{
+	draw(render, cam_pos, NULL, dst);
+}
+
+void texture::draw(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* src, SDL_FRect* dst)
+{
+	auto res_dst = SDL_FRect{
+		dst->x + cam_pos.x,
+		dst->y + cam_pos.y,
+		dst->w,
+		dst->h
+	};
+	draw(render, src, &res_dst);
+}
+
+void texture::draw_rotated(SDL_Renderer* render, vec2 cam_pos, vec2 pos, vec2 size, float angle, SDL_FlipMode flip)
+{
+	auto frect = pos.get_frect(size);
+	draw_rotated(render, cam_pos, &frect, angle, flip);
+}
+
+void texture::draw_rotated(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* dst, float angle, SDL_FlipMode flip)
+{
+	draw_rotated(render, cam_pos, NULL, dst, angle, flip);
+}
+
+void texture::draw_rotated(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* src, SDL_FRect* dst, float angle, SDL_FlipMode flip)
+{
+	auto res_dst = SDL_FRect{
+		dst->x + cam_pos.x,
+		dst->y + cam_pos.y,
+		dst->w,
+		dst->h
+	};
+	draw_rotated(render, src, &res_dst, angle, flip);
+}
+
+atlas::atlas(SDL_Renderer* render)
 {
 	print::loading("Loading textures");
 	print::increase_level();
@@ -138,19 +179,12 @@ atlas::atlas()
 	auto json_textures = json::parse(file);
 	file.close();
 
-	std::vector<std::string> keys;
-	std::map<std::string, std::string> paths;
-
-	for (auto& element : json_textures.items()) {
-		keys.push_back(element.key());
-	}
-
-	for (auto& key : keys) {
-		paths[key] = json_textures.at(key);
-	}
-
-	for (auto& [key, path] : paths) {
-		textures[key] = std::make_shared<texture>("textures\\"+path);
+	int count = json_textures.size();
+	int i = 0;
+	
+	for (auto& [key, value] : json_textures.items()) {
+		print::loading(std::format("Loading texture {}/{}: {}", ++i, count, key));
+		textures[key] = std::make_unique<texture>(render, "textures\\" + std::string(value));
 	}
 
 	print::decrease_level();
@@ -160,10 +194,20 @@ atlas::atlas()
 atlas::~atlas()
 {
 	print::info("Deleting texture context");
+	print::increase_level();
+	int i = 0, count = textures.size();
+	for (auto& txt : textures) {
+		print::info(std::format("{}/{}: {}", ++i, count, txt.first));
+		txt.second.reset();
+	}
+	textures.clear();
+
+	print::decrease_level();
+	print::info("Atlas deleted!");
 }
 
 
-std::shared_ptr<texture> atlas::get(std::string name)
+texture_from_atlas atlas::get(std::string name)
 {
-	return textures[name];
+	return textures[name].get();
 }

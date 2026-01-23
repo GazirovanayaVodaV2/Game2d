@@ -7,13 +7,13 @@ protected:
 	int damage = 0;
 	float current_life_time = 0;
 
-	std::shared_ptr<texture> txt;
+	texture_from_atlas txt;
 
 	void interaction_impl(entity* ent) override;
 	void use_impl(entity* user) override {};
 public:
 	projectile() = default;
-	projectile(std::shared_ptr<texture> txt, vec2 vel, int damage = 100);
+	projectile(texture_from_atlas txt, vec2 vel, int damage = 100);
 
 	~projectile() = default;
 

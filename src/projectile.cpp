@@ -9,7 +9,7 @@ void projectile::interaction_impl(entity* ent)
 	exist = false;
 }
 
-projectile::projectile(std::shared_ptr<texture> txt, vec2 vel, int damage)
+projectile::projectile(texture_from_atlas txt, vec2 vel, int damage)
 {
 	this->txt = txt;
 	this->vel = vel;
@@ -43,14 +43,5 @@ bool projectile::check_collision(game_object* object)
 
 void projectile::draw()
 {
-	auto txt_saved_pos = txt->get_pos();
-	auto txt_saved_size = txt->get_size();
-
-	txt->set_pos(pos);
-	txt->set_size(size);
-
-	txt->draw();
-
-	txt->set_pos(txt_saved_pos);
-	txt->set_size(txt_saved_size);
+	txt->draw(camera::get(), camera::get_pos(), pos, size);
 }

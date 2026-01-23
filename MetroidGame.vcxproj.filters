@@ -51,9 +51,6 @@
     <ClCompile Include="src\rgba.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\texture.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\vector.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -65,9 +62,6 @@
     </ClCompile>
     <ClCompile Include="src\raycast.cpp">
       <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\entity.cpp">
-      <Filter>entity\code</Filter>
     </ClCompile>
     <ClCompile Include="src\player.cpp">
       <Filter>entity\code</Filter>
@@ -91,6 +85,9 @@
       <Filter>interactive objects\code</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -120,9 +117,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\headers\rgba.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\headers\texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\headers\vector.h">
@@ -163,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="src\headers\medkit.h">
       <Filter>interactive objects\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\texture.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

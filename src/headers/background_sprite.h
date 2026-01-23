@@ -5,7 +5,7 @@ class background_sprite : public wall {
 protected:
 	bool collideable = false;
 public:
-	background_sprite(std::shared_ptr<texture> txt) : wall(txt) {};
+	background_sprite(texture_from_atlas txt) : wall(txt) {};
 	bool check_collision(game_object* object) override { return false; };
 	void set_collide_mode(bool state) = delete;
 	bool get_collide_mode() { return false; };

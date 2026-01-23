@@ -133,10 +133,11 @@ gui::context::context(SDL_Renderer* renderer)
 gui::context::~context()
 {
 	print::info("Deleting gui context");
+	print::increase_level();
 	for (auto& [name, page] : pages) {
 		delete page;
 	}
-
+	print::decrease_level();
 	SDL_DestroyTexture(target);
 }
 

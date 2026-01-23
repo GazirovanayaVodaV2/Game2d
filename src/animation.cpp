@@ -12,10 +12,8 @@ animation::frame::frame(SDL_Renderer* render, std::string path, int time)
 	print::increase_level();
 
 	msec = time;
-	txt = std::make_shared<texture>(path);
+	txt = std::make_shared<texture>(render, path);
 	this->path = path;
-
-	size = txt->get_size();
 
 	print::decrease_level();
 	print::loaded();
@@ -25,68 +23,6 @@ animation::frame::~frame()
 {
 	print::info("Deleting frame. Path: " + path);
 }
-
-SDL_AppResult animation::frame::update(float delta_time)
-{
-	return txt->update(delta_time);
-}
-
-SDL_AppResult animation::frame::input(const SDL_Event* event)
-{
-	return txt->input(event);
-}
-
-void animation::frame::set_pos(vec2 pos)
-{
-	txt->set_pos(pos);
-}
-
-void animation::frame::move_on(vec2 velocity)
-{
-	txt->move_on(velocity);
-}
-
-void animation::frame::set_size(vec2 size)
-{
-	txt->set_size(size);
-}
-
-void animation::frame::rotate(double angle)
-{
-	txt->rotate(angle);
-}
-
-vec2 animation::frame::get_size()
-{
-	return txt->get_size();
-}
-
-vec2 animation::frame::get_pos()
-{
-	return txt->get_pos();
-}
-
-float animation::frame::get_ratio()
-{
-	return txt->get_ratio();
-}
-
-void animation::frame::draw()
-{
-	txt->draw();
-}
-
-bool animation::frame::check_collision(game_object* object)
-{
-	return txt->check_collision(object);
-}
-
-void animation::frame::clear_collision_buffer()
-{
-	collided_objects.clear();
-	txt->clear_collision_buffer();
-}
-
 
 std::shared_ptr<texture> animation::frame::get()
 {
@@ -116,121 +52,14 @@ animation::cycle::~cycle()
 
 void animation::cycle::add_frame(std::shared_ptr<animation::frame> frame)
 {
-	if (frames.size() == 0) {
-		size = frame->get_size();
-	}
 	frames.push_back(frame);
 }
 
-SDL_AppResult animation::cycle::update(float delta_time)
-{
-	for (auto& frame : frames) {
-		auto app_res = frame->update(delta_time);
-		switch (app_res)
-		{
-		case SDL_APP_CONTINUE:
-			break;
-		case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
-			break;
-		case SDL_APP_FAILURE: return SDL_APP_FAILURE;
-			break;
-		default:
-			break;
-		}
-	}
-	return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult animation::cycle::input(const SDL_Event* event)
-{
-	for (auto& frame : frames) {
-		auto app_res = frame->input(event);
-		switch (app_res)
-		{
-		case SDL_APP_CONTINUE:
-			break;
-		case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
-			break;
-		case SDL_APP_FAILURE: return SDL_APP_FAILURE;
-			break;
-		default:
-			break;
-		}
-	}
-	return SDL_APP_CONTINUE;
-}
-
-void animation::cycle::set_pos(vec2 pos)
-{
-	this->pos = pos;
-	for (auto& frame : frames) {
-		frame->set_pos(pos);
-	}
-}
-
-void animation::cycle::move_on(vec2 velocity)
-{
-	this->pos = get_pos() + velocity;
-	for (auto& frame : frames) {
-		frame->move_on(velocity);
-	}
-}
-
-void animation::cycle::set_size(vec2 size)
-{
-	this->size = size;
-	for (auto& frame : frames) {
-		frame->set_size(size);
-	}
-}
-
-void animation::cycle::rotate(double angle)
-{
-	this->angle = angle;
-	for (auto& frame : frames) {
-		frame->rotate(angle);
-	}
-}
-
-vec2 animation::cycle::get_size()
-{
-	return size;
-}
-
-vec2 animation::cycle::get_pos()
-{
-	return pos;
-}
-
-float animation::cycle::get_ratio()
-{
-	return size.x / size.y;
-}
 
 std::shared_ptr<animation::frame> animation::cycle::get()
 {
 	return frames[current_frame];
 }
-
-void animation::cycle::draw()
-{
-	get()->draw();
-}
-
-bool animation::cycle::check_collision(game_object* object)
-{
-	return false;
-}
-
-void animation::cycle::clear_collision_buffer()
-{
-	collided_objects.clear();
-
-	for (auto& frame_ : frames) {
-		frame_->clear_collision_buffer();
-	}
-}
-
 
 void animation::cycle::play(float fps)
 {
@@ -283,8 +112,6 @@ animation::player::player(SDL_Renderer* render, std::string animation_config)
 		}
 	}
 
-	size = get()->get_size();
-
 	print::decrease_level();
 	print::loaded("Animation player loaded");
 }
@@ -294,113 +121,9 @@ animation::player::~player()
 	print::info("Deleting animation player");
 }
 
-SDL_AppResult animation::player::update(float delta_time)
-{
-	for (auto& [key, animation] : animations) {
-		auto app_res = animation->update(delta_time);
-		switch (app_res)
-		{
-		case SDL_APP_CONTINUE:
-			break;
-		case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
-			break;
-		case SDL_APP_FAILURE: return SDL_APP_FAILURE;
-			break;
-		default:
-			break;
-		}
-	}
-	return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult animation::player::input(const SDL_Event* event)
-{
-	for (auto& [key, animation] : animations) {
-		auto app_res = animation->input (event);
-		switch (app_res)
-		{
-		case SDL_APP_CONTINUE:
-			break;
-		case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
-			break;
-		case SDL_APP_FAILURE: return SDL_APP_FAILURE;
-			break;
-		default:
-			break;
-		}
-	}
-	return SDL_APP_CONTINUE;
-}
-
-void animation::player::set_pos(vec2 pos)
-{
-	this->pos = pos;
-	for (auto& [key, animation] : animations) {
-		animation->set_pos(pos);
-	}
-}
-
-void animation::player::move_on(vec2 velocity)
-{
-	this->pos = get_pos() + velocity;
-	for (auto& [key, animation] : animations) {
-		animation->move_on(velocity);
-	}
-}
-
-void animation::player::set_size(vec2 size)
-{
-	this->size = size;
-	for (auto& [key, animation] : animations) {
-		animation->set_size(size);
-	}
-}
-
-void animation::player::rotate(double angle)
-{
-	this->angle = angle;
-	for (auto& [key, animation] : animations) {
-		animation->rotate(angle);
-	}
-}
-
-vec2 animation::player::get_size()
-{
-	return size;
-}
-
-vec2 animation::player::get_pos()
-{
-	return pos;
-}
-
-float animation::player::get_ratio()
-{
-	return size.x / size.y;
-}
-
 std::shared_ptr<animation::cycle> animation::player::get()
 {
 	return animations[current_sprite_animation];
-}
-
-void animation::player::draw()
-{
-	get()->draw();
-}
-
-bool animation::player::check_collision(game_object* object)
-{
-	return false;
-}
-
-void animation::player::clear_collision_buffer()
-{
-	collided_objects.clear();
-
-	for (auto& [name, animation] : animations) {
-		animation->clear_collision_buffer();
-	}
 }
 
 void animation::player::play(std::string name, float fps)

@@ -1,23 +1,8 @@
 #include "wall.h"
+#include "window.h"
+#include "utils.h"
 
-#include <utils.h>
-
-void wall::save_txt_state()
-{
-	txt_saved_pos = txt->get_pos();
-	txt_saved_size = txt->get_size();
-
-	txt->set_pos(pos);
-	txt->set_size(size);
-}
-
-void wall::restore_txt_state()
-{
-	txt->set_pos(txt_saved_pos);
-	txt->set_size(txt_saved_size);
-}
-
-wall::wall(std::shared_ptr<texture> txt)
+wall::wall(texture_from_atlas txt)
 {
 	print::loading("Spawning wall");
 	print::increase_level();
@@ -46,12 +31,8 @@ SDL_AppResult wall::input(const SDL_Event* event)
 
 void wall::draw()
 {
-	save_txt_state();
-
 	draw_selection();
-	txt->draw();
-
-	restore_txt_state();
+	txt->draw(camera::get(), camera::get_pos(), pos, size);
 }
 
 bool wall::check_collision(game_object* object)
@@ -69,5 +50,5 @@ bool wall::check_collision(game_object* object)
 
 void wall::clear_collision_buffer()
 {
-	txt->clear_collision_buffer();
+	collided_objects.clear();
 }

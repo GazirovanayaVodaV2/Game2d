@@ -25,7 +25,7 @@ class entity :
     public game_object
 {
 protected:
-	std::shared_ptr<animation::player> animations;
+	std::unique_ptr<animation::player> animations;
 
 	ENTITY::ACTION action = ENTITY::ACTION::IDLE;
 	ENTITY::STATUSES statuses;

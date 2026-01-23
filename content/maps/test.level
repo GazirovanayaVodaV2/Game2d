@@ -7,6 +7,12 @@
 
     "tile_size": 64,
 
+    "environment" : {
+        "weather": "snow",
+        "time": 6000,
+        "time_cycle": true
+    },
+
     "id": {
         "0": {
             "type": "air"

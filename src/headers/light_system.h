@@ -1,17 +1,16 @@
 #pragma once
-#include <base_object.h>
-#include <texture.h>
+#include "base_object.h"
 #include <rgba.h>
 #include <memory>
 #include <vector>
 
-#include <window.h>
-
+#include "window.h"
+#include "texture.h"
 namespace light {
 	class source : public base_object
 	{
 		private:
-			std::shared_ptr<texture> light_txt;
+			std::unique_ptr<texture> light_txt;
 			float radius = 1.0f;
 			rgba color = rgba(0xffffffff);
 		protected:
@@ -28,12 +27,12 @@ namespace light {
 
 			void set_size(vec2 size);
 
-			void rotate(double angle);
+			void rotate(double angle) {};
 
 			vec2 get_size();
 			vec2 get_pos();
 
-			float get_ratio();
+			float get_ratio() { return 1.0f; };
 			void draw();
 
 			float get_radius();
@@ -48,8 +47,8 @@ namespace light {
 	private:
 		std::vector<std::shared_ptr<light::source>> lights;
 
-		SDL_Texture* dark = nullptr;
-
+		std::shared_ptr<texture> ambient = nullptr;
+		rgba ambient_color;
 	public:
 		system();
 		~system() override;
@@ -67,17 +66,18 @@ namespace light {
 		void set_pos(vec2 pos);
 		void move_on(vec2 velocity);
 
-		void set_size(vec2 size);
+		void set_size(vec2 size) {};
 
-		void rotate(double angle);
+		void rotate(double angle) {};
 
-		float get_ratio();
+		float get_ratio() {return 1.0f;};
 
-		vec2 get_size();
-		vec2 get_pos();
+		vec2 get_size() { return vec2(); };
+		vec2 get_pos() { return vec2(); };
 		void draw();
 
-		SDL_Texture* get_dark() { return dark; }
+		void set_ambient(rgba clr);
+		std::shared_ptr<texture> get_ambient() { return ambient; }
 
 		OBJECT::TYPE get_type() override { return OBJECT::TYPE::LIGHT_SYSTEM; }
 	};

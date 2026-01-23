@@ -1,50 +1,64 @@
 #pragma once
-#include "game_object.h"
+
 #include <string>
-#include <map>
+#include <functional>
 
-#include <rgba.h>
+#include "SDL3/SDL.h"
+#include "rgba.h"
+#include "vector.h"
 
-class texture :
-    public game_object
-{
+class texture {
 private:
-	void create_texture(std::string path_);
+	SDL_Texture* txt = nullptr;
+
+	void create_texture(SDL_Renderer* render, std::string path_);
 	void delete_texture();
-
-	SDL_Texture* sdl_texture = nullptr;
 public:
-	texture(std::string path_);
-	~texture() override;
+	texture() = default;
+	texture(SDL_Renderer* render, std::string path_);
+	texture(SDL_Renderer* render, SDL_PixelFormat format, SDL_TextureAccess txt_access, int w, int h);
 
-	SDL_AppResult update(float delta_time) override;
-	SDL_AppResult input(const SDL_Event* event) override;
 
-	void change(std::string path);
+	~texture();
 
-	void move_on(vec2 velocity);
-
+	void change(SDL_Renderer* render, std::string path);
 	void set_blend(SDL_BlendMode blend_mode);
 	void set_color(rgba color);
 	void set_color(hex color);
 
-	void draw() override;
-	bool check_collision(game_object* object) override;
-	void clear_collision_buffer() override;
+	void set_alpha(uint8_t alpha);
 
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::TEXTURE; }
+	vec2 get_size();
+	void get_size(float* w, float* h);
+	
+	void draw(SDL_Renderer* render, vec2 pos, vec2 size);
+	void draw(SDL_Renderer* render, SDL_FRect* dst);
+	void draw(SDL_Renderer* render, SDL_FRect* src, SDL_FRect* dst);
+	
+	void draw_rotated(SDL_Renderer* render, vec2 pos, vec2 size, float angle, SDL_FlipMode flip = SDL_FLIP_NONE);
+	void draw_rotated(SDL_Renderer* render, SDL_FRect* dst, float angle, SDL_FlipMode flip = SDL_FLIP_NONE);
+	void draw_rotated(SDL_Renderer* render, SDL_FRect* src, SDL_FRect* dst, float angle, SDL_FlipMode flip = SDL_FLIP_NONE);
+
+	void draw(SDL_Renderer* render, vec2 cam_pos, vec2 pos, vec2 size);
+	void draw(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* dst);
+	void draw(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* src, SDL_FRect* dst);
+	
+	void draw_rotated(SDL_Renderer* render, vec2 cam_pos, vec2 pos, vec2 size, float angle, SDL_FlipMode flip = SDL_FLIP_NONE);
+	void draw_rotated(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* dst, float angle, SDL_FlipMode flip = SDL_FLIP_NONE);
+	void draw_rotated(SDL_Renderer* render, vec2 cam_pos, SDL_FRect* src, SDL_FRect* dst, float angle, SDL_FlipMode flip = SDL_FLIP_NONE);
+
+	SDL_Texture* get() {
+		return txt;
+	}
 };
 
-class atlas : public base {
+typedef texture* texture_from_atlas;
+class atlas {
 private:
-	std::map<std::string, std::shared_ptr<texture>> textures;
+	std::map<std::string, std::unique_ptr<texture>> textures;
 public:
-	atlas();
-	~atlas() override;
+	atlas(SDL_Renderer* render);
+	~atlas();
 
-	std::shared_ptr<texture> get(std::string name);
-
-	OBJECT::TYPE get_type() override {
-		return OBJECT::TYPE::ATLAS;
-	}
+	texture_from_atlas get(std::string name);
 };

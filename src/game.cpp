@@ -30,9 +30,9 @@ game::game()
 	bench::enable();
 #endif
 
-	txt_context = std::make_shared<atlas>();
-
-	level_manager::add("maps\\test.level", txt_context);
+	txt_context = std::make_unique<atlas>(camera::get());
+	level_manager::set_atlas(txt_context.get());
+	level_manager::add("maps\\test.level");
 
 	//main menu
 	
@@ -59,7 +59,7 @@ game::game()
 	main_menu_quit->hover.fill_color = { 255, 0, 0, 255 };
 	main_menu_quit->clicked.fill_color = { 0, 0, 0, 255 };
 	main_menu_quit->on_mouse_left_click = [this, main_menu]() {
-		exit(0);
+		should_quit = true;
 		};
 	main_menu_quit->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Quit", { 0 });
 	main_menu_quit->label->allign(main_menu_quit->box);
@@ -127,6 +127,7 @@ game::~game()
 SDL_AppResult game::cycle()
 {
 	auto delta = fps::delta();
+
 	
 	bench::get("game_draw").start();
 	camera::clear();
@@ -193,7 +194,9 @@ SDL_AppResult game::cycle()
 	bench::start();
 	//std::cout << bench::get_info(true);
 	
-
+	if (should_quit) {
+		return SDL_APP_SUCCESS;
+	}
 	return SDL_APP_CONTINUE;
 }
 

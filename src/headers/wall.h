@@ -9,15 +9,10 @@ class wall :
     public game_object
 {
 protected:
-	std::shared_ptr<texture> txt;
-
-	vec2 txt_saved_pos, txt_saved_size;
-
-	void save_txt_state();
-	void restore_txt_state();
+	texture_from_atlas txt;
 	bool physic = true;
 public:
-	wall(std::shared_ptr<texture> txt);
+	wall(texture_from_atlas txt);
 	~wall() override;
 
 	SDL_AppResult update(float delta_time) override;

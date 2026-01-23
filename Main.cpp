@@ -1,11 +1,11 @@
 
+#include <memory>
 
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
-#include <SDL3/SDL_main.h>
-#include <SDL3_ttf/SDL_ttf.h>
+#include "SDL3/SDL_main.h"
+#include "SDL3_ttf/SDL_ttf.h"
 
-#include <memory>
-#include <game.h>
+#include "game.h"
 game* game_ = nullptr;
 
 /* This function runs once at startup. */

@@ -8,9 +8,10 @@ player::player(SDL_Renderer* render, std::string animation_config)
 	:invent(this)
 {
 	print::loading("Spawning player");
-	animations = std::make_shared<animation::player>(render, animation_config);
+	animations = std::make_unique<animation::player>(render, animation_config);
 
-	size = animations->get_size();
+	auto first_frame = animations->get()->get()->get();
+	first_frame->get_size(&size.x, & size.y);
 
 	print::loaded("Player spawned");
 };
@@ -124,13 +125,11 @@ SDL_AppResult player::update(float delta_time)
 	}
 
 	move_on(fps::synch(movement_velocity));
-	return animations->update(delta_time);
+	return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult player::input(const SDL_Event* event)
 {
-	animations->input(event);
-
 	if (!invent.input(event)) {
 		if (event->type == SDL_EVENT_KEY_DOWN) {
 			switch (event->key.key)
@@ -195,24 +194,20 @@ SDL_AppResult player::input(const SDL_Event* event)
 void player::set_pos(vec2 pos)
 {
 	this->pos = pos;
-	animations->set_pos(pos);
 }
 void player::move_on(vec2 velocity)
 {
 	this->pos += velocity;
-	animations->move_on(velocity);
 }
 
 void player::set_size(vec2 size)
 {
 	this->size = size;
-	animations->set_size(size);
 }
 
 void player::rotate(double angle)
 {
 	this->angle = angle;
-	animations->rotate(angle);
 }
 
 vec2 player::get_size()
@@ -231,7 +226,14 @@ float player::get_ratio()
 
 void player::draw()
 {
-	animations->draw();
+	auto flip = SDL_FLIP_NONE;
+	if (dir == OBJECT_DIRECTION::RIGHT) {
+		flip = SDL_FLIP_HORIZONTAL;
+	}
+
+
+	auto frame = animations->get()->get()->get();
+	frame->draw_rotated(camera::get(),camera::get_pos(), pos, size, angle, flip);
 }
 bool player::check_collision(game_object* object)
 {
@@ -249,7 +251,6 @@ bool player::check_collision(game_object* object)
 
 void player::clear_collision_buffer()
 {
-	animations->clear_collision_buffer();
 	collided_objects.clear();
 }
 

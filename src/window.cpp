@@ -146,7 +146,7 @@ int window::get_fps()
 SDL_Renderer* camera::sdl_renderer = nullptr;
 vec2 camera::pos = vec2(0,0);
 with_default_value<vec2> camera::size = vec2(1366, 768);
-std::shared_ptr<game_object> camera::connected_object = nullptr;
+game_object* camera::connected_object = nullptr;
 SDL_FRect camera::viewport = { 0 };
 
 bool camera::show_gui = DEBUG_VAL(true, false);
@@ -193,7 +193,7 @@ SDL_AppResult camera::update(float delta_time)
 	set_size(win_resolution);
 	set_scale(win_resolution);
 
-	if (connected_object.get() != nullptr) {
+	if (connected_object) {
 		auto new_pos = connected_object->get_pos() + (connected_object->get_size() / 2.0f)
 				    	- (size.get_default() / 2.0f);
 		new_pos = vec2(-new_pos.x, -new_pos.y);
@@ -220,7 +220,7 @@ SDL_AppResult camera::input(const SDL_Event *event)
 			break;
 		}
 
-		if (connected_object.get() == nullptr) {
+		if (!connected_object) {
 			switch (event->key.key)
 			{
 			case SDLK_W: {
@@ -316,7 +316,7 @@ SDL_Renderer *camera::get()
     return sdl_renderer;
 }
 
-void camera::connect_object(std::shared_ptr<game_object> object)
+void camera::connect_object(game_object* object)
 {
 	connected_object = object;
 }

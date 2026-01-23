@@ -20,7 +20,7 @@ class game :
     public base
 {
 private:
-	std::shared_ptr<atlas> txt_context;
+	std::unique_ptr<atlas> txt_context;
 	//std::shared_ptr<map> game_map;
 
 	std::shared_ptr<game_object> last_selected_obj;
@@ -30,6 +30,7 @@ private:
 	vec2 last_raycasted_pos, pl_pos;
 
 	bool pause = false, in_inventory = false;
+	bool should_quit = false;
 	//std::shared_ptr<animation::physic_animation_player> phys_player;
 	//std::shared_ptr<wall> test_wall;
 

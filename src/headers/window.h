@@ -46,7 +46,7 @@ private:
     static SDL_Renderer* sdl_renderer;
     static vec2 pos;
     static with_default_value<vec2> size;
-    static std::shared_ptr<game_object> connected_object;
+    static game_object* connected_object;
     static SDL_FRect viewport;
     static bool show_gui;
 
@@ -80,7 +80,7 @@ public:
 
     static SDL_Renderer* get();
 
-    static void connect_object(std::shared_ptr<game_object> object);
+    static void connect_object(game_object* object);
 
     static void clear();
     static void clear(unsigned int color);

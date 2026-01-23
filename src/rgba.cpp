@@ -36,3 +36,13 @@ int rgba::to_hex()
 
 	return res;
 }
+
+rgba rgba::mix(rgba clr, float factor)
+{
+	return rgba{
+	static_cast<byte>(this->color.r + (clr.color.r - this->color.r) * factor),
+	static_cast<byte>(this->color.g + (clr.color.g - this->color.g) * factor),
+	static_cast<byte>(this->color.b + (clr.color.b - this->color.b) * factor),
+	static_cast<byte>(this->color.a + (clr.color.a - this->color.a) * factor)
+	};
+}

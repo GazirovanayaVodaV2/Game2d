@@ -3,12 +3,11 @@
 
 class medkit : public interactive_object_base {
 protected:
-	std::shared_ptr<texture> txt;
-
+	texture_from_atlas txt;
 	void interaction_impl(entity* ent) override {};
 	void use_impl(entity* user) override;
 public:
-	medkit(std::shared_ptr<atlas> atl);
+	medkit(texture_from_atlas txt);
 	~medkit() = default;
 
 	void draw();
