@@ -16,8 +16,8 @@ namespace inventory {
 		const int cell_margin = 10;
 		const int cell_size = 86;
 		int cursor_x = 0, cursor_y = 0;
-		std::vector<std::shared_ptr<item>> items{nullptr};
-		std::shared_ptr<item> item_in_hands = nullptr;
+		std::vector<item*> items{nullptr};
+		item* item_in_hands = nullptr;
 		int item_in_hands_id = -1;
 		int selected_item_id = -1;
 
@@ -31,7 +31,7 @@ namespace inventory {
 		void remove_item(int x, int y);
 	public:
 		inventory(entity* parent);
-		~inventory() = default;
+		~inventory();
 
 		void draw();
 		void resize(int w_, int h_);
@@ -41,12 +41,12 @@ namespace inventory {
 		/// </summary>
 		/// <param name="item_"></param>
 		/// <returns></returns>
-		bool try_add_item(std::shared_ptr<item> item_);
+		bool try_add_item(item* item_);
 		
 		void try_use_item();
 
-		std::shared_ptr<item> get_item(int x, int y);
-		std::shared_ptr<item> get_item_in_hands();
+		item* get_item(int x, int y);
+		item* get_item_in_hands();
 
 		void update(float delta);
 

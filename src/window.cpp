@@ -161,9 +161,7 @@ camera::camera()
 	auto parsed_options = json::parse(json_file);
 	json_file.close();
 
-	bool vsync;
-
-	parsed_options.at("vsync").get_to(vsync);
+	auto vsync = parsed_options.at("vsync").get<bool>();
 
 	sdl_renderer = SDL_CreateRenderer(window::get_instance().get(), NULL);
 	if (!sdl_renderer) {
@@ -175,7 +173,6 @@ camera::camera()
 	}
 
 	this->size = get_size();
-
 	
 	viewport = pos.get_frect(size);
 	print::loaded("Renderer created!");
@@ -416,7 +413,7 @@ void camera::draw_debug_info()
 
 		std::string new_str;
 		float y = 16.0f;
-		for (std::string::iterator ch = debug_text.begin(); ch != debug_text.end(); ch++) {
+		for (auto ch = debug_text.begin(); ch != debug_text.end(); ch++) {
 			if (*ch != '\n') {
 				new_str += *ch;
 			}

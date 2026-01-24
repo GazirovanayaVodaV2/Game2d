@@ -15,7 +15,7 @@ public:
 	projectile() = default;
 	projectile(texture_from_atlas txt, vec2 vel, int damage = 100);
 
-	~projectile() = default;
+	~projectile();
 
 	SDL_AppResult update(float delta_time) override;
 	bool check_collision(game_object* object);

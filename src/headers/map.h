@@ -24,8 +24,8 @@ public:
         error
     };
 private:
-    std::vector<std::shared_ptr<game_object>> objects;
-    std::vector<std::shared_ptr<game_object>> new_obj_buffer;
+    std::vector<std::unique_ptr<game_object>> objects;
+    std::vector<std::unique_ptr<game_object>> new_obj_buffer;
     std::vector<float> height_map;
 
     atlas* atl;
@@ -34,7 +34,7 @@ private:
     std::unique_ptr<player> pl;
     std::unique_ptr<light::system> light_system;
 
-    std::shared_ptr<game_object> NULL_OBJECT_PTR;
+    game_object* NULL_OBJECT_PTR;
 
     std::string name;
     std::string level_type = "normal";
@@ -60,15 +60,15 @@ public:
     map(atlas* atl);
 	~map() override;
 
-    std::shared_ptr<game_object>& get(vec2 pos);
-    std::shared_ptr<game_object>& get(size_t id);
+    game_object* get(vec2 pos);
+    game_object* get(size_t id);
 	void draw();
-    void add(std::shared_ptr<game_object> obj);
+    void add(game_object* obj);
 
     void add_bullet(int dmg, vec2 pos, float speed, vec2 vel);
 
     player* get_player();
-    const std::vector<std::shared_ptr<game_object>>& get_objects() {
+    const std::vector<std::unique_ptr<game_object>>& get_objects() {
         return objects;
     }
 

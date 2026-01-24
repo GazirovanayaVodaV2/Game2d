@@ -18,6 +18,8 @@ public:
 	texture(SDL_Renderer* render, std::string path_);
 	texture(SDL_Renderer* render, SDL_PixelFormat format, SDL_TextureAccess txt_access, int w, int h);
 
+	texture(const texture&) = delete;
+	texture& operator=(const texture&) = delete;
 
 	~texture();
 

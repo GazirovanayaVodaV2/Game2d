@@ -27,7 +27,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(map::weather_t, {
 map::map(atlas* atl)
 {
 	this->atl = atl;
-	NULL_OBJECT_PTR = std::make_shared<NULL_OBJECT>();
+	NULL_OBJECT_PTR = new NULL_OBJECT();
 
 	sky = std::make_unique<texture>(camera::get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET,
 		1000, 1000);
@@ -43,21 +43,23 @@ map::~map()
 	unload();
 
 	SDL_DestroyTexture(scene);
+
+	delete NULL_OBJECT_PTR;
 }
 
-void map::add(std::shared_ptr<game_object> obj)
+void map::add(game_object* obj)
 {
-	new_obj_buffer.push_back(obj);
+	new_obj_buffer.push_back(std::unique_ptr<game_object>(obj));
 }
 
 void map::add_bullet(int dmg, vec2 pos, float speed, vec2 vel)
 {
-	auto bullet = std::make_shared<projectile>(atl->get("bullet"), vel * speed, dmg);
+	auto bullet = new projectile(atl->get("bullet"), vel * speed, dmg);
 	bullet->set_pos(pos);
 	add(bullet);
 }
 
-std::shared_ptr<game_object>& map::get(vec2 pos)
+game_object* map::get(vec2 pos)
 {
 	if (!loaded) {
 		throw std::format("Level is not loaded! Name: {}", this->name).c_str();
@@ -69,7 +71,7 @@ std::shared_ptr<game_object>& map::get(vec2 pos)
 		for (; i < objects.size() - 1; i++) {
 			auto& obj = objects[i];
 			if (obj->in(pos)) {
-				return objects[i];
+				return objects[i].get();
 			}
 		}
 	}
@@ -77,7 +79,7 @@ std::shared_ptr<game_object>& map::get(vec2 pos)
 	return NULL_OBJECT_PTR;
 }
 
-std::shared_ptr<game_object>& map::get(size_t id)
+game_object* map::get(size_t id)
 {
 	if (!loaded) {
 		throw std::format("Level is not loaded! Name: {}", this->name).c_str();
@@ -85,7 +87,7 @@ std::shared_ptr<game_object>& map::get(size_t id)
 	if (id > objects.size()) {
 		throw std::format("Out of objects! Index: {}", id).c_str();
 	}
-	return objects[id];
+	return objects[id].get();
 }
 
 static rgba get_light_by_time(rgba day, rgba night, int time) {
@@ -187,7 +189,7 @@ void map::draw()
 			if (object->exist) {
 				if (object->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT 
 					|| is_subtype_of(object->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
-					if (!std::static_pointer_cast<interactive_object_base>(object)->in_inventory()) {
+					if (!static_cast<interactive_object_base*>(object.get())->in_inventory()) {
 						object->draw();
 					}
 				}
@@ -304,7 +306,7 @@ void map::load_level_format(std::string path_)
 
 					index++;
 
-					std::shared_ptr<game_object> object;
+					game_object* object = nullptr;
 
 					if (type == keyword_to_string(air)) {
 						continue;
@@ -312,7 +314,7 @@ void map::load_level_format(std::string path_)
 					else if (type == keyword_to_string(wall)) {
 						auto sprite_id = block.at("sprite_id").get<std::string>();
 
-						object = std::make_shared<wall>(atl->get(sprite_id));
+						object = new wall(atl->get(sprite_id));
 						object->set_pos(pos);
 						object->set_size(size);
 
@@ -346,17 +348,17 @@ void map::load_level_format(std::string path_)
 					else if (type == keyword_to_string(background_sprite)) {
 						auto sprite_id = block.at("sprite_id").get<std::string>();
 
-						object = std::make_shared<background_sprite>(atl->get(sprite_id));
+						object = new background_sprite(atl->get(sprite_id));
 						
 						object->set_pos(pos);
 						object->set_size(size);
 					}
 					else if (type == keyword_to_string(dummy)) {
-						object = std::make_shared<dummy>(atl->get(keyword_to_string(dummy)), 100);
+						object = new dummy(atl->get(keyword_to_string(dummy)), 100);
 						object->set_pos(pos);
 					}
 					else if (type == keyword_to_string(medkit)) {
-						object = std::make_shared<medkit>(atl->get(keyword_to_string(medkit)));
+						object = new medkit(atl->get(keyword_to_string(medkit)));
 						object->set_pos(pos);
 					}
 
@@ -429,13 +431,14 @@ SDL_AppResult map::update(float delta_time)
 
 		objects.erase(
 			std::remove_if(objects.begin(), objects.end(),
-				[](const std::shared_ptr<game_object>& obj) {
+				[](const std::unique_ptr<game_object>& obj) {
 					return !obj->exist;
 				}),
 			objects.end());
 
 		if (!new_obj_buffer.empty()) {
-			objects.insert(objects.end(), new_obj_buffer.begin(), new_obj_buffer.end());
+			//objects.insert(objects.end(), new_obj_buffer.begin(), new_obj_buffer.end());
+			std::move(new_obj_buffer.begin(), new_obj_buffer.end(), std::back_inserter(objects));
 			new_obj_buffer.clear();
 		}
 

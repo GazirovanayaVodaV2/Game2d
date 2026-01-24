@@ -271,12 +271,12 @@ SDL_AppResult game::input(const SDL_Event* event)
 		SDL_GetMouseState(&m_x, &m_y);
 		auto rel_pos = camera::get_mouse_relative_pos(m_x, m_y);
 		if (!level_manager::is_level_empty()) {
-			auto& obj = level_manager::get()->get(rel_pos);
+			auto obj = level_manager::get()->get(rel_pos);
 
 			if (obj->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT or is_subtype_of(obj->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
 				if (level_manager::is_any_level_loaded()) {
 					auto& inv = level_manager::get()->get_player()->get_inventory();
-					inv.try_add_item(std::static_pointer_cast<inventory::item>(obj));
+					inv.try_add_item((inventory::item*)(obj));
 				}
 			}
 

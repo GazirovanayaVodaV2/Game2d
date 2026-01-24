@@ -191,7 +191,11 @@ gui::text_box::~text_box()
 {
 
 	if (font)
+	{
 		TTF_CloseFont(font);
+		font = nullptr;
+	}
+		
 
 	text_deleter();
 }

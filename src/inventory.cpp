@@ -26,6 +26,11 @@ inventory::inventory::inventory(entity* parent)
 	resize(w, h);
 }
 
+inventory::inventory::~inventory()
+{
+	print::info("Deleting inventory");
+}
+
 
 void inventory::inventory::resize(int w_, int h_)
 {
@@ -70,7 +75,7 @@ void inventory::inventory::resize(int w_, int h_)
 	inv_gui.add("inv_page", inv_page);
 }
 
-bool inventory::inventory::try_add_item(std::shared_ptr<item> item_)
+bool inventory::inventory::try_add_item(item* item_)
 {
 	if (item_->is_pickable() and !item_->in_inventory()) {
 		for (size_t i = 0; i < items.size(); i++) {
@@ -102,12 +107,12 @@ void inventory::inventory::try_use_item()
 	}
 }
 
-std::shared_ptr<inventory::item> inventory::inventory::get_item(int x, int y)
+inventory::item* inventory::inventory::get_item(int x, int y)
 {
 	return items.at(x + y * w);
 }
 
-std::shared_ptr<inventory::item> inventory::inventory::get_item_in_hands()
+inventory::item* inventory::inventory::get_item_in_hands()
 {
 	return item_in_hands;
 }

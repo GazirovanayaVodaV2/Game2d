@@ -20,9 +20,7 @@ dummy::dummy(texture_from_atlas txt, int hp)
 	hp_box = new gui::text_box(camera::get(), "fonts\\NotoSans.ttf", "0", {255});
 
 	this->txt = txt;
-
 	this->size = txt->get_size();
-
 	this->size = this->size / 2;
 
 	update_hp_box();
@@ -31,6 +29,7 @@ dummy::dummy(texture_from_atlas txt, int hp)
 dummy::~dummy()
 {
 	delete hp_box; 
+	print::info("Dummy deleted!");
 }
 
 void dummy::draw()

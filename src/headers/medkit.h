@@ -8,7 +8,7 @@ protected:
 	void use_impl(entity* user) override;
 public:
 	medkit(texture_from_atlas txt);
-	~medkit() = default;
+	~medkit();
 
 	void draw();
 

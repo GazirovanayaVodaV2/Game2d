@@ -23,7 +23,7 @@ private:
 	std::unique_ptr<atlas> txt_context;
 	//std::shared_ptr<map> game_map;
 
-	std::shared_ptr<game_object> last_selected_obj;
+	game_object* last_selected_obj = nullptr;
 
 	gui::context Gui;
 

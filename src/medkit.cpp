@@ -15,6 +15,11 @@ medkit::medkit(texture_from_atlas txt)
 	collideable = false;
 }
 
+medkit::~medkit()
+{
+	print::info("Medkit deleted!");
+}
+
 void medkit::draw()
 {
 	txt->draw(camera::get(), camera::get_pos(), pos, size);

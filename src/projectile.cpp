@@ -17,6 +17,11 @@ projectile::projectile(texture_from_atlas txt, vec2 vel, int damage)
 	this->size = txt->get_size() / 4;
 }
 
+projectile::~projectile()
+{
+	print::info("Projectile deleted!");
+}
+
 SDL_AppResult projectile::update(float delta_time)
 {
 	move_on(fps::synch<vec2>(vel));
