@@ -62,6 +62,11 @@ public:
 		return pos;
 	};
 
+	 float get_distance(base_object* obj);
+	 float get_sqr_distance(base_object* obj);
+
+	 float get_size_radius();
+
 	double get_angle() {
 		return angle;
 	}

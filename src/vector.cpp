@@ -83,7 +83,12 @@ float vec2::scalar(const vec2& _vec) const
 
 float vec2::len() const
 {
-	return sqrtf(powf(this->x, 2.0f) + powf(this->y, 2.0f));
+	return sqrtf(sqr_len());
+}
+
+float vec2::sqr_len() const
+{
+	return powf(this->x, 2.0f) + powf(this->y, 2.0f);
 }
 
 vec2 vec2::normalize() const

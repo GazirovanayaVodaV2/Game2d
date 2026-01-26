@@ -65,29 +65,99 @@ game_object* map::get(vec2 pos)
 		throw std::format("Level is not loaded! Name: {}", this->name).c_str();
 	}
 
-	size_t i = 0;
-	if (objects.size() > 0)
-	{
-		for (; i < objects.size() - 1; i++) {
-			auto& obj = objects[i];
-			if (obj->in(pos)) {
-				return objects[i].get();
-			}
+	auto chunk_ = get_chunk(pos);
+	auto& chunk_obj = chunk_->objects;
+	for (auto& obj : chunk_obj) {
+		if (obj->in(pos)) {
+			return obj.get();
 		}
 	}
 
 	return NULL_OBJECT_PTR;
 }
 
-game_object* map::get(size_t id)
+game_object* map::get(size_t chunk_id, size_t id)
 {
 	if (!loaded) {
 		throw std::format("Level is not loaded! Name: {}", this->name).c_str();
 	}
-	if (id > objects.size()) {
-		throw std::format("Out of objects! Index: {}", id).c_str();
+	return chunks.at(chunk_id)->objects.at(id).get();
+}
+
+size_t map::get_chunk_id(vec2 pos)
+{
+	return (size_t)convert::f2i((pos.x / tile_size / chunk_size) + (pos.y / tile_size / chunk_size) * chunks_W);;
+}
+
+map::chunk* map::get_chunk(vec2 pos)
+{
+	return get_chunk(get_chunk_id(pos));
+}
+
+map::chunk* map::get_chunk(size_t id)
+{
+	size_t ret_id = id < chunks.size() ? id : 0;
+	auto& chunk_ = chunks.at(ret_id);
+	if (!chunk_) {
+		chunks[id] = std::make_unique<map::chunk>();
 	}
-	return objects[id].get();
+	return chunk_.get();
+}
+
+map::chunk* map::get_chunk_or_null(vec2 pos)
+{
+	return get_chunk_or_null(get_chunk_id(pos));
+}
+
+map::chunk* map::get_chunk_or_null(size_t id)
+{
+	if (id >= chunks.size()) {
+		return nullptr;
+	}
+
+	auto& chunk_ = chunks.at(id);
+	if (!chunk_) {
+		chunks[id] = std::make_unique<map::chunk>();
+	}
+	return chunk_.get();
+}
+
+void map::rebuild_chunks()
+{
+	print::info("Rebuilding chunks");
+	/*size_t i = 0;
+	for (auto& chunk_ : chunks) {
+		for (auto& object : chunk_->objects) {
+			if (object) {
+				auto object_id = get_chunk_id(object->get_pos());
+				if (object_id != i) {
+					
+					
+					chunk_->objects.erase(chunk_->objects.begin() + i);
+				}
+			}
+		}
+
+		i++;
+	}*/
+
+	for (size_t i = 0; i < chunks.size(); i++) {
+		auto& chunk_ = chunks[i];
+		
+		std::erase_if(chunk_->objects, [&](auto& obj) {
+			if (!obj) return true;
+			auto obj_id = get_chunk_id(obj->get_pos());
+			if (obj_id != i) {
+				auto new_chunk = get_chunk(obj_id);
+				new_chunk->objects.emplace_back(std::move(obj));
+
+				return true;
+			}
+			return false;
+			});
+	}
+
+	update(1.0f);
 }
 
 static rgba get_light_by_time(rgba day, rgba night, int time) {
@@ -185,9 +255,9 @@ void map::draw()
 		stars_texture->draw(render, &dstrect);
 
 		pl->draw();
-		for (auto& object : objects) {
-			if (object->exist) {
-				if (object->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT 
+		for (auto& chunk_ : chunks) {
+			for (auto& object : chunk_->objects) {
+				if (object->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT
 					|| is_subtype_of(object->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
 					if (!static_cast<interactive_object_base*>(object.get())->in_inventory()) {
 						object->draw();
@@ -208,10 +278,13 @@ void map::draw()
 		light_system->draw();
 		if (draw_debug_info) {
 			pl->draw_debug();
-			for (auto& object : objects) {
-				if (object->exist) {
+
+			for (auto& chunk_ : chunks) {
+
+				for (auto& object : chunk_->objects) {
 					object->draw_debug();
 				}
+
 			}
 		}
 	}
@@ -253,6 +326,10 @@ void map::load_level_format(std::string path_)
 		json_level.at("H").get_to(H);
 		json_level.at("tile_size").get_to(tile_size);
 
+		chunks_W = std::ceilf((float)W / chunk_size);
+		chunks_H = std::ceilf((float)H / chunk_size);
+
+		chunks.resize(chunks_W * chunks_H);
 		height_map.resize(W);
 		std::fill(height_map.begin(), height_map.end(), std::numeric_limits<float>::max());
 
@@ -375,11 +452,18 @@ void map::load_level_format(std::string path_)
 	}
 }
 
+
+
 void map::load(std::string path_)
 {
 	after_load_delay = 0;
 	if (path_.find(".level") != std::string::npos) {
 		load_level_format(path_);
+	}
+
+	for (size_t i = 0; i < chunks.size(); i++) {
+		if (!chunks[i])
+			chunks[i] = std::make_unique<map::chunk>();
 	}
 }
 
@@ -389,8 +473,12 @@ void map::unload()
 		print::info("Deleting map");
 		SDL_DestroyTexture(scene);
 
-		objects.clear();
+		chunks.clear();
+		chunks.shrink_to_fit();
+
 		height_map.clear();
+		height_map.shrink_to_fit();
+
 		light_system.reset();
 		pl.reset();
 	}
@@ -401,7 +489,7 @@ void map::unload()
 SDL_AppResult map::update(float delta_time)
 {
 	if (loaded) {
-		for (auto& object : objects) {
+		/*for (auto& object : objects) {
 			//pl->check_collision(object);
 			if (object->exist) {
 				pl->check_collision(object.get());
@@ -418,29 +506,57 @@ SDL_AppResult map::update(float delta_time)
 					break;
 				}
 			}
-		}
+		}*/
 
 		
-		for (auto& obj1 : objects) {
-			if (!obj1->exist) continue;
-			for (auto& obj2 : objects) {
-				if (obj1 == obj2 || !obj2->exist) continue;
-				obj1->check_collision(obj2.get());
+		/*for (auto obj1 = objects.begin(); obj1 < objects.end(); obj1++) {
+			pl->check_collision((*obj1).get());
+			(*obj1)->update(delta_time);
+
+			for (auto obj2 = objects.begin(); obj2 < obj1; obj2++) {
+				(*obj1)->check_collision((*obj2).get());
+			}
+
+			for (auto obj2 = obj1 + 1; obj2 < objects.end(); obj2++) {
+				(*obj1)->check_collision((*obj2).get());
+			}
+		}*/
+
+		for (auto& chunk_ : chunks) {
+			for (auto& obj1 : chunk_->objects) {
+				auto current_chunk = get_chunk_or_null(obj1->get_pos());
+
+				pl->check_collision(obj1.get());
+				obj1->update(delta_time);
+
+				if (current_chunk) {
+					for (auto& obj2 : current_chunk->objects) {
+						if (obj1.get() == obj2.get()) continue;
+						(obj1)->check_collision(obj2.get());
+					}
+				}
 			}
 		}
 
-		objects.erase(
-			std::remove_if(objects.begin(), objects.end(),
-				[](const std::unique_ptr<game_object>& obj) {
-					return !obj->exist;
-				}),
-			objects.end());
+		for (auto& chunk_ : chunks) {
 
-		if (!new_obj_buffer.empty()) {
-			//objects.insert(objects.end(), new_obj_buffer.begin(), new_obj_buffer.end());
-			std::move(new_obj_buffer.begin(), new_obj_buffer.end(), std::back_inserter(objects));
-			new_obj_buffer.clear();
+				auto& objects = chunk_->objects;
+				objects.erase(
+					std::remove_if(objects.begin(), objects.end(),
+						[](const std::unique_ptr<game_object>& obj) {
+							return !obj->exist;
+						}),
+					objects.end());
+			
 		}
+
+		for (auto& new_obj : new_obj_buffer) {
+			auto chunk_ = get_chunk(new_obj->get_pos());
+
+			chunk_->objects.emplace_back(std::move(new_obj));
+		
+		}
+		new_obj_buffer.clear();
 
 		//To prevent player teleport to void after spawn
 		if (after_load_delay < 10) {
@@ -465,8 +581,9 @@ SDL_AppResult map::update(float delta_time)
 SDL_AppResult map::input(const SDL_Event* event)
 {
 	if (loaded) {
-		for (auto& obj : objects) {
-			if (obj->exist) {
+		for (auto& chunk_ : chunks)
+		{
+			for (auto& obj : chunk_->objects) {
 				obj->input(event);
 			}
 		}
@@ -476,6 +593,9 @@ SDL_AppResult map::input(const SDL_Event* event)
 			{
 			case SDLK_F5: {
 				draw_debug_info = !draw_debug_info;
+			} break;
+			case SDLK_T: {
+				rebuild_chunks();
 			} break;
 			default: {
 			} break;

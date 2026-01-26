@@ -23,8 +23,17 @@ public:
         snow_storm,
         error
     };
+
+    struct chunk {
+        std::vector<std::unique_ptr<game_object>> objects;
+
+        chunk() = default;
+        ~chunk() = default;
+    };
 private:
-    std::vector<std::unique_ptr<game_object>> objects;
+    const size_t chunk_size = 4;
+    size_t chunks_W = 0, chunks_H = 0;
+    std::vector<std::unique_ptr<chunk>> chunks;
     std::vector<std::unique_ptr<game_object>> new_obj_buffer;
     std::vector<float> height_map;
 
@@ -54,6 +63,8 @@ private:
     int after_load_delay = 0;
 
     void load_level_format(std::string path_);
+
+    size_t get_chunk_id(vec2 pos);
 protected:
     const OBJECT::TYPE type = OBJECT::TYPE::MAP;
 public:
@@ -61,15 +72,23 @@ public:
 	~map() override;
 
     game_object* get(vec2 pos);
-    game_object* get(size_t id);
+    game_object* get(size_t chunk_id, size_t id);
+    map::chunk* get_chunk(vec2 pos);
+    map::chunk* get_chunk(size_t id);
+
+    map::chunk* get_chunk_or_null(vec2 pos);
+    map::chunk* get_chunk_or_null(size_t id);
+
+    void rebuild_chunks();
+
 	void draw();
     void add(game_object* obj);
 
     void add_bullet(int dmg, vec2 pos, float speed, vec2 vel);
 
     player* get_player();
-    const std::vector<std::unique_ptr<game_object>>& get_objects() {
-        return objects;
+    const std::vector<std::unique_ptr<map::chunk>>& get_chunks() {
+        return chunks;
     }
 
     void load(std::string path_);
@@ -82,28 +101,6 @@ public:
 
     OBJECT::TYPE get_type() override { return OBJECT::TYPE::MAP; }
 };
-
-/*
-class object_atlas {
-private:
-    std::vector<game_object*> objects;
-public:
-    object_atlas() = default;
-    ~object_atlas() {
-        for (auto& obj : objects) {
-            delete obj;
-        }
-    }
-
-    object_atlas& add(game_object* obj) {
-        objects.emplace_back(obj);
-        return *this;
-    }
-
-    std::shared_ptr<game_object> get_copy(size_t id) {
-        return std::make_shared<game_object>(*(objects.at(id)));
-    }
-};*/
 
 class level_manager {
 private:

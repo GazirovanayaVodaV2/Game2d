@@ -30,6 +30,7 @@ struct vec2
 
 	float scalar(const vec2& _vec) const;
 	float len() const;
+	float sqr_len() const;
 
 	vec2 normalize() const;
 

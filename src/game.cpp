@@ -176,8 +176,6 @@ SDL_AppResult game::cycle()
 		level_manager::update(delta);
 	}
 
-	
-	
 	camera::update(delta);
 	fps::update();
 	bench::get("game_update").stop();

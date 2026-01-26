@@ -32,6 +32,8 @@ SDL_AppResult projectile::update(float delta_time)
 		exist = false;
 	}
 
+	clear_collision_buffer();
+
 	return SDL_APP_CONTINUE;
 }
 
