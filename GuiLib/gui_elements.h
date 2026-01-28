@@ -44,6 +44,10 @@ namespace gui {
 		types get_type() override {
 			return types::rect;
 		}
+
+		SDL_Texture* get_texture() {
+			return image;
+		}
 	};
 
 	//add text box

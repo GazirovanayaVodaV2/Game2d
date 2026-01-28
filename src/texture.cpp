@@ -13,8 +13,7 @@ void texture::create_texture(SDL_Renderer* render, std::string path_)
 	if (!txt) {
 		txt = IMG_LoadTexture(render, path(path_).c_str());
 		if (!txt) {
-			throw std::format("Something wrong with sky texture. Path: {} Log: {} Error Code: {}",
-				path(path_), SDL_GetError(), static_cast<int>(SDL_APP_FAILURE)).c_str();
+			print::error(path_, SDL_GetError());
 		}
 
 	}
@@ -38,7 +37,7 @@ texture::texture(SDL_Renderer* render, SDL_PixelFormat format, SDL_TextureAccess
 {
 	txt = SDL_CreateTexture(render, format, txt_access, w, h);
 	if (!txt) {
-		throw "Something wrong with texture!";
+		print::error("Failed to create texture!");
 	}
 }
 

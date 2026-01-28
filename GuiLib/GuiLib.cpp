@@ -11,15 +11,17 @@
 gui::page::~page()
 {
 	print::info("Deleting ui page");
-	for (auto& el : elements) {
-		delete el;
+	for (auto& [name, element] : elements) {
+		delete element;
 	}
+	elements.clear();
+	elements_names.clear();
 }
 
 void gui::page::update(float delta_time)
 {
 	if (active) {
-		for (auto& element : elements) {
+		for (auto& [name, element] : elements) {
 			element->update(delta_time);
 		}
 	}
@@ -28,12 +30,13 @@ void gui::page::update(float delta_time)
 void gui::page::draw(SDL_Renderer* render)
 {
 	if (active) {
-		for (auto& element : elements) {
+		for (auto& [name, element] : elements) {
 			element->draw(render);
 		}
 
 		if (enable_keyboard_selection) {
-			auto item = elements[keyboard_selected_item];
+			auto& el_name = elements_names.at(keyboard_selected_item);
+			auto item = elements.at(el_name);
 			if (item->get_type() == gui::types::button) {
 				auto button = (button_base*)item;
 				button->force_highlight(render);
@@ -45,7 +48,7 @@ void gui::page::draw(SDL_Renderer* render)
 void gui::page::input(const SDL_Event* event)
 {
 	if (active) {
-		for (auto& element : elements) {
+		for (auto& [name, element] : elements) {
 			element->input(event);
 		}
 
@@ -65,7 +68,8 @@ void gui::page::input(const SDL_Event* event)
 						}
 					} break;
 					case SDLK_RETURN: {
-						auto item = elements[keyboard_selected_item];
+						auto& el_name = elements_names.at(keyboard_selected_item);
+						auto item = elements.at(el_name);
 						if (item->get_type() == gui::types::button) {
 							auto button = (button_base*)item;
 							button->force_click();
@@ -93,10 +97,33 @@ void gui::page::input(const SDL_Event* event)
 	}
 }
 
-gui::page& gui::page::add(base* el)
+gui::page& gui::page::add(base* el, std::string name)
 {
-	elements.emplace_back(el);
+	auto res_name = name;
+	if (name.empty()) {
+		constexpr int safe_limit = 1024;
+		for (int int_name = 0; int_name < safe_limit; int_name++) {
+			std::string new_name = std::to_string(int_name);
+
+			if (elements.find(new_name) == elements.end()) {
+				res_name = new_name;
+
+				goto add;
+			}
+		}
+
+		print::error("Failed to add unnamed gui object!");
+	}
+
+	add:
+	elements[res_name] = el;
+	elements_names[elements.size()-1] = res_name;
 	return *this;	
+}
+
+gui::base* gui::page::get(std::string name)
+{
+	return elements.at(name);
 }
 
 size_t gui::page::size()

@@ -15,21 +15,12 @@ void light::source::draw_selection()
 		dest_rect.w += 4;
 		dest_rect.h += 4;
 
-		SDL_Color buffered_color;
-		SDL_GetRenderDrawColor(render,
-			&buffered_color.r,
-			&buffered_color.g,
-			&buffered_color.b,
-			&buffered_color.a
-		);
+		auto buffered_color = camera::get_color();
+		camera::set_color({ 0,255,0,255 });
 
-		SDL_SetRenderDrawColor(render, 0, 255, 0, 255);
 		SDL_RenderRect(render, &dest_rect);
-		SDL_SetRenderDrawColor(render,
-			buffered_color.r,
-			buffered_color.g,
-			buffered_color.b,
-			buffered_color.a);
+
+		camera::set_color(buffered_color);
 	}
 }
 
@@ -97,8 +88,8 @@ void light::source::draw()
 	auto txt_size = size;
 	auto txt_pos = pos;
 
-	SDL_Color saved_clr;
-	SDL_GetRenderDrawColor(render, &saved_clr.r, &saved_clr.g, &saved_clr.b, &saved_clr.a);
+	auto saved_clr = camera::get_color();
+
 
 	set_size(vec2(txt_size.x * radius, txt_size.y * radius));
 	set_pos(pos - (size / 2.0f));
@@ -111,7 +102,8 @@ void light::source::draw()
 	set_pos(txt_pos);
 	set_size(txt_size);
 
-	SDL_SetRenderDrawColor(render, saved_clr.r, saved_clr.g, saved_clr.b, saved_clr.a);
+
+	camera::set_color(saved_clr);
 }
 
 void light::source::set_color(int clr)
@@ -205,14 +197,13 @@ For some reason avalible only white lights : (
 */
 void light::system::draw()
 {
-	auto viewport = camera::get_viewport();
 	auto render = camera::get();
-	SDL_SetRenderTarget(render, ambient->get());
 
-	//SDL_SetRenderScale(render, 1000.0f / viewport.w, 1000.0f / viewport.h);
+	camera::set_target(ambient->get());
+
 	camera::abjust_scale();
 
-	SDL_SetRenderDrawColor(render, ambient_color.color.r, ambient_color.color.g, ambient_color.color.b, 255);
+	camera::set_color(ambient_color);
 	SDL_RenderFillRect(render, NULL);
 
 	for (auto& light : lights) {
@@ -221,14 +212,11 @@ void light::system::draw()
 
 	//SDL_SetRenderScale(render, 1.0f, 1.0f);
 	camera::reset_scale();
-	SDL_SetRenderTarget(render, NULL);
+	camera::reset_target();
 	
-	SDL_FRect dst_rect = viewport;
-	dst_rect.x = 0;
-	dst_rect.y = 0;
-	ambient->draw(render, NULL, &dst_rect);
+	ambient->draw(render, NULL, NULL);
 	
-	SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+	camera::set_color(0xffffffff);
 }
 
 void light::system::set_ambient(rgba clr)

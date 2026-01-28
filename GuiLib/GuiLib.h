@@ -40,7 +40,8 @@ namespace gui {
 
 	class page : public Igui {
 	private:
-		std::vector<base*> elements;
+		std::map<std::string, base*> elements;
+		std::map<size_t, std::string> elements_names;
 
 		size_t keyboard_selected_item = 0;
 		bool enable_keyboard_selection = false;
@@ -59,7 +60,9 @@ namespace gui {
 		/// </summary>
 		/// <param name="el"></param>
 		/// <returns></returns>
-		page& add(base* el);
+		page& add(base* el, std::string name = "");
+
+		base* get(std::string name);
 
 		size_t size();
 

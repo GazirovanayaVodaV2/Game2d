@@ -39,7 +39,7 @@ window::window()
 	auto window_flags = NULL | (SDL_WINDOW_FULLSCREEN * fullscreen) | (SDL_WINDOW_RESIZABLE * resizeable);
 	sdl_window = SDL_CreateWindow(window_name.c_str(), size.get_default().x, size.get_default().y, window_flags);
 	if (!sdl_window) {
-		throw std::format("Window creating error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
+		print::error("Window creating error", SDL_GetError());
 	}
 	
 	SDL_SetWindowSize(sdl_window, resolution[0], resolution[1]);
@@ -152,9 +152,7 @@ vec2 camera::pos = vec2(0,0);
 vec2 camera::win_res = vec2(0, 0);
 game_object* camera::connected_object = nullptr;
 SDL_FRect camera::viewport = { 0 };
-
-SDL_Texture* camera::scene = nullptr;
-
+std::unique_ptr<texture> camera::scene;
 bool camera::show_gui = DEBUG_VAL(true, false);
 std::string camera::debug_text = "";
 
@@ -171,19 +169,19 @@ camera::camera()
 
 	sdl_renderer = SDL_CreateRenderer(window::get_instance().get(), NULL);
 	if (!sdl_renderer) {
-		throw std::format("Renderer creating error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
+		print::error("Renderer creating error!", SDL_GetError());
 	}
 
 	if (!SDL_SetRenderVSync(sdl_renderer, vsync)) {
-		throw std::format("Renderer vsync error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
+		print::error("Renderer vsync error", SDL_GetError());
 	}
 
 	//SDL_SetRenderLogicalPresentation(camera::get(), 1000, 1000, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 	
 	viewport = pos.get_frect(win_res);
 
-	scene = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, 1000, 1000);
-	SDL_SetTextureScaleMode(scene, SDL_SCALEMODE_NEAREST);
+	scene = std::make_unique<texture>(sdl_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, 1000, 1000);
+	SDL_SetTextureScaleMode(scene->get(), SDL_SCALEMODE_NEAREST);
 
 	print::loaded("Renderer created!");
 }
@@ -191,7 +189,7 @@ camera::camera()
 camera::~camera()
 {
 	print::info("Destroying camera");
-	SDL_DestroyTexture(scene);
+	scene.reset();
 	SDL_DestroyRenderer(sdl_renderer);
 }
 
@@ -357,6 +355,13 @@ void camera::set_color(rgba color)
 	SDL_SetRenderDrawColor(sdl_renderer, color.color.r, color.color.g, color.color.b, color.color.a);
 }
 
+rgba camera::get_color()
+{
+	SDL_Color clr;
+	SDL_GetRenderDrawColor(sdl_renderer, &clr.r, &clr.g, &clr.b, &clr.a);
+	return rgba(clr);
+}
+
 void camera::present()
 {
 	SDL_RenderPresent(sdl_renderer);
@@ -389,9 +394,29 @@ vec2 camera::get_mouse_relative_pos(float m_x, float m_y)
 	return res;
 }
 
-SDL_Texture* camera::get_scene()
+texture* camera::get_scene()
 {
-	return scene;
+	return scene.get();
+}
+
+void camera::set_target(texture& txt)
+{
+	SDL_SetRenderTarget(sdl_renderer, txt.get());
+}
+
+void camera::set_target(texture* txt)
+{
+	SDL_SetRenderTarget(sdl_renderer, txt->get());
+}
+
+void camera::set_target(SDL_Texture* txt)
+{
+	SDL_SetRenderTarget(sdl_renderer, txt);
+}
+
+void camera::reset_target()
+{
+	SDL_SetRenderTarget(sdl_renderer, NULL);
 }
 
 void camera::draw_debug_text(std::string text, vec2 pos)

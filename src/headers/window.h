@@ -1,11 +1,15 @@
 #pragma once
+#include <string>
+
+#include "texture.h"
+
 #include "base_object.h"
-#include <game_object.h>
+#include "game_object.h"
 
 #include "with_default_value.h"
 
-#include <rgba.h>
-#include <string>
+#include "rgba.h"
+
 
 class window {
 private:
@@ -45,7 +49,7 @@ class camera {
 private:
     static SDL_Renderer* sdl_renderer;
     static vec2 pos, win_res;
-    static SDL_Texture* scene;
+    static std::unique_ptr<texture> scene;
     static game_object* connected_object;
     static SDL_FRect viewport; 
     static bool show_gui;
@@ -88,6 +92,9 @@ public:
     static void clear(rgba color);
     static void set_color(unsigned int color);
     static void set_color(rgba color);
+    
+    static rgba get_color();
+
     static void present();
 
     static void set_viewport(SDL_FRect viewport);
@@ -97,7 +104,12 @@ public:
 
     static vec2 get_mouse_relative_pos(float m_x, float m_y);
 
-    static SDL_Texture* get_scene();
+    static texture* get_scene();
+
+    static void set_target(texture& txt);
+    static void set_target(texture* txt);
+    static void set_target(SDL_Texture* txt);
+    static void reset_target();
 
     static void draw_debug_text(std::string text, vec2 pos);
     static void draw_debug_info();

@@ -62,7 +62,7 @@ void map::add_bullet(int dmg, vec2 pos, float speed, vec2 vel)
 game_object* map::get(vec2 pos)
 {
 	if (!loaded) {
-		throw std::format("Level is not loaded! Name: {}", this->name).c_str();
+		print::error("Level is not loaded!", this->name);
 	}
 
 	auto chunk_ = get_chunk(pos);
@@ -79,7 +79,7 @@ game_object* map::get(vec2 pos)
 game_object* map::get(size_t chunk_id, size_t id)
 {
 	if (!loaded) {
-		throw std::format("Level is not loaded! Name: {}", this->name).c_str();
+		print::error("Level is not loaded!", this->name);
 	}
 	return chunks.at(chunk_id)->objects.at(id).get();
 }
@@ -211,9 +211,10 @@ void map::draw()
 	auto scene = camera::get_scene();
 	if (scene and loaded) {
 		auto render = camera::get();
-		SDL_SetRenderTarget(render, scene);
 
-		draw_sky(this->weather, scene, sky, sky_texture, stars_texture, {255, 255, 255}, { 0, 162 , 232 }, { 94, 108, 127 }, { 39, 4, 77 }, time);
+		camera::set_target(scene);
+
+		draw_sky(this->weather, scene->get(), sky, sky_texture, stars_texture, {255, 255, 255}, {0, 162 , 232}, {94, 108, 127}, {39, 4, 77}, time);
 
 		camera::abjust_scale();
 
@@ -251,9 +252,9 @@ void map::draw()
 		}
 
 		
-		SDL_SetRenderTarget(render, NULL);
+		camera::reset_target();
 
-		SDL_RenderTexture(render, scene, NULL, NULL);
+		scene->draw(render, NULL);
 
 		light_system->set_ambient(get_light_by_time({255,255,255}, {0,0,0}, time));
 		light_system->draw();
@@ -280,7 +281,7 @@ void map::load_level_format(std::string path_)
 		using json = nlohmann::json;
 		std::ifstream file(path(path_));
 		if (!file.is_open()) {
-			throw std::format("Map open failed, path: {}", path_).c_str();
+			print::error("Map open failed, path", path_);
 		}
 		auto json_level = json::parse(file);
 		file.close();
@@ -553,7 +554,7 @@ std::string level_manager::get_level_name_from_file(std::string path_)
 	using json = nlohmann::json;
 	std::ifstream file(path(path_));
 	if (!file.is_open()) {
-		throw std::format("Failed to open map for name reading, path: {}", path_).c_str();
+		print::error("Failed to open map for name reading", path_);
 	}
 	auto json_level = json::parse(file);
 	file.close();
@@ -622,7 +623,7 @@ SDL_AppResult level_manager::input(const SDL_Event* event)
 map* level_manager::get()
 {
 	if (current_level.empty()) {
-		throw std::format("Current level is NULL").c_str();
+		print::error("Current level is NULL");
 	}
 
 	return levels.at(current_level).get();

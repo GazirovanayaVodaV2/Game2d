@@ -5,13 +5,16 @@
 #include "light_system.h"
 #include "GuiLib/GuiLib.h"
 
+#define DISABLE_INVENTORY_LIGHTS
+
 namespace inventory {
 	using item = interactive_object_base;
 	class inventory {
 	private:
 		gui::context inv_gui;
+#ifndef DISABLE_INVENTORY_LIGHTS
 		light::system lights;
-
+#endif
 		int w = 5, h = 5;
 		const int cell_margin = 10;
 		const int cell_size = 86;

@@ -14,21 +14,14 @@ void game_object::draw_selection()
 		dest_rect.w += 4;
 		dest_rect.h += 4;
 
-		SDL_Color buffered_color;
-		SDL_GetRenderDrawColor(render,
-			&buffered_color.r,
-			&buffered_color.g,
-			&buffered_color.b,
-			&buffered_color.a
-		);
+
+		auto buffered_color = camera::get_color();
 
 		SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+		camera::set_color(0xffffffff);
+
 		SDL_RenderRect(render, &dest_rect);
-		SDL_SetRenderDrawColor(render,
-			buffered_color.r,
-			buffered_color.g,
-			buffered_color.b,
-			buffered_color.a);
+		camera::set_color(buffered_color);
 	}
 }
 
@@ -45,21 +38,12 @@ void game_object::draw_debug()
 		dest_rect.w += 4;
 		dest_rect.h += 4;
 
-		SDL_Color buffered_color;
-		SDL_GetRenderDrawColor(render,
-			&buffered_color.r,
-			&buffered_color.g,
-			&buffered_color.b,
-			&buffered_color.a
-		);
+		auto buffered_color = camera::get_color();
 
-		SDL_SetRenderDrawColor(render, 255, 0, 0, 127);
+		camera::set_color({ 255, 0, 0, 127 });
 		SDL_RenderRect(render, &dest_rect);
-		SDL_SetRenderDrawColor(render,
-			buffered_color.r,
-			buffered_color.g,
-			buffered_color.b,
-			buffered_color.a);
+
+		camera::set_color(buffered_color);
 	}
 }
 
