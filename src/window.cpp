@@ -67,6 +67,10 @@ SDL_AppResult window::input(const SDL_Event* event)
 
 		(*size).x = convert::i2f(w);
 		(*size).y = convert::i2f(h);
+
+		//camera::set_size(size);
+
+		//SDL_SetRenderLogicalPresentation(camera::get(), w, h, SDL_LOGICAL_PRESENTATION_OVERSCAN);
 	}
 
 	if (event->type == SDL_EVENT_QUIT) {
@@ -145,9 +149,11 @@ int window::get_fps()
 
 SDL_Renderer* camera::sdl_renderer = nullptr;
 vec2 camera::pos = vec2(0,0);
-with_default_value<vec2> camera::size = vec2(1366, 768);
+vec2 camera::win_res = vec2(0, 0);
 game_object* camera::connected_object = nullptr;
 SDL_FRect camera::viewport = { 0 };
+
+SDL_Texture* camera::scene = nullptr;
 
 bool camera::show_gui = DEBUG_VAL(true, false);
 std::string camera::debug_text = "";
@@ -172,32 +178,37 @@ camera::camera()
 		throw std::format("Renderer vsync error: {} Code: {}", SDL_GetError(), static_cast<int>(SDL_APP_FAILURE));
 	}
 
-	this->size = get_size();
+	//SDL_SetRenderLogicalPresentation(camera::get(), 1000, 1000, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 	
-	viewport = pos.get_frect(size);
+	viewport = pos.get_frect(win_res);
+
+	scene = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, 1000, 1000);
+	SDL_SetTextureScaleMode(scene, SDL_SCALEMODE_NEAREST);
+
 	print::loaded("Renderer created!");
 }
 
 camera::~camera()
 {
 	print::info("Destroying camera");
+	SDL_DestroyTexture(scene);
 	SDL_DestroyRenderer(sdl_renderer);
 }
 
 SDL_AppResult camera::update(float delta_time)
 {
-	auto win_resolution = window::get_instance().get_size();
-	set_size(win_resolution);
-	set_scale(win_resolution);
+	win_res = window::get_instance().get_size();
+	//set_size(win_resolution);
+	//set_scale(win_resolution);
 
 	if (connected_object) {
-		auto new_pos = connected_object->get_pos() + (connected_object->get_size() / 2.0f)
-				    	- (size.get_default() / 2.0f);
+		auto obj_center = (connected_object->get_size() / 2.0f);
+		auto new_pos = connected_object->get_pos() + vec2(obj_center.x / get_ratio(), obj_center.y) - vec2(500.0f * get_ratio(), 500.0f);
 		new_pos = vec2(-new_pos.x, -new_pos.y);
 		set_pos(new_pos);
 	}
 
-	viewport = pos.get_frect(size);
+	viewport = pos.get_frect(win_res);
 
     return SDL_APP_SUCCESS;
 }
@@ -257,20 +268,24 @@ void camera::move_on(vec2 velocity_)
 	set_pos(get_pos() + velocity_);
 }
 
-void camera::set_size(vec2 size_)
-{
-	size = size_;
-	auto viewport_ = vec2().get_rect(size);
-
-	SDL_SetRenderViewport(sdl_renderer, &viewport_);
-}
-
 void camera::set_scale(vec2 size_)
 {
-	SDL_SetRenderScale(sdl_renderer, size_.x / size.get_default().x, 
-		size_.y / size.get_default().y);
+	SDL_SetRenderScale(sdl_renderer, win_res.x / size_.x,
+		win_res.y / size_.y);
+}
 
-	viewport = pos.get_frect(size);
+void camera::abjust_scale()
+{
+	//SDL_SetRenderScale(sdl_renderer, win_res.x / size.x,
+	//	win_res.y / (*size).y);
+
+	SDL_SetRenderScale(sdl_renderer, 1.0f / get_ratio(),
+		1.0f);
+}
+
+void camera::reset_scale()
+{
+	SDL_SetRenderScale(sdl_renderer, 1, 1);
 }
 
 void camera::rotate(double angle)
@@ -286,12 +301,6 @@ vec2 camera::get_scale()
 	return vec2(w,h);
 }
 
-vec2 camera::get_size()
-{
-	size = window::get_instance().get_size();
-	return size;
-}
-
 vec2 camera::get_pos()
 {
 	return pos;
@@ -299,8 +308,7 @@ vec2 camera::get_pos()
 
 float camera::get_ratio()
 {
-	auto size = get_size();
-	return size.x / size.y;
+	return win_res.x / win_res.y;
 }
 
 OBJECT::TYPE camera::get_type()
@@ -332,9 +340,9 @@ void camera::clear(rgba color)
 {
 	set_color(color);
 	
-	reset_viewport();
+	//reset_viewport();
 	SDL_RenderClear(sdl_renderer);
-	restore_viewport();
+	//restore_viewport();
 
 	set_color(colors::WHITE);
 }
@@ -357,26 +365,8 @@ void camera::present()
 void camera::set_viewport(SDL_FRect viewport)
 {
 	//pos = ;
-	size = { viewport.w, viewport.h };
-
-	viewport = { viewport.x, viewport.y,viewport.w, viewport.h  };
-}
-
-void camera::reset_viewport()
-{
-	SDL_SetRenderViewport(sdl_renderer, NULL);
-	SDL_SetRenderScale(sdl_renderer, 1.0f, 1.0f);
-
-	viewport = pos.get_frect(size);
-}
-
-void camera::restore_viewport()
-{
-	auto size_ = get_size();
-	set_size(size_);
-	set_scale(size_);
-
-	viewport = pos.get_frect(size);
+	//size = { viewport.w, viewport.h };
+	//viewport = { viewport.x, viewport.y,viewport.w, viewport.h  };
 }
 
 SDL_FRect camera::get_viewport()
@@ -397,6 +387,11 @@ vec2 camera::get_mouse_relative_pos(float m_x, float m_y)
 	//std::cout << res.x << " " << res.y << std::endl;
 
 	return res;
+}
+
+SDL_Texture* camera::get_scene()
+{
+	return scene;
 }
 
 void camera::draw_debug_text(std::string text, vec2 pos)

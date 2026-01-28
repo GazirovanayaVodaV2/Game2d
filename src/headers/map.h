@@ -39,7 +39,6 @@ private:
 
     atlas* atl;
 
-    SDL_Texture* scene = nullptr;
     std::unique_ptr<player> pl;
     std::unique_ptr<light::system> light_system;
 

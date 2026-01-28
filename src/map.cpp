@@ -42,7 +42,7 @@ map::~map()
 {
 	unload();
 
-	SDL_DestroyTexture(scene);
+	
 
 	delete NULL_OBJECT_PTR;
 }
@@ -125,22 +125,6 @@ map::chunk* map::get_chunk_or_null(size_t id)
 void map::rebuild_chunks()
 {
 	print::info("Rebuilding chunks");
-	/*size_t i = 0;
-	for (auto& chunk_ : chunks) {
-		for (auto& object : chunk_->objects) {
-			if (object) {
-				auto object_id = get_chunk_id(object->get_pos());
-				if (object_id != i) {
-					
-					
-					chunk_->objects.erase(chunk_->objects.begin() + i);
-				}
-			}
-		}
-
-		i++;
-	}*/
-
 	for (size_t i = 0; i < chunks.size(); i++) {
 		auto& chunk_ = chunks[i];
 		
@@ -208,51 +192,36 @@ static void draw_sky(map::weather_t weather_t,
 	res_sky_b_color = get_light_by_time(day_b, night_b, time);;
 	auto stars_alpha = get_light_by_time( {0,0,0,0}, { 255,255,255,255 }, time).color.a;
 
-	camera::set_color(res_sky_t_color);
-	SDL_RenderClear(camera::get());
+	camera::clear(res_sky_t_color);
 
-	auto viewport = camera::get_viewport();
-	viewport.x = 0;
-	viewport.y = 0;
 	camera::set_color(0xffffff);
-	SDL_SetRenderScale(camera::get(), 1000.0f / viewport.w, 1000.0f / viewport.h);
 
-	SDL_FRect dstrect = { 0,0,1366,768 };
+	camera::abjust_scale();
 
-	sky->draw(camera::get(), &dstrect);
+	sky->draw(camera::get(), NULL);
 	
 	sky_texture->set_color(res_sky_b_color);
-	sky_texture->draw(camera::get(), &dstrect);
+	sky_texture->draw(camera::get(), NULL);
 
-	//SDL_SetRenderTarget(camera::get(), NULL);
-//	SDL_SetTextureAlphaMod(stars, stars_alpha);
-	//SDL_RenderTexture(camera::get(), stars, NULL, &dstrect);
-	//SDL_SetRenderTarget(camera::get(), scene);
+	camera::reset_scale();
 }
  
 void map::draw()
 {
+	auto scene = camera::get_scene();
 	if (scene and loaded) {
-		auto viewport = camera::get_viewport();
 		auto render = camera::get();
-		auto res_viewport = viewport;
-		res_viewport.x = 0;
-		res_viewport.y = 0;
-
 		SDL_SetRenderTarget(render, scene);
 
 		draw_sky(this->weather, scene, sky, sky_texture, stars_texture, {255, 255, 255}, { 0, 162 , 232 }, { 94, 108, 127 }, { 39, 4, 77 }, time);
+
+		camera::abjust_scale();
 
 		// Draw stars before objects but with ADD blending so they're visible
 		auto stars_alpha = get_light_by_time( {0,0,0,0}, { 255,255,255,255 }, time).color.a;
 		stars_texture->set_alpha(stars_alpha);
 
-		auto viewport_render = camera::get_viewport();
-		viewport_render.x = 0;
-		viewport_render.y = 0;
-		SDL_SetRenderScale(render, 1000.0f / viewport_render.w, 1000.0f / viewport_render.h);
-		SDL_FRect dstrect = { 0,0,1366,768 };
-		stars_texture->draw(render, &dstrect);
+		stars_texture->draw(render, NULL);
 
 		pl->draw();
 		for (auto& chunk_ : chunks) {
@@ -269,13 +238,6 @@ void map::draw()
 			}
 		}
 
-		SDL_SetRenderScale(render, 1.0f, 1.0f);
-		SDL_SetRenderTarget(render, NULL);
-
-		SDL_RenderTexture(render, scene, NULL, &res_viewport);
-
-		light_system->set_ambient(get_light_by_time({255,255,255}, {0,0,0}, time));
-		light_system->draw();
 		if (draw_debug_info) {
 			pl->draw_debug();
 
@@ -287,6 +249,15 @@ void map::draw()
 
 			}
 		}
+
+		
+		SDL_SetRenderTarget(render, NULL);
+
+		SDL_RenderTexture(render, scene, NULL, NULL);
+
+		light_system->set_ambient(get_light_by_time({255,255,255}, {0,0,0}, time));
+		light_system->draw();
+		camera::reset_scale();
 	}
 }
 
@@ -302,10 +273,6 @@ void map::load_level_format(std::string path_)
 	if (!loaded) {
 		print::loading("map");
 		print::increase_level();
-
-		scene = SDL_CreateTexture(camera::get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, 1000, 1000);
-
-		SDL_SetTextureScaleMode(scene, SDL_SCALEMODE_NEAREST);
 
 		pl = std::make_unique<player>(camera::get(), "entity\\player\\animations.json");
 		light_system = std::make_unique<light::system>();
@@ -471,7 +438,6 @@ void map::unload()
 {
 	if (loaded) {
 		print::info("Deleting map");
-		SDL_DestroyTexture(scene);
 
 		chunks.clear();
 		chunks.shrink_to_fit();
@@ -489,39 +455,6 @@ void map::unload()
 SDL_AppResult map::update(float delta_time)
 {
 	if (loaded) {
-		/*for (auto& object : objects) {
-			//pl->check_collision(object);
-			if (object->exist) {
-				pl->check_collision(object.get());
-				auto app_res = object->update(delta_time);
-				switch (app_res)
-				{
-				case SDL_APP_CONTINUE:
-					break;
-				case SDL_APP_SUCCESS: return SDL_APP_SUCCESS;
-					break;
-				case SDL_APP_FAILURE: return SDL_APP_FAILURE;
-					break;
-				default:
-					break;
-				}
-			}
-		}*/
-
-		
-		/*for (auto obj1 = objects.begin(); obj1 < objects.end(); obj1++) {
-			pl->check_collision((*obj1).get());
-			(*obj1)->update(delta_time);
-
-			for (auto obj2 = objects.begin(); obj2 < obj1; obj2++) {
-				(*obj1)->check_collision((*obj2).get());
-			}
-
-			for (auto obj2 = obj1 + 1; obj2 < objects.end(); obj2++) {
-				(*obj1)->check_collision((*obj2).get());
-			}
-		}*/
-
 		for (auto& chunk_ : chunks) {
 			for (auto& obj1 : chunk_->objects) {
 				auto current_chunk = get_chunk_or_null(obj1->get_pos());
@@ -539,15 +472,13 @@ SDL_AppResult map::update(float delta_time)
 		}
 
 		for (auto& chunk_ : chunks) {
-
-				auto& objects = chunk_->objects;
-				objects.erase(
-					std::remove_if(objects.begin(), objects.end(),
-						[](const std::unique_ptr<game_object>& obj) {
-							return !obj->exist;
-						}),
-					objects.end());
-			
+			auto& objects = chunk_->objects;
+			objects.erase(
+				std::remove_if(objects.begin(), objects.end(),
+					[](const std::unique_ptr<game_object>& obj) {
+						return !obj->exist;
+					}),
+				objects.end());
 		}
 
 		for (auto& new_obj : new_obj_buffer) {

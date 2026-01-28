@@ -77,7 +77,7 @@ namespace gui {
 		std::map<std::string, page*> pages;
 		SDL_Texture* target = nullptr;
 	public:
-		context() = default;
+		context() = delete;
 		context(SDL_Renderer* renderer);
 		~context();
 

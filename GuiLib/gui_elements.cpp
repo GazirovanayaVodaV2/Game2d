@@ -101,10 +101,10 @@ void gui::button_base::input(const SDL_Event* event) {
 		SDL_GetMouseState(&x, &y);
 
 		//Shitty code
-		if (viewport) {
+		/*if (viewport) {
 			x /= (viewport->w / 1366);
 			y /= (viewport->h / 768);
-		}
+		}*/
 
 		mouse_hover = (((x > box.x) and (x < (box.x + box.w))) and
 			((y > box.y) and (y < (box.y + box.h))));

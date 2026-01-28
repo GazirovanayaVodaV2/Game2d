@@ -15,6 +15,7 @@
 #include "raycast.h"
 
 game::game()
+	: Gui(camera::get())
 {
 	print::loading("Starting game");
 	print::increase_level();
@@ -136,10 +137,11 @@ SDL_AppResult game::cycle()
 
 	/* Draw UI */
 
-	camera::reset_viewport();
+//	camera::reset_viewport();
 	camera::draw_debug_info();
 
-	camera::restore_viewport();
+//	camera::restore_viewport();
+	camera::reset_scale();
 	bench::get("game_draw").stop();
 
 	bench::get("gui_draw").start();
@@ -169,7 +171,7 @@ SDL_AppResult game::cycle()
 
 	camera::present();
 
-	camera::set_viewport({ 0,0, window::get_size().x, window::get_size().y});
+	//camera::set_viewport({ 0,0, window::get_size().x, window::get_size().y});
 
 	bench::get("game_update").start();
 	if (!pause and !in_inventory) {
@@ -207,14 +209,7 @@ SDL_AppResult game::input(const SDL_Event* event)
 
 	camera::input(event);
 	auto res = window::input(event);
-	if (event->type == SDL_EVENT_WINDOW_RESIZED) {
-
-		auto win_size = window::get_size();
-
-		SDL_SetRenderLogicalPresentation(camera::get(), 
-			convert::f2i(win_size.x), convert::f2i(win_size.y),
-			SDL_LOGICAL_PRESENTATION_LETTERBOX);
-	} else if (event->type == SDL_EVENT_KEY_DOWN) {
+	if (event->type == SDL_EVENT_KEY_DOWN) {
 		if (event->key.key == SDLK_F1) {
 			level_manager::load("first");
 			camera::connect_object(level_manager::get()->get_player());

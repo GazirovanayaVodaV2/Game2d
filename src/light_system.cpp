@@ -209,7 +209,8 @@ void light::system::draw()
 	auto render = camera::get();
 	SDL_SetRenderTarget(render, ambient->get());
 
-	SDL_SetRenderScale(render, 1000.0f / viewport.w, 1000.0f / viewport.h);
+	//SDL_SetRenderScale(render, 1000.0f / viewport.w, 1000.0f / viewport.h);
+	camera::abjust_scale();
 
 	SDL_SetRenderDrawColor(render, ambient_color.color.r, ambient_color.color.g, ambient_color.color.b, 255);
 	SDL_RenderFillRect(render, NULL);
@@ -218,7 +219,8 @@ void light::system::draw()
 		light->draw();
 	}
 
-	SDL_SetRenderScale(render, 1.0f, 1.0f);
+	//SDL_SetRenderScale(render, 1.0f, 1.0f);
+	camera::reset_scale();
 	SDL_SetRenderTarget(render, NULL);
 	
 	SDL_FRect dst_rect = viewport;

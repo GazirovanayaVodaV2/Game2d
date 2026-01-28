@@ -21,6 +21,7 @@ void inventory::inventory::try_place_selected_item(int x, int y)
 }
 
 inventory::inventory::inventory(entity* parent)
+	: inv_gui(camera::get())
 {
 	this->parent = parent;
 	resize(w, h);

@@ -150,22 +150,41 @@ void gui::context::update(float delta_time)
 
 void gui::context::draw(SDL_Renderer* render)
 {
+
 	SDL_SetRenderTarget(render, target);
+
+	SDL_SetRenderDrawColor(render, 0, 0, 0, 0);
+	SDL_RenderClear(render);
+	SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+
+	if (SDL_GetRenderTarget(render) != target) {
+		print::warning("Failed to set target in GUI!");
+	}
+
 	for (auto& [name, page] : pages) {
 		page->draw(render);
 	}
 
 	SDL_SetRenderTarget(render, NULL);
 
-	SDL_Rect rect;
-	SDL_FRect dest;
-	SDL_GetRenderViewport(render, &rect);
+	SDL_Rect viewport;
+	SDL_GetRenderViewport(render, &viewport);
 
-	dest = {
-		(float)rect.x,
-		(float)rect.y,
-		(float)rect.w,
-		(float)rect.h
+	/*auto delta_w = (viewport.w - 1000.0f) / 2.0f;
+	auto delta_h = (viewport.h - 1000.0f) / 2.0f;
+
+	SDL_FRect dest = {
+		delta_w,
+		delta_h,
+		viewport.w / (viewport.w / 1000.0f),
+		viewport.h / (viewport.h / 1000.0f)
+	};*/
+
+	SDL_FRect dest = {
+	0,
+	0,
+	viewport.w / (viewport.w / 1000.0f),
+	viewport.h / (viewport.h / 1000.0f)
 	};
 
 	SDL_RenderTexture(render, target, NULL, &dest);

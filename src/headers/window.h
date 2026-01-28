@@ -44,10 +44,10 @@ public:
 class camera {
 private:
     static SDL_Renderer* sdl_renderer;
-    static vec2 pos;
-    static with_default_value<vec2> size;
+    static vec2 pos, win_res;
+    static SDL_Texture* scene;
     static game_object* connected_object;
-    static SDL_FRect viewport;
+    static SDL_FRect viewport; 
     static bool show_gui;
 
     camera();
@@ -66,12 +66,13 @@ public:
     static void set_pos(vec2 pos_);
     static void move_on(vec2 velocity_);
 
-    static void set_size(vec2 size_);
     static void set_scale(vec2 size_);
+
+    static void abjust_scale();
+    static void reset_scale();
 
     static void rotate(double angle_);
 
-    static vec2 get_size();
     static vec2 get_pos();
     static vec2 get_scale();
 
@@ -90,12 +91,13 @@ public:
     static void present();
 
     static void set_viewport(SDL_FRect viewport);
-    static void reset_viewport();
-    static void restore_viewport();
+
     static SDL_FRect get_viewport();
     static SDL_FRect* get_viewport_ptr();
 
     static vec2 get_mouse_relative_pos(float m_x, float m_y);
+
+    static SDL_Texture* get_scene();
 
     static void draw_debug_text(std::string text, vec2 pos);
     static void draw_debug_info();
