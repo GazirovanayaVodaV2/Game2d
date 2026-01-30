@@ -242,7 +242,7 @@ SDL_AppResult game::input(const SDL_Event* event)
 		if (!level_manager::is_level_empty()) {
 			auto obj = level_manager::get()->get(rel_pos);
 
-			if (obj->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT or is_subtype_of(obj->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
+			if (auto* int_obj = dynamic_cast<interactive_object_base*>(obj)) {
 				if (level_manager::is_any_level_loaded()) {
 					auto& inv = level_manager::get()->get_player()->get_inventory();
 					inv.try_add_item((inventory::item*)(obj));

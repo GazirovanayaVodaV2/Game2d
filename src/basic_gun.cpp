@@ -19,8 +19,7 @@ basic_gun::basic_gun(texture_from_atlas txt, int dmg, SHOOT_MODE smode, int mag_
 
 void basic_gun::reload(entity* user)
 {
-	if (user->get_type() == OBJECT::TYPE::PLAYER) {
-		auto pl = (player*)user;
+	if (auto* pl = dynamic_cast<player*>(user)) {
 		auto& inv = pl->get_inventory();
 
 		auto it = inv.find_item(OBJECT::TYPE::AMMO);

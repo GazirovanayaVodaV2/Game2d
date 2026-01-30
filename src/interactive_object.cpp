@@ -13,8 +13,10 @@ bool interactive_object_base::check_collision(game_object* object)
 		if (collided) {
 			collided_objects.push_back(object);
 
-			entity_nearby = (object->get_type() == OBJECT::TYPE::ENTITY) ||
-				(is_subtype_of(object->get_type(), OBJECT::TYPE::ENTITY));
+			//entity_nearby = (object->get_type() == OBJECT::TYPE::ENTITY) ||
+			//	(is_subtype_of(object->get_type(), OBJECT::TYPE::ENTITY));
+
+			entity_nearby = (bool)dynamic_cast<entity*>(object);
 
 			if (entity_nearby)
 				interact(static_cast<entity*>(object));

@@ -180,10 +180,8 @@ SDL_AppResult player::input(const SDL_Event* event)
 			case SDLK_F: {
 				auto it = invent.get_item_in_hands();
 				if (it) {
-					switch (it->get_type()) {
-						case (OBJECT::TYPE::BASIC_GUN): {
-							((basic_gun*)it)->reload(this);
-						} break;
+					if (auto* gun_ptr = dynamic_cast<basic_gun*>(it)) {
+						gun_ptr->reload(this);
 					}
 				}
 			} break;
@@ -254,8 +252,7 @@ void player::draw()
 }
 bool player::check_collision(game_object* object)
 {
-	if ((object->get_type() != OBJECT::TYPE::ENTITY)
-		and not is_subtype_of(object->get_type(), OBJECT::TYPE::ENTITY)) {
+	if (!dynamic_cast<entity*>(object)) {
 		if (object->check_collision(this)) {
 			collided_objects.push_back(object);
 		}

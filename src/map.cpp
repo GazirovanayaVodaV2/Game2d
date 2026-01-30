@@ -233,10 +233,9 @@ void map::draw()
 		pl->draw();
 		for (auto& chunk_ : chunks) {
 			for (auto& object : chunk_->objects) {
-				if (object->get_type() == OBJECT::TYPE::INTERACTIVE_OBJECT
-					|| is_subtype_of(object->get_type(), OBJECT::TYPE::INTERACTIVE_OBJECT)) {
-					if (!static_cast<interactive_object_base*>(object.get())->in_inventory()) {
-						object->draw();
+				if (auto* int_obj = dynamic_cast<interactive_object_base*>(object.get())) {
+					if (!int_obj->in_inventory()) {
+						int_obj->draw();
 					}
 				}
 				else {
