@@ -47,16 +47,18 @@ interactive_object_base& interactive_object_base::add_interaction(std::function<
 	return *this;
 }
 
-void interactive_object_base::use(entity* user)
+bool interactive_object_base::use(entity* user)
 {
 	if (exist) {
 		auto us_center = user->get_pos() + (user->get_size() / 2);
 		auto center = pos + (size / 2);
 		auto distance = (us_center - center).len();
 		if ((distance < use_dist) or (in_inventory())) {
-			use_impl(user);
+			return use_impl(user);
 		}
 	}
+
+	return false;
 }
 
 void interactive_object_base::pick_up()

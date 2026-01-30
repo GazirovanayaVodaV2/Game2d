@@ -113,8 +113,9 @@ void inventory::inventory::try_use_item()
 			item_in_hands_id = cursor_x + cursor_y * w;
 		}
 		else {
-			it->use(parent);
-			remove_item(cursor_x, cursor_y);
+			if (it->use(parent)) {
+				remove_item(cursor_x, cursor_y);
+			}
 		}
 
 		update(1.0f);
@@ -131,13 +132,43 @@ inventory::item* inventory::inventory::get_item_in_hands()
 	return item_in_hands;
 }
 
-void inventory::inventory::remove_item(int x, int y)
+inventory::item* inventory::inventory::find_item(OBJECT::TYPE type)
 {
-	int i = x + y * w;
+	auto res = std::find_if(items.begin(), items.end(), [&](const auto& item) {
+		if (item) {
+			return type == item->get_type();
+		}
+		return false;
+		});
+
+	if (res == items.end()) {
+		return nullptr;
+	}
+	return *res;
+}
+
+void inventory::inventory::remove_item(size_t i)
+{
 	items[i] = nullptr;
 
 	if (selected_item_id == i) {
 		item_in_hands = nullptr;
+	}
+}
+
+void inventory::inventory::remove_item(int x, int y)
+{
+	int i = x + y * w;
+	remove_item(i);
+}
+
+void inventory::inventory::remove_item(OBJECT::TYPE type)
+{
+	for (size_t i = 0; i < items.size(); i++) {
+		if (items[i]->get_type() == type) {
+			remove_item(i);
+			return;
+		}
 	}
 }
 
@@ -171,11 +202,14 @@ void inventory::inventory::draw()
 		}
 
 		if (item_in_hands_id != -1) {
+			auto saved_blend_mode = camera::get_blend_mode();
+			camera::set_blend_mode(SDL_BLENDMODE_BLEND);
 			camera::set_color({ 31, 163, 70, 127 });
 			SDL_FRect item_in_hands_rect = { (item_in_hands_id % w) * (cell_size + cell_margin) + cell_margin,
 							(item_in_hands_id / w) * (cell_size + cell_margin) + cell_margin,
 							cell_size, cell_size };
 			SDL_RenderFillRect(camera::get(), &item_in_hands_rect);
+			camera::set_blend_mode(saved_blend_mode);
 		}
 
 		camera::set_color(render_color);

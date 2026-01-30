@@ -93,6 +93,9 @@ public:
     static void set_color(unsigned int color);
     static void set_color(rgba color);
     
+    static void set_blend_mode(SDL_BlendMode mode);
+    static SDL_BlendMode get_blend_mode();
+
     static rgba get_color();
 
     static void present();

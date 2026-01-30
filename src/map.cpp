@@ -15,6 +15,10 @@
 #include "dummy.h"
 #include "projectile.h"
 #include "medkit.h"
+#include "basic_gun.h"
+#include "ammo.h"
+
+#define FIND_FIELD(json, type, name) if (json.find(#name) == json.end()) {print::warning("Error at line", __LINE__); print::error("Failed to find JSON field", #name);} auto name = json.at(#name).get<type>()
 
 NLOHMANN_JSON_SERIALIZE_ENUM(map::weather_t, {
 			{map::weather_t::error, nullptr},
@@ -22,6 +26,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM(map::weather_t, {
 			{map::weather_t::rain, "rain"},
 			{map::weather_t::snow, "snow"},
 			{map::weather_t::snow_storm, "snow_storm"},
+	});
+
+NLOHMANN_JSON_SERIALIZE_ENUM(basic_gun::SHOOT_MODE, {
+			{basic_gun::SHOOT_MODE::ERROR, nullptr},
+			{basic_gun::SHOOT_MODE::SEMI_AUTO, "semi-auto"},
+			{basic_gun::SHOOT_MODE::AUTO, "auto"},
 	});
 
 map::map(atlas* atl)
@@ -186,15 +196,12 @@ static void draw_sky(map::weather_t weather_t,
 	rgba day_b, rgba day_t, rgba night_b, rgba night_t, float time)
 {
 
-	rgba res_sky_t_color, res_sky_b_color; 
+	rgba res_sky_t_color = get_light_by_time(day_t, night_t, time), 
+		res_sky_b_color = get_light_by_time(day_b, night_b, time);
 
-	res_sky_t_color = get_light_by_time(day_t, night_t, time);
-	res_sky_b_color = get_light_by_time(day_b, night_b, time);;
 	auto stars_alpha = get_light_by_time( {0,0,0,0}, { 255,255,255,255 }, time).color.a;
 
 	camera::clear(res_sky_t_color);
-
-	camera::set_color(0xffffff);
 
 	camera::abjust_scale();
 
@@ -218,7 +225,6 @@ void map::draw()
 
 		camera::abjust_scale();
 
-		// Draw stars before objects but with ADD blending so they're visible
 		auto stars_alpha = get_light_by_time( {0,0,0,0}, { 255,255,255,255 }, time).color.a;
 		stars_texture->set_alpha(stars_alpha);
 
@@ -407,6 +413,22 @@ void map::load_level_format(std::string path_)
 						object->set_pos(pos);
 					}
 
+					else if (type == keyword_to_string(basic_gun)) {
+						FIND_FIELD(block, int, damage);
+						FIND_FIELD(block, basic_gun::SHOOT_MODE, mode);
+						FIND_FIELD(block, int, max_mag);
+
+						object = new basic_gun(atl->get(keyword_to_string(basic_gun)), damage, mode, max_mag);
+						object->set_pos(pos);
+					}
+					else if (type == keyword_to_string(ammo)) {
+						FIND_FIELD(block, int, ammo_type);
+						FIND_FIELD(block, int, count);
+
+						object = new ammo(atl->get(keyword_to_string(ammo)), ammo_type, count);
+
+						object->set_pos(pos);
+					}
 					add(object);
 				}
 			}

@@ -2,10 +2,11 @@
 
 #include "window.h"
 
-void medkit::use_impl(entity* user)
+bool medkit::use_impl(entity* user)
 {
 	user->heal(20);
 	exist = false;
+	return true;
 }
 
 medkit::medkit(texture_from_atlas txt)

@@ -34,7 +34,9 @@ namespace OBJECT {
 		MAP_INTERACTION,
 		LEVEL_SWITCHER,
 		PROJECTILE,
-		MEDKIT
+		MEDKIT,
+		BASIC_GUN,
+		AMMO,
 	};
 };
 
@@ -46,7 +48,7 @@ inline bool is_subtype_of(OBJECT::TYPE type, OBJECT::TYPE base_type) {
             return type == OBJECT::TYPE::PLAYER || 
                    type == OBJECT::TYPE::DUMMY_ENTITY;
         case OBJECT::TYPE::INTERACTIVE_OBJECT:
-            return type == OBJECT::TYPE::MEDKIT ||
+            return type == OBJECT::TYPE::MEDKIT || type == OBJECT::TYPE::AMMO || type == OBJECT::TYPE::BASIC_GUN ||
 				   type == OBJECT::TYPE::PROJECTILE;
         default:
             return false;

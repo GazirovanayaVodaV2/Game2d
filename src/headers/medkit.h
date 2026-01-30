@@ -5,7 +5,7 @@ class medkit : public interactive_object_base {
 protected:
 	texture_from_atlas txt;
 	void interaction_impl(entity* ent) override {};
-	void use_impl(entity* user) override;
+	bool use_impl(entity* user) override;
 public:
 	medkit(texture_from_atlas txt);
 	~medkit();

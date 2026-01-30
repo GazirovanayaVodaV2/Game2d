@@ -336,13 +336,12 @@ void camera::clear(unsigned int color)
 
 void camera::clear(rgba color)
 {
+	auto buffer_color = get_color();
 	set_color(color);
-	
-	//reset_viewport();
-	SDL_RenderClear(sdl_renderer);
-	//restore_viewport();
 
-	set_color(colors::WHITE);
+	SDL_RenderClear(sdl_renderer);
+
+	set_color(buffer_color);
 }
 
 void camera::set_color(unsigned int color)
@@ -353,6 +352,17 @@ void camera::set_color(unsigned int color)
 void camera::set_color(rgba color)
 {
 	SDL_SetRenderDrawColor(sdl_renderer, color.color.r, color.color.g, color.color.b, color.color.a);
+}
+
+void camera::set_blend_mode(SDL_BlendMode mode)
+{
+	SDL_SetRenderDrawBlendMode(sdl_renderer, mode);
+}
+
+SDL_BlendMode camera::get_blend_mode() {
+	SDL_BlendMode res;
+	SDL_GetRenderDrawBlendMode(sdl_renderer, &res);
+	return res;
 }
 
 rgba camera::get_color()

@@ -40,6 +40,19 @@
         "6": {
             "type":"medkit",
             "sprite_id":"medkit"
+        },
+        "7": {
+            "type":"basic_gun",
+            "sprite_id":"basic_gun",
+            "damage": 10,
+            "mode":"semi-auto",
+            "max_mag":8
+        },
+        "8": {
+            "type":"ammo",
+            "sprite_id":"basic_ammo",
+            "ammo_type": 762,
+            "count": 20
         }
     },
 
@@ -73,8 +86,8 @@
         "3": [
             0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,
-            0,0,6,6,6,0,0,0,0,0,
-            0,0,6,6,6,5,0,0,0,0,
+            0,0,6,6,6,0,0,8,0,0,
+            0,0,6,6,6,5,0,7,0,0,
             0,0,0,0,0,0,0,0,0,0
         ],
         "level_switchers" : [

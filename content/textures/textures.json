@@ -1,8 +1,9 @@
 {
     "brick": "brick.png",
-    "mitas": "text2.png",
     "lamp":"lamp.png",
     "dummy":"dummy.png",
     "bullet":"bullet.png",
-    "medkit":"medkit.png"
+    "medkit":"medkit.png",
+    "basic_gun":"basic_gun.png",
+    "ammo":"ammo.png"
 }

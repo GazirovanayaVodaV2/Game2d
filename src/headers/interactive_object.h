@@ -9,7 +9,6 @@
 #include "texture.h"
 #include "entity.h"
 
-
 class interactive_object_base : public game_object {
 protected:
 	bool entity_nearby = false;
@@ -20,7 +19,7 @@ protected:
 	void interact(entity* ent);
 	std::vector<std::function<void(entity*)>> custom_interactions;
 
-	virtual void use_impl(entity* user) = 0;
+	virtual bool use_impl(entity* user) = 0;
 public:
 	interactive_object_base() = default;
 
@@ -31,7 +30,7 @@ public:
 
 	interactive_object_base& add_interaction(std::function<void(entity*)> inter);
 
-	void use(entity* user);
+	bool use(entity* user);
 
 	SDL_AppResult input(const SDL_Event* ev) override { return SDL_APP_CONTINUE; };
 

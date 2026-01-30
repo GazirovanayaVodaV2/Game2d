@@ -14,7 +14,7 @@ projectile::projectile(texture_from_atlas txt, vec2 vel, int damage)
 	this->txt = txt;
 	this->vel = vel;
 	this->damage = damage;
-	this->size = txt->get_size() / 4;
+	this->size = txt->get_size() / bullet_size;
 }
 
 projectile::~projectile()
@@ -50,5 +50,7 @@ bool projectile::check_collision(game_object* object)
 
 void projectile::draw()
 {
-	txt->draw(camera::get(), camera::get_pos(), pos, size);
+	auto draw_size = size * bullet_size;
+
+	txt->draw(camera::get(), camera::get_pos(), pos - draw_size / 2, draw_size);
 }

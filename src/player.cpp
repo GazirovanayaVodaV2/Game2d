@@ -1,8 +1,10 @@
 #include "player.h"
 #include "utils.h"
 
-#include "headers/map.h"
-#include "headers/projectile.h"
+#include "map.h"
+#include "projectile.h"
+
+#include "basic_gun.h"
 
 player::player(SDL_Renderer* render, std::string animation_config)
 	:invent(this)
@@ -163,12 +165,27 @@ SDL_AppResult player::input(const SDL_Event* event)
 			case SDLK_K: {
 				//temp
 
-				float bullet_speed = 20.0f;
-				bullet_speed = 1.0f;
-				vec2 bullet_vel = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(bullet_speed, 0.0f) : vec2(-bullet_speed, 0.0f);
-				vec2 bullet_spawn_pos = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(80.0f, 0.0f) : vec2(-32.0f, 0.0f);
-				bullet_spawn_pos += this->pos;
-				level_manager::get()->add_bullet(34, bullet_spawn_pos, bullet_speed, bullet_vel);
+				//float bullet_speed = 20.0f;
+				//bullet_speed = 1.0f;
+				//vec2 bullet_vel = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(bullet_speed, 0.0f) : vec2(-bullet_speed, 0.0f);
+				//vec2 bullet_spawn_pos = (dir == OBJECT_DIRECTION::RIGHT) ? vec2(80.0f, 0.0f) : vec2(-32.0f, 0.0f);
+				//bullet_spawn_pos += this->pos;
+				//level_manager::get()->add_bullet(34, bullet_spawn_pos, bullet_speed, bullet_vel);
+
+				auto it = invent.get_item_in_hands();
+				if (it) {
+					it->use(this);
+				}
+			} break;
+			case SDLK_F: {
+				auto it = invent.get_item_in_hands();
+				if (it) {
+					switch (it->get_type()) {
+						case (OBJECT::TYPE::BASIC_GUN): {
+							((basic_gun*)it)->reload(this);
+						} break;
+					}
+				}
 			} break;
 			case SDLK_F3: {
 				fly = !fly;

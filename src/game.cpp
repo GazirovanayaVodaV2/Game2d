@@ -233,30 +233,6 @@ SDL_AppResult game::input(const SDL_Event* event)
 				}
 			}
 		}
-
-/*#ifdef _DEBUG
-		if (event->key.key == SDLK_E) {
-			if (!level_manager::is_level_empty()) {
-
-				auto pl = level_manager::get()->get_player();
-
-				pl_pos = pl->get_pos();
-				raycast::ray player_ray {
-					pl_pos, pl->get_direction(),
-					(float)pl->get_angle()
-				};
-
-				float dist;
-				auto& obj = raycast::cast(player_ray, level_manager::get()->get_objects(), dist);
-				if (obj) {
-					obj->select();
-					last_selected_obj = obj;
-					last_raycasted_pos = player_ray.dir * dist;
-				}
-			}
-			
-		}
-#endif*/
 	}
 #ifdef _DEBUG
 	else if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {

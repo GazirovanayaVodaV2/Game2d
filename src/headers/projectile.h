@@ -6,11 +6,12 @@ protected:
 	vec2 vel;
 	int damage = 0;
 	float current_life_time = 0;
+	const float bullet_size = 6;
 
 	texture_from_atlas txt;
 
 	void interaction_impl(entity* ent) override;
-	void use_impl(entity* user) override {};
+	bool use_impl(entity* user) override { return false; };
 public:
 	projectile() = default;
 	projectile(texture_from_atlas txt, vec2 vel, int damage = 100);

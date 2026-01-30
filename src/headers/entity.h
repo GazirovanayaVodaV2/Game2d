@@ -65,15 +65,6 @@ public:
 		return hp;
 	};
 
-
-	vec2 get_direction() {
-		auto dir = vec2(cosf((float)angle),
-						sinf((float)angle));
-		if (this->dir == OBJECT_DIRECTION::RIGHT) dir.x *= -1;
-
-		return dir;
-	}
-
 	OBJECT::TYPE get_type() override { return OBJECT::TYPE::ENTITY; }
 };
 
