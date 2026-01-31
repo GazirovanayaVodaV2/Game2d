@@ -32,43 +32,8 @@ public:
 	virtual SDL_FRect get_collision_box() {
 		return pos.get_frect(size);
 	}
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::GAME_OBJECT; }
-};
-
-class NULL_OBJECT : public game_object {
-public:
-	NULL_OBJECT() = default;
-	 ~NULL_OBJECT() = default;
-
-	 SDL_AppResult update(float delta_time) override {
-		 return SDL_APP_CONTINUE;
-	 };
-	 SDL_AppResult input(const SDL_Event* event) override {
-		 return SDL_APP_CONTINUE;
-	 };
-
-	 void set_pos(vec2 pos) {};
-	 void move_on(vec2 velocity) {};
-
-	 void set_size(vec2 size) {};
-	 void rotate(double angle)  {};
-
-	 void draw() override {};
-	 virtual void draw_debug() override {};
-	 bool check_collision(game_object* object) override { return false; };
-	 void clear_collision_buffer() override {};
-
-	 bool get_collided() {
-		 return false;
-	 };
-	 void set_physic(bool state) {};
-	 bool get_physic() {
-		 return false;
-	 };
-
-	 OBJECT::TYPE get_type() override { return OBJECT::TYPE::NULL_OBJECT; }
 };
 
 
 bool global_check_collision(game_object* obj1, game_object* obj2);
+bool force_global_check_collision(game_object* obj1, game_object* obj2);

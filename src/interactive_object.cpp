@@ -2,6 +2,9 @@
 
 #include "entity.h"
 #include "interactive_object.h"
+#include "window.h"
+
+#include "player.h"
 
 bool interactive_object_base::check_collision(game_object* object)
 {
@@ -15,11 +18,14 @@ bool interactive_object_base::check_collision(game_object* object)
 
 			//entity_nearby = (object->get_type() == OBJECT::TYPE::ENTITY) ||
 			//	(is_subtype_of(object->get_type(), OBJECT::TYPE::ENTITY));
+		}
 
-			entity_nearby = (bool)dynamic_cast<entity*>(object);
+		if (force_global_check_collision(this, object)) {
+			auto* ent = dynamic_cast<entity*>(object);
+			entity_nearby = (bool)ent;
 
 			if (entity_nearby)
-				interact(static_cast<entity*>(object));
+				interact(ent);
 		}
 
 		return collided;
@@ -39,6 +45,12 @@ void interactive_object_base::interact(entity* ent)
 
 		for (auto& c_interaction : custom_interactions) {
 			c_interaction(ent);
+		}
+
+		if (is_pickable()) {
+			if (auto* pl = dynamic_cast<player*>(ent)) {
+				pl->get_msg_from_int_obj(send_msg_to_player());
+			}
 		}
 	}
 }

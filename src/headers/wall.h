@@ -21,6 +21,4 @@ public:
 	void draw() override;
 	bool check_collision(game_object* object) override;
 	void clear_collision_buffer() override;
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::WALL; }
 };

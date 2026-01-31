@@ -22,14 +22,14 @@ void basic_gun::reload(entity* user)
 	if (auto* pl = dynamic_cast<player*>(user)) {
 		auto& inv = pl->get_inventory();
 
-		auto it = inv.find_item(OBJECT::TYPE::AMMO);
+		auto it = inv.find_item(typeid(ammo));
 		if (it) {
 			auto ammo_it = (ammo*)it;
 			int diff = m_mag.get_default() - *m_mag;
 			m_mag += diff;
 			ammo_it->set_count(ammo_it->get_count() - diff);
 			if (ammo_it->get_count() <= 0) {
-				inv.remove_item(OBJECT::TYPE::AMMO);
+				inv.remove_item(typeid(ammo));
 			}
 		}
 	}

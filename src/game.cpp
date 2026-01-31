@@ -234,40 +234,6 @@ SDL_AppResult game::input(const SDL_Event* event)
 			}
 		}
 	}
-#ifdef _DEBUG
-	else if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-		float m_x, m_y;
-		SDL_GetMouseState(&m_x, &m_y);
-		auto rel_pos = camera::get_mouse_relative_pos(m_x, m_y);
-		if (!level_manager::is_level_empty()) {
-			auto obj = level_manager::get()->get(rel_pos);
-
-			if (auto* int_obj = dynamic_cast<interactive_object_base*>(obj)) {
-				if (level_manager::is_any_level_loaded()) {
-					auto& inv = level_manager::get()->get_player()->get_inventory();
-					inv.try_add_item((inventory::item*)(obj));
-				}
-			}
-
-			if (!obj->is_null()) {
-				if (obj->is_selected()) {
-					obj->reject();
-					last_selected_obj = nullptr;
-				}
-				else {
-					obj->select();
-					last_selected_obj = obj;
-				}
-			}
-			else {
-				if (last_selected_obj) {
-					last_selected_obj->reject();
-					last_selected_obj = nullptr;
-				}
-			}
-		}
-	}
-#endif
 
 	bench::get("input").stop();
 	return res;

@@ -2,6 +2,7 @@
 
 #include "player.h"
 #include "dummy.h"
+#include "wall.h"
 
 void projectile::interaction_impl(entity* ent)
 {
@@ -41,7 +42,7 @@ bool projectile::check_collision(game_object* object)
 {
 	auto res = interactive_object_base::check_collision(object);
 
-	if (res && (object->get_type() == OBJECT::TYPE::WALL)) {
+	if (res && cmp_type(*object, wall)) {
 		exist = false;
 	}
 

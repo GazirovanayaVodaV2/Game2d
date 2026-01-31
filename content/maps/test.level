@@ -8,9 +8,9 @@
     "tile_size": 64,
 
     "environment" : {
-        "weather": "snow",
+        "weather": "clear",
         "time": 6000,
-        "time_cycle": true
+        "time_cycle": false
     },
 
     "id": {

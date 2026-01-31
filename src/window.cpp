@@ -135,11 +135,6 @@ SDL_Window *window::get()
     return sdl_window;
 }
 
-OBJECT::TYPE window::get_type()
-{
-	return OBJECT::TYPE::WINDOW;
-}
-
 int window::get_fps()
 {
 	return fps;
@@ -309,11 +304,6 @@ float camera::get_ratio()
 	return win_res.x / win_res.y;
 }
 
-OBJECT::TYPE camera::get_type()
-{
-    return OBJECT::TYPE::CAMERA;
-}
-
 SDL_Renderer *camera::get()
 {
     return sdl_renderer;
@@ -399,7 +389,6 @@ vec2 camera::get_mouse_relative_pos(float m_x, float m_y)
 	auto res = get_pos();
 	res.x = (-res.x + m_x);
 	res.y = (-res.y + m_y);
-	//std::cout << res.x << " " << res.y << std::endl;
 
 	return res;
 }

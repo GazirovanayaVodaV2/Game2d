@@ -177,7 +177,18 @@ SDL_AppResult player::input(const SDL_Event* event)
 					it->use(this);
 				}
 			} break;
-			case SDLK_F: {
+			case SDLK_E: {
+				auto lvl = level_manager::get();
+				if (lvl) {
+					if (auto* obj = dynamic_cast<interactive_object_base*>(lvl->get(pos))) {
+						invent.try_add_item(obj);
+					}
+					else if (auto* obj = dynamic_cast<interactive_object_base*>(lvl->get(vec2(pos.x, pos.y + size.y / 2)))) {
+						invent.try_add_item(obj);
+					}
+				}
+			} break;
+			case SDLK_R: {
 				auto it = invent.get_item_in_hands();
 				if (it) {
 					if (auto* gun_ptr = dynamic_cast<basic_gun*>(it)) {
@@ -249,6 +260,9 @@ void player::draw()
 
 	auto frame = animations->get()->get()->get();
 	frame->draw_rotated(camera::get(),camera::get_pos(), pos, size, angle, flip);
+
+	camera::draw_debug_text(object_msg,  window::get_size() / 2);
+	object_msg = "";
 }
 bool player::check_collision(game_object* object)
 {
@@ -293,6 +307,11 @@ void player::heal(int hp)
 int player::get_hp()
 {
 	return hp;
+}
+
+void player::get_msg_from_int_obj(std::string msg)
+{
+	this->object_msg = msg;
 }
 
 inventory::inventory& player::get_inventory()

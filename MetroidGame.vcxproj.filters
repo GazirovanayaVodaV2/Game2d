@@ -90,6 +90,12 @@
     <ClCompile Include="src\texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\basic_gun.cpp">
+      <Filter>interactive objects\code</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ammo.cpp">
+      <Filter>interactive objects\code</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -146,9 +152,6 @@
     <ClInclude Include="src\headers\interactive_object.h">
       <Filter>interactive objects\headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\headers\map_interaction.h">
-      <Filter>interactive objects\headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\headers\projectile.h">
       <Filter>interactive objects\headers</Filter>
     </ClInclude>
@@ -160,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="src\headers\texture.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\basic_gun.h">
+      <Filter>interactive objects\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\ammo.h">
+      <Filter>interactive objects\headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -132,13 +132,10 @@ inventory::item* inventory::inventory::get_item_in_hands()
 	return item_in_hands;
 }
 
-inventory::item* inventory::inventory::find_item(OBJECT::TYPE type)
+inventory::item* inventory::inventory::find_item(const std::type_info& type)
 {
 	auto res = std::find_if(items.begin(), items.end(), [&](const auto& item) {
-		if (item) {
-			return type == item->get_type();
-		}
-		return false;
+			return item && typeid(*item) == type;
 		});
 
 	if (res == items.end()) {
@@ -162,10 +159,12 @@ void inventory::inventory::remove_item(int x, int y)
 	remove_item(i);
 }
 
-void inventory::inventory::remove_item(OBJECT::TYPE type)
+void inventory::inventory::remove_item(const std::type_info& type)
 {
+	
 	for (size_t i = 0; i < items.size(); i++) {
-		if (items[i]->get_type() == type) {
+		auto item = items[i];
+		if (item && typeid(*item) == type) {
 			remove_item(i);
 			return;
 		}
@@ -265,7 +264,7 @@ bool inventory::inventory::input(const SDL_Event* event)
 	if (event->type == SDL_EVENT_KEY_DOWN) {
 		switch (event->key.key)
 		{
-		case SDLK_E: {
+		case SDLK_TAB: {
 			if (opened) {
 				close();
 			} else {

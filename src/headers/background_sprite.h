@@ -9,8 +9,4 @@ public:
 	bool check_collision(game_object* object) override { return false; };
 	void set_collide_mode(bool state) = delete;
 	bool get_collide_mode() { return false; };
-
-	OBJECT::TYPE get_type() override {
-		return OBJECT::TYPE::BACKGROUND_SPRITE;
-	};
 };

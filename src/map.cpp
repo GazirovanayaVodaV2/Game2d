@@ -37,7 +37,9 @@ NLOHMANN_JSON_SERIALIZE_ENUM(basic_gun::SHOOT_MODE, {
 map::map(atlas* atl)
 {
 	this->atl = atl;
-	NULL_OBJECT_PTR = new NULL_OBJECT();
+
+	rain_txt = atl->get("rain");
+	//snow_txt = atl->get("snow");
 
 	sky = std::make_unique<texture>(camera::get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET,
 		1000, 1000);
@@ -51,10 +53,6 @@ map::map(atlas* atl)
 map::~map()
 {
 	unload();
-
-	
-
-	delete NULL_OBJECT_PTR;
 }
 
 void map::add(game_object* obj)
@@ -83,7 +81,7 @@ game_object* map::get(vec2 pos)
 		}
 	}
 
-	return NULL_OBJECT_PTR;
+	return nullptr;
 }
 
 game_object* map::get(size_t chunk_id, size_t id)
@@ -97,6 +95,16 @@ game_object* map::get(size_t chunk_id, size_t id)
 size_t map::get_chunk_id(vec2 pos)
 {
 	return (size_t)convert::f2i((pos.x / tile_size / chunk_size) + (pos.y / tile_size / chunk_size) * chunks_W);;
+}
+
+void map::draw_rain(float time)
+{
+	//STILL IN DEV
+	SDL_RenderTextureTiled(camera::get(), rain_txt->get(), NULL, 1.0f, NULL);
+}
+
+void map::draw_snow(float time)
+{
 }
 
 map::chunk* map::get_chunk(vec2 pos)
@@ -184,10 +192,6 @@ static rgba get_light_by_time(rgba day, rgba night, int time) {
 	return res;
 }
 
-static void draw_stars(SDL_Texture* sky, int time) {
-
-}
-
 static void draw_sky(map::weather_t weather_t, 
 	SDL_Texture* scene, 
 	const std::unique_ptr<texture>& sky, 
@@ -229,6 +233,21 @@ void map::draw()
 		stars_texture->set_alpha(stars_alpha);
 
 		stars_texture->draw(render, NULL);
+
+		switch (this->weather) {
+			case map::weather_t::rain: {
+				draw_rain(time);
+			} break;
+			case map::weather_t::snow: {
+				draw_snow(time);
+			} break;
+			case map::weather_t::clear: {
+
+			} break;
+			default: {
+
+			} break;
+		}
 
 		pl->draw();
 		for (auto& chunk_ : chunks) {
@@ -294,7 +313,6 @@ void map::load_level_format(std::string path_)
 		json_level.at("name").get_to(name);
 		json_level.at("type").get_to(level_type);
 
-		print::warning("W, H and TILE_SIZE is deprecated");
 		json_level.at("W").get_to(W);
 		json_level.at("H").get_to(H);
 		json_level.at("tile_size").get_to(tile_size);
@@ -303,8 +321,6 @@ void map::load_level_format(std::string path_)
 		chunks_H = std::ceilf((float)H / chunk_size);
 
 		chunks.resize(chunks_W * chunks_H);
-		height_map.resize(W);
-		std::fill(height_map.begin(), height_map.end(), std::numeric_limits<float>::max());
 
 		struct layer {
 			std::string name;
@@ -367,11 +383,6 @@ void map::load_level_format(std::string path_)
 						object = new wall(atl->get(sprite_id));
 						object->set_pos(pos);
 						object->set_size(size);
-
-						int x_i = convert::f2i(pos.x / size.x);
-						if (pos.y < height_map[x_i]) {
-							height_map[x_i] = pos.y;
-						}
 					}
 					else if (type == keyword_to_string(player)) {
 						size = vec2(tile_size, tile_size * 2);
@@ -463,9 +474,6 @@ void map::unload()
 
 		chunks.clear();
 		chunks.shrink_to_fit();
-
-		height_map.clear();
-		height_map.shrink_to_fit();
 
 		light_system.reset();
 		pl.reset();

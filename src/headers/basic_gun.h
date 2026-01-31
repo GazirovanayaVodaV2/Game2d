@@ -35,6 +35,5 @@ public:
 	void draw();
 	SDL_AppResult update(float delta);
 
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::BASIC_GUN; }
 	std::string get_name() override { return "basic_gun"; };
 };

@@ -64,8 +64,6 @@ public:
 	int get_hp() {
 		return hp;
 	};
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::ENTITY; }
 };
 
  

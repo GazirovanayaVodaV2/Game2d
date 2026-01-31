@@ -39,8 +39,6 @@ namespace light {
 			void set_radius(float radius);
 
 			void set_color(int clr);
-
-			OBJECT::TYPE get_type() override { return OBJECT::TYPE::LIGHT_SOURCE; }
 	};
 
 	class system : public base_object {
@@ -78,8 +76,6 @@ namespace light {
 
 		void set_ambient(rgba clr);
 		std::shared_ptr<texture> get_ambient() { return ambient; }
-
-		OBJECT::TYPE get_type() override { return OBJECT::TYPE::LIGHT_SYSTEM; }
 	};
 }
 

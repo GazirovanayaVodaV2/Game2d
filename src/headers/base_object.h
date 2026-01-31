@@ -91,10 +91,6 @@ public:
 	OBJECT_DIRECTION get_direction_enum() {
 		return this->dir;
 	}
-
-	OBJECT::TYPE get_type() override {
-		return OBJECT::TYPE::BASE_OBJECT;
-	}
 };
 
 

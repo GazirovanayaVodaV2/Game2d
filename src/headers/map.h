@@ -35,14 +35,11 @@ private:
     size_t chunks_W = 0, chunks_H = 0;
     std::vector<std::unique_ptr<chunk>> chunks;
     std::vector<std::unique_ptr<game_object>> new_obj_buffer;
-    std::vector<float> height_map;
 
     atlas* atl;
 
     std::unique_ptr<player> pl;
     std::unique_ptr<light::system> light_system;
-
-    game_object* NULL_OBJECT_PTR;
 
     std::string name;
     std::string level_type = "normal";
@@ -54,7 +51,9 @@ private:
 
     std::unique_ptr<texture> sky;
     std::unique_ptr<texture> sky_texture;
-    std::unique_ptr<texture>stars_texture;
+    std::unique_ptr<texture> stars_texture;
+
+    texture_from_atlas rain_txt = nullptr, snow_txt = nullptr;
 
     bool loaded = false;
     bool draw_debug_info = DEBUG_VAL(true, false);
@@ -64,8 +63,8 @@ private:
     void load_level_format(std::string path_);
 
     size_t get_chunk_id(vec2 pos);
-protected:
-    const OBJECT::TYPE type = OBJECT::TYPE::MAP;
+    void draw_rain(float time);
+    void draw_snow(float time);
 public:
     map(atlas* atl);
 	~map() override;
@@ -97,8 +96,6 @@ public:
     SDL_AppResult input(const SDL_Event* event);
 
     atlas* get_atlas() { return atl; };
-
-    OBJECT::TYPE get_type() override { return OBJECT::TYPE::MAP; }
 };
 
 class level_manager {

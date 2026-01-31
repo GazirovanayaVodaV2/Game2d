@@ -27,6 +27,5 @@ public:
 		m_count = val;
 	}
 
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::AMMO; }
 	virtual std::string get_name() { return "ammo"; };
 };

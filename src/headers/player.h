@@ -10,6 +10,7 @@ private:
 	bool noclip = false;
 
 	inventory::inventory invent;
+	std::string object_msg;
 protected:
 	float default_speed = 10.0f;
 
@@ -42,8 +43,8 @@ public:
 	void heal(int hp) override;
 	int get_hp();
 
-	inventory::inventory& get_inventory();
+	void get_msg_from_int_obj(std::string msg);
 
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::PLAYER; }
+	inventory::inventory& get_inventory();
 };
 

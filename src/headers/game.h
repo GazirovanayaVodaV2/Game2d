@@ -42,7 +42,5 @@ public:
 	SDL_AppResult input(const SDL_Event* event);
 
 	gui::context& get_gui_context();
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::GAME; }
 };
 

@@ -40,8 +40,6 @@ public:
 
     static SDL_Window* get();
 
-    static OBJECT::TYPE get_type();
-
     static int get_fps();
 };
 
@@ -81,7 +79,6 @@ public:
     static vec2 get_scale();
 
     static float get_ratio();
-    static OBJECT::TYPE get_type();
 
     static SDL_Renderer* get();
 

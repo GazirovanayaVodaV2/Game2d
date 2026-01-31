@@ -22,6 +22,4 @@ public:
 	bool check_collision(game_object* object);
 
 	void draw() override;
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::PROJECTILE; }
 };

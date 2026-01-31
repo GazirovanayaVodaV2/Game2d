@@ -17,6 +17,4 @@ public:
 	bool is_pickable() override {
 		return true;
 	};
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::MEDKIT; }
 };

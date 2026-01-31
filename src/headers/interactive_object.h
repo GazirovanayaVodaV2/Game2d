@@ -20,6 +20,8 @@ protected:
 	std::vector<std::function<void(entity*)>> custom_interactions;
 
 	virtual bool use_impl(entity* user) = 0;
+
+	virtual std::string send_msg_to_player() { return "press to E pick up!"; };
 public:
 	interactive_object_base() = default;
 
@@ -44,7 +46,5 @@ public:
 	}
 
 	bool in_inventory();
-
-	OBJECT::TYPE get_type() override { return OBJECT::TYPE::INTERACTIVE_OBJECT; }
 	virtual std::string get_name() { return ""; };
 };

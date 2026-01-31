@@ -50,13 +50,13 @@ namespace inventory {
 		item* get_item(int x, int y);
 		item* get_item_in_hands();
 
-		item* find_item(OBJECT::TYPE type);
+		item* find_item(const std::type_info& type);
 
 		void update(float delta);
 
 		void remove_item(size_t i);
 		void remove_item(int x, int y);		
-		void remove_item(OBJECT::TYPE type);
+		void remove_item(const std::type_info& type);
 		/// <summary>
 		/// Returns TRUE is inventory opened
 		/// </summary>
