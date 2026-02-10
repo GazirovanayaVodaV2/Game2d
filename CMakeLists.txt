@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.31.6)
 project(Game2d VERSION 0.1.0)
 
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-modules-ts")
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -15,8 +16,8 @@ endif()
 
 # Установить выходные директории
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -29,20 +30,28 @@ set(SDL_SHARED ON CACHE BOOL "" FORCE)
 FetchContent_Declare(SDL3
     GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
     GIT_TAG main
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/SDL3"
+    UPDATE_DISCONNECTED ON
 )
 
 FetchContent_Declare(SDL3_image
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
     GIT_TAG main
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/SDL_image"
+    UPDATE_DISCONNECTED ON
 )
 
 FetchContent_Declare(SDL3_ttf
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
     GIT_TAG main
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/SDL_ttf"
+    UPDATE_DISCONNECTED ON
 )
 FetchContent_Declare(nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.3
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/nlohmann_json"
+    UPDATE_DISCONNECTED ON
 )
 FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf nlohmann_json)
 
