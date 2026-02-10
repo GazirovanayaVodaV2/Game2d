@@ -3,7 +3,7 @@
 
 #include "texture.h"
 
-#include "SDL3_image/SDL_Image.h"
+#include "SDL3_image/SDL_image.h"
 #include "Utils.h"
 
 #include "nlohmann/json.hpp"
@@ -174,7 +174,7 @@ atlas::atlas(SDL_Renderer* render)
 	print::increase_level();
 
 	using json = nlohmann::json;
-	std::ifstream file(path("textures\\textures.json"));
+	std::ifstream file(path("textures/textures.json"));
 	auto json_textures = json::parse(file);
 	file.close();
 
@@ -183,7 +183,7 @@ atlas::atlas(SDL_Renderer* render)
 	
 	for (auto& [key, value] : json_textures.items()) {
 		print::loading(std::format("Loading texture {}/{}: {}", ++i, count, key));
-		textures[key] = std::make_unique<texture>(render, "textures\\" + std::string(value));
+		textures[key] = std::make_unique<texture>(render, "textures/" + std::string(value));
 	}
 
 	print::decrease_level();

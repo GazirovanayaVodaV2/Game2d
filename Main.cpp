@@ -19,6 +19,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 
     TTF_Init();
 
+    std::cout << SDL_GetBasePath() << std::endl;
+
     //Init singletons 
     window::get_instance();
     camera::get_instance();

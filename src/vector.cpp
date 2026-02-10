@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include <utils.h>
+#include "Utils.h"
 
 vec2::vec2(SDL_FPoint sdl_fpoint)
 {

@@ -1,6 +1,6 @@
 #include "headers/inventory.h"
 
-#include "GuiLib/gui_elements.h"
+#include "gui_elements.h"
 #include "headers/window.h"
 
 void inventory::inventory::try_place_selected_item(int x, int y)
@@ -61,7 +61,7 @@ void inventory::inventory::resize(int w_, int h_)
 			inv_page->add(cell);
 
 #ifndef DISABLE_INVENTORY_LIGHTS
-			lights.add_light("textures\\lightsource.png", 0.35f, 0xfffffffff);
+		lights.add_light("textures/lightsource.png", 0.35f, 0xfffffffff);
 			auto pos = vec2((float)x + cell_size / 2, (float)y + cell_size / 2);
 			lights.get_last()->set_pos(pos);
 #endif // !DISABLE_INVENTORY_LIGHTS
@@ -70,9 +70,9 @@ void inventory::inventory::resize(int w_, int h_)
 		}
 	}
 
-	auto hp_img = new gui::image_rect(camera::get(), "textures\\inventory_hp.png");
+	auto hp_img = new gui::image_rect(camera::get(), "textures/inventory_hp.png");
 
-	hp_img->box.x = h * (cell_size + cell_margin);
+	hp_img->box.x = convert::i2f(h * (cell_size + cell_margin));
 	inv_page->add(hp_img, "player_hp_ind");
 
 	inv_hp_text_pos = vec2(hp_img->box.x, hp_img->box.y);
@@ -80,7 +80,7 @@ void inventory::inventory::resize(int w_, int h_)
 
 
 #ifndef DISABLE_INVENTORY_LIGHTS
-	lights.add_light("textures\\lightsource.png", 1.0f, 0xF09B59);
+	lights.add_light("textures/lightsource.png", 1.0f, 0xF09B59);
 	auto pos = vec2(hp_img->box.x, 0.0f);
 	lights.get_last()->set_pos(pos);
 #endif // !DISABLE_INVENTORY_LIGHTS
@@ -184,7 +184,8 @@ void inventory::inventory::draw()
 		}
 		SDL_FRect cursor = { cursor_x * (cell_size + cell_margin) + cell_margin,
 			cursor_y* (cell_size + cell_margin) + cell_margin,
-			cell_size,cell_size };
+			convert::i2f(cell_size),
+			convert::i2f(cell_size) };
 		SDL_RenderFillRect(camera::get(), &cursor);
 		
 

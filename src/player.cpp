@@ -1,5 +1,5 @@
 #include "player.h"
-#include "utils.h"
+#include "Utils.h"
 
 #include "map.h"
 #include "projectile.h"
@@ -259,7 +259,7 @@ void player::draw()
 
 
 	auto frame = animations->get()->get()->get();
-	frame->draw_rotated(camera::get(),camera::get_pos(), pos, size, angle, flip);
+	frame->draw_rotated(camera::get(),camera::get_pos(), pos, size, (float)angle, flip);
 
 	camera::draw_debug_text(object_msg,  window::get_size() / 2);
 	object_msg = "";

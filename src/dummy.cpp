@@ -17,7 +17,7 @@ dummy::dummy(texture_from_atlas txt, int hp)
 {
 	this->hp.set_new_defaults(hp);
 
-	hp_box = new gui::text_box(camera::get(), "fonts\\NotoSans.ttf", "0", {255});
+	hp_box = new gui::text_box(camera::get(), "fonts/NotoSans.ttf", "0", {255});
 
 	this->txt = txt;
 	this->size = txt->get_size();
@@ -46,10 +46,10 @@ void dummy::draw()
 SDL_AppResult dummy::update(float delta_time)
 {
 	if (collided) {
-		pos.y -= 1;
+		pos.y -= 1.0f;
 	}
 	else {
-		pos.y += 0.1;
+		pos.y += 0.1f;
 	}
 
 	clear_collision_buffer();

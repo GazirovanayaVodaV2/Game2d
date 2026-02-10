@@ -2,7 +2,7 @@
 #include <memory>
 #include "vector.h"
 #include "game_object.h"
-#include "Utils/custom_warning.h"
+#include "custom_warning.h"
 
 COMPILER_WARNING("Raycast is still WIP, this code cause bugs!");
 namespace raycast {

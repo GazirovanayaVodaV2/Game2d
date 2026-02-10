@@ -79,6 +79,7 @@ bool global_check_collision(game_object* obj1, game_object* obj2)
 		return force_global_check_collision(obj1, obj2);
 	}
 
+	return false;
 }
 
 bool force_global_check_collision(game_object* obj1, game_object* obj2)

@@ -5,7 +5,7 @@
 #include <format>
 #include <iostream>
 
-#include <utils.h>
+#include "Utils.h"
 #include "SDL3/SDL_rect.h"
 
 //Window
@@ -19,7 +19,7 @@ window::window()
 {
 	print::loading("Creating window");
 	using json = nlohmann::json;
-	std::ifstream json_file(path("configs\\window.conf"));
+	std::ifstream json_file(path("configs/window.conf"));
 	auto parsed_options = json::parse(json_file);
 	json_file.close();
 
@@ -37,13 +37,18 @@ window::window()
 	}
 
 	auto window_flags = NULL | (SDL_WINDOW_FULLSCREEN * fullscreen) | (SDL_WINDOW_RESIZABLE * resizeable);
-	sdl_window = SDL_CreateWindow(window_name.c_str(), size.get_default().x, size.get_default().y, window_flags);
+	sdl_window = SDL_CreateWindow(window_name.c_str(), 
+		convert::f2i(size.get_default().x), 
+		convert::f2i(size.get_default().y),
+		window_flags);
 	if (!sdl_window) {
 		print::error("Window creating error", SDL_GetError());
 	}
 	
 	SDL_SetWindowSize(sdl_window, resolution[0], resolution[1]);
-	SDL_SetWindowMinimumSize(sdl_window, size.get_default().x, size.get_default().y);
+	SDL_SetWindowMinimumSize(sdl_window, 
+		convert::f2i(size.get_default().x),
+		convert::f2i(size.get_default().y));
 
 	print::loaded("Window created!");
 }
@@ -156,7 +161,7 @@ camera::camera()
 	print::loading("Creating renderer");
 
 	using json = nlohmann::json;
-	std::ifstream json_file(path("configs\\window.conf"));
+	std::ifstream json_file(path("configs/window.conf"));
 	auto parsed_options = json::parse(json_file);
 	json_file.close();
 

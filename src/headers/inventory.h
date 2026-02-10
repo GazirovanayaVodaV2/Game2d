@@ -3,7 +3,7 @@
 #include "interactive_object.h"
 #include "entity.h"
 #include "light_system.h"
-#include "GuiLib/GuiLib.h"
+#include "GuiLib.h"
 
 #define DISABLE_INVENTORY_LIGHTS
 

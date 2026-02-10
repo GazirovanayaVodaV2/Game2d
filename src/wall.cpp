@@ -1,6 +1,6 @@
 #include "wall.h"
 #include "window.h"
-#include "utils.h"
+#include "Utils.h"
 
 wall::wall(texture_from_atlas txt)
 {

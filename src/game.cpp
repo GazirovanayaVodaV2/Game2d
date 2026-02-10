@@ -6,7 +6,7 @@
 #include "SDL3/SDL_stdinc.h"
 #include "SDL3/SDL_timer.h"
 
-#include <utils.h>
+#include "Utils.h"
 #include <texture.h>
 #include <entity.h>
 #include "wall.h"
@@ -33,7 +33,7 @@ game::game()
 
 	txt_context = std::make_unique<atlas>(camera::get());
 	level_manager::set_atlas(txt_context.get());
-	level_manager::add("maps\\test.level");
+	level_manager::add("maps/test.level");
 
 	//main menu
 	
@@ -49,7 +49,7 @@ game::game()
 		camera::connect_object(level_manager::get()->get_player());
 		main_menu->deactivate();
 		};
-	new_game->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "New game", { 0 });
+	new_game->label = new gui::text_box(renderer, "fonts/NotoSans.ttf", "New game", { 0 });
 	new_game->label->allign(new_game->box);
 	
 	main_menu->add(new_game);
@@ -62,7 +62,7 @@ game::game()
 	main_menu_quit->on_mouse_left_click = [this, main_menu]() {
 		should_quit = true;
 		};
-	main_menu_quit->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Quit", { 0 });
+	main_menu_quit->label = new gui::text_box(renderer, "fonts/NotoSans.ttf", "Quit", { 0 });
 	main_menu_quit->label->allign(main_menu_quit->box);
 	
 	main_menu->add(main_menu_quit);
@@ -82,7 +82,7 @@ game::game()
 		pause_page->deactivate();
 		};
 
-	resume_button->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Resume", {0});
+	resume_button->label = new gui::text_box(renderer, "fonts/NotoSans.ttf", "Resume", {0});
 	resume_button->label->allign(resume_button->box);
 	pause_page->add(resume_button);
 
@@ -101,7 +101,7 @@ game::game()
 		pause_page->deactivate();
 		};
 
-	quit_to_main_menu_button->label = new gui::text_box(renderer, "fonts\\NotoSans.ttf", "Quit to main menu", { 0 });
+	quit_to_main_menu_button->label = new gui::text_box(renderer, "fonts/NotoSans.ttf", "Quit to main menu", { 0 });
 	quit_to_main_menu_button->label->allign(quit_to_main_menu_button->box);
 	quit_to_main_menu_button->label->resize_parent(&quit_to_main_menu_button->box, true);
 

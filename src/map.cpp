@@ -6,7 +6,7 @@
 #include <format>
 
 #include "nlohmann/json.hpp"
-#include "utils.h"
+#include "Utils.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3_image/SDL_image.h"
 #include "wall.h"
@@ -43,10 +43,10 @@ map::map(atlas* atl)
 
 	sky = std::make_unique<texture>(camera::get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET,
 		1000, 1000);
-	sky_texture = std::make_unique<texture>(camera::get(), "textures\\sky.png");
+	sky_texture = std::make_unique<texture>(camera::get(), "textures/sky.png");
 	sky_texture->set_blend(SDL_BLENDMODE_ADD);
 
-	stars_texture = std::make_unique<texture>(camera::get(), "textures\\stars.png");
+	stars_texture = std::make_unique<texture>(camera::get(), "textures/stars.png");
 	stars_texture->set_blend(SDL_BLENDMODE_ADD);
 }
 
@@ -162,7 +162,7 @@ void map::rebuild_chunks()
 	update(1.0f);
 }
 
-static rgba get_light_by_time(rgba day, rgba night, int time) {
+static rgba get_light_by_time(rgba day, rgba night, float time) {
 	rgba res;
 	/*
 	
@@ -299,7 +299,7 @@ void map::load_level_format(std::string path_)
 		print::loading("map");
 		print::increase_level();
 
-		pl = std::make_unique<player>(camera::get(), "entity\\player\\animations.json");
+		pl = std::make_unique<player>(camera::get(), "entity/player/animations.json");
 		light_system = std::make_unique<light::system>();
 
 		using json = nlohmann::json;
@@ -317,8 +317,8 @@ void map::load_level_format(std::string path_)
 		json_level.at("H").get_to(H);
 		json_level.at("tile_size").get_to(tile_size);
 
-		chunks_W = std::ceilf((float)W / chunk_size);
-		chunks_H = std::ceilf((float)H / chunk_size);
+		chunks_W = (size_t)convert::f2i(std::ceilf((float)W / chunk_size));
+		chunks_H = (size_t)convert::f2i(std::ceilf((float)H / chunk_size));
 
 		chunks.resize(chunks_W * chunks_H);
 
@@ -401,10 +401,7 @@ void map::load_level_format(std::string path_)
 							color = (hex)std::stoul(str, nullptr, 16);
 						}
 
-						light_system->add_light("textures\\lightsource.png", radius, color);
-						light_system->get_last()->set_pos(pos - vec2((tile_size / 2), (tile_size / 2)));
-
-						continue;
+				light_system->add_light("textures/lightsource.png", radius, color);
 					}
 					else if (type == keyword_to_string(background_sprite)) {
 						auto sprite_id = block.at("sprite_id").get<std::string>();
@@ -512,10 +509,10 @@ SDL_AppResult map::update(float delta_time)
 		}
 
 		for (auto& new_obj : new_obj_buffer) {
-			auto chunk_ = get_chunk(new_obj->get_pos());
-
-			chunk_->objects.emplace_back(std::move(new_obj));
-		
+			if (new_obj) {
+				auto chunk_ = get_chunk(new_obj->get_pos());
+				chunk_->objects.emplace_back(std::move(new_obj));
+			}	
 		}
 		new_obj_buffer.clear();
 

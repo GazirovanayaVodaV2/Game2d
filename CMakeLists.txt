@@ -1,0 +1,83 @@
+cmake_minimum_required(VERSION 3.31.6)
+project(Game2d VERSION 0.1.0)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-modules-ts")
+
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Определить директории для сборки в зависимости от типа
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+# Установить выходные директории
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include(FetchContent)
+
+set(SDL_X11_XTEST OFF CACHE BOOL "" FORCE) 
+set(SDL_SHARED ON CACHE BOOL "" FORCE)
+
+
+FetchContent_Declare(SDL3
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+    GIT_TAG main
+)
+
+FetchContent_Declare(SDL3_image
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+    GIT_TAG main
+)
+
+FetchContent_Declare(SDL3_ttf
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+    GIT_TAG main
+)
+FetchContent_Declare(nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf nlohmann_json)
+
+add_subdirectory(dependencies/Utils)
+add_subdirectory(dependencies/GuiLib)
+
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "src/headers/*.h")
+
+add_executable(${PROJECT_NAME} "Main.cpp" ${SOURCES} ${HEADERS})
+
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/headers"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GuiLib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Utils"
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    UtilsLib 
+    GuiLib
+    nlohmann_json::nlohmann_json
+    SDL3::SDL3
+    SDL3_image::SDL3_image
+    SDL3_ttf::SDL3_ttf
+)
+
+
+set(SOURCE_ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/content")
+set(DEST_ASSETS_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${SOURCE_ASSETS_DIR}
+        ${DEST_ASSETS_DIR}
+    COMMENT "Copying assets to build directory..."
+)

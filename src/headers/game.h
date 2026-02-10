@@ -3,13 +3,13 @@
 
 #include <base_object.h>
 #include <window.h>
-#include <utils.h>
+#include "Utils.h"
 
 #include <texture.h>
 #include <map.h>
 #include "wall.h"
 
-#include "GuiLib/gui_elements.h"
+#include "gui_elements.h"
 
 #include <map>
 #include <list>

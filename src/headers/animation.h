@@ -6,7 +6,7 @@
 #include <functional>
 #include <map>
 
-#include "utils.h"
+#include "Utils.h"
 #include "game_object.h"
 #include "texture.h"
 #include "vector.h"

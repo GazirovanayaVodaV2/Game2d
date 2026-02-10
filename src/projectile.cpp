@@ -27,7 +27,7 @@ SDL_AppResult projectile::update(float delta_time)
 {
 	move_on(fps::synch<vec2>(vel));
 
-	current_life_time += delta_time / pow(10, 9);
+	current_life_time += delta_time / powf(10, 9);
 
 	if (current_life_time > 20) {
 		exist = false;

@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 
-#include <utils.h>
+#include "Utils.h"
 
 #include <ctype.h>
 

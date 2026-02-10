@@ -1,7 +1,7 @@
 #pragma once
 
 #include "entity.h"
-#include "GuiLib/gui_elements.h"
+#include "gui_elements.h"
 
 class dummy : public entity {
 private:
