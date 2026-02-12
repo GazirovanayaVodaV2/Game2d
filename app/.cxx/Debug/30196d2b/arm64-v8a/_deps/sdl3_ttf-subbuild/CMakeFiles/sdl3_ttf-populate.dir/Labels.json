@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/CMakeFiles/sdl3_ttf-populate"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/CMakeFiles/sdl3_ttf-populate.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/CMakeFiles/sdl3_ttf-populate-complete.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-build.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-configure.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-download.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-install.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-mkdir.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-patch_disconnected.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-test.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-subbuild/sdl3_ttf-populate-prefix/src/sdl3_ttf-populate-stamp/sdl3_ttf-populate-update_disconnected.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"sdl3_ttf-populate"
+		],
+		"name" : "sdl3_ttf-populate"
+	}
+}

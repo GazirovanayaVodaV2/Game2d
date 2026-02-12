@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "_deps/sdl3_ttf-build/external/plutosvg-guild",
+		"source" : "dependencies/git/SDL_ttf/external/plutosvg"
+	}
+}

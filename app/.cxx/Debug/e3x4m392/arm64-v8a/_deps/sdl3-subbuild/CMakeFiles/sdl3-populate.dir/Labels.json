@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/CMakeFiles/sdl3-populate"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/CMakeFiles/sdl3-populate.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/CMakeFiles/sdl3-populate-complete.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-build.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-configure.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-download.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-install.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-mkdir.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-patch.rule"
+		},
+		{
+			"file" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/e3x4m392/arm64-v8a/_deps/sdl3-subbuild/sdl3-populate-prefix/src/sdl3-populate-stamp/sdl3-populate-test.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"sdl3-populate"
+		],
+		"name" : "sdl3-populate"
+	}
+}

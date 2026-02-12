@@ -1,5 +1,18 @@
-cmake_minimum_required(VERSION 3.31.6)
+cmake_minimum_required(VERSION 3.20)
 project(Game2d VERSION 0.1.0)
+
+# Поддержка C++20 требует минимум CMake 3.20 для правильной компиляции с Android NDK
+if(ANDROID)
+    # Минимальный API level для Android
+    if(NOT ANDROID_PLATFORM)
+        set(ANDROID_PLATFORM android-24)
+    endif()
+    
+    # STL для Android
+    if(NOT ANDROID_STL)
+        set(ANDROID_STL c++_shared)
+    endif()
+endif()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
@@ -15,16 +28,28 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Установить выходные директории
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git")
+if(ANDROID)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs/${ANDROID_ABI}")
+else()
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git")
+endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
-set(SDL_X11_XTEST OFF CACHE BOOL "" FORCE) 
-set(SDL_SHARED ON CACHE BOOL "" FORCE)
+# Android-специфичные опции
+if(ANDROID)
+    set(SDL_X11_XTEST OFF CACHE BOOL "" FORCE)
+    set(SDL_SHARED ON CACHE BOOL "" FORCE)
+    set(SDL_FORCE_STATIC_VCRT OFF CACHE BOOL "" FORCE)
+    set(SDL_LIBC ON CACHE BOOL "" FORCE)
+else()
+    set(SDL_X11_XTEST OFF CACHE BOOL "" FORCE) 
+    set(SDL_SHARED ON CACHE BOOL "" FORCE)
+endif()
 
 
 FetchContent_Declare(SDL3
@@ -61,7 +86,12 @@ add_subdirectory(dependencies/GuiLib)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "src/headers/*.h")
 
-add_executable(${PROJECT_NAME} "Main.cpp" ${SOURCES} ${HEADERS})
+# Для Android создаём shared library, для остального - executable
+if(ANDROID)
+    add_library(${PROJECT_NAME} SHARED "Main.cpp" ${SOURCES} ${HEADERS})
+else()
+    add_executable(${PROJECT_NAME} "Main.cpp" ${SOURCES} ${HEADERS})
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
     "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -79,14 +109,28 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3_ttf::SDL3_ttf
 )
 
+# Для Android добавляем системные библиотеки
+if(ANDROID)
+    target_link_libraries(${PROJECT_NAME} PRIVATE 
+        android
+        log
+    )
+endif()
 
-set(SOURCE_ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/content")
-set(DEST_ASSETS_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+# Копирование ассетов только для настольных платформ
+# ВАЖНО: На Android ассеты должны быть в папке app/src/main/assets/
+# и автоматически распаковываются SDL3 в internal storage.
+# Путь будет доступен через SDL_GetBasePath()
+if(NOT ANDROID)
+    set(SOURCE_ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/content")
+    set(DEST_ASSETS_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${SOURCE_ASSETS_DIR}
-        ${DEST_ASSETS_DIR}
-    COMMENT "Copying assets to build directory..."
-)
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${SOURCE_ASSETS_DIR}
+            ${DEST_ASSETS_DIR}
+        COMMENT "Copying assets to build directory..."
+    )
+endif()
+

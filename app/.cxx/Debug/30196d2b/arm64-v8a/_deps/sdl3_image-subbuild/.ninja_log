@@ -1,0 +1,21 @@
+# ninja log v6
+1	31	1770922157897953400	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-mkdir	1000544ca953b1b3
+1	31	1770922157897953400	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-mkdir	1000544ca953b1b3
+31	372942	1770922530808831500	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-download	faf4179d8202ce25
+31	372942	1770922530808831500	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-download	faf4179d8202ce25
+372942	374387	1770922532252796800	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-update_disconnected	eb81913277845a59
+372942	374387	1770922532252796800	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-update_disconnected	eb81913277845a59
+374387	374413	1770922532280796100	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-patch_disconnected	81e34f2d68f0312c
+374387	374413	1770922532280796100	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-patch_disconnected	81e34f2d68f0312c
+374413	374443	1770922532308795400	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-configure	270349c6486c6760
+374413	374443	1770922532308795400	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-configure	270349c6486c6760
+374443	374469	1770922532336794700	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-build	d1a94dffda451b11
+374443	374469	1770922532336794700	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-build	d1a94dffda451b11
+374469	374496	1770922532360794200	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-install	fbcf65299e2ddef2
+374469	374496	1770922532360794200	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-install	fbcf65299e2ddef2
+374496	374523	1770922532388793500	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-test	fb76682e4f956752
+374496	374523	1770922532388793500	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-test	fb76682e4f956752
+374523	374567	1770922532432792400	CMakeFiles/sdl3_image-populate-complete	968726372096a859
+374523	374567	1770922532432792400	sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-done	968726372096a859
+374523	374567	1770922532432792400	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/CMakeFiles/sdl3_image-populate-complete	968726372096a859
+374523	374567	1770922532432792400	/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_image-subbuild/sdl3_image-populate-prefix/src/sdl3_image-populate-stamp/sdl3_image-populate-done	968726372096a859

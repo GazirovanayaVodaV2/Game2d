@@ -1,0 +1,118 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"dependencies/git/SDL_ttf/external/plutovg/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 80,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 85,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 92,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 98,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 141,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/plutovg",
+			"paths" : 
+			[
+				"dependencies/git/SDL_ttf/external/plutovg/include/plutovg.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"_deps/sdl3_ttf-build/external/plutovg-build/libplutovg.a"
+			],
+			"targetId" : "plutovg::@f4e53f3da16b5c3d62ed",
+			"targetIndex" : 11,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/plutovg",
+			"exportName" : "plutovgTargets",
+			"exportTargets" : 
+			[
+				{
+					"id" : "plutovg::@f4e53f3da16b5c3d62ed",
+					"index" : 11
+				}
+			],
+			"paths" : 
+			[
+				"_deps/sdl3_ttf-build/external/plutovg-build/CMakeFiles/Export/f6ef2f3f18222bc8084975f00f853305/plutovgTargets.cmake"
+			],
+			"type" : "export"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/plutovg",
+			"paths" : 
+			[
+				"app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/plutovg-build/plutovgConfig.cmake",
+				"app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/plutovg-build/plutovgConfigVersion.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib/pkgconfig",
+			"paths" : 
+			[
+				"app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/plutovg-build/plutovg.pc"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "_deps/sdl3_ttf-build/external/plutovg-build",
+		"source" : "dependencies/git/SDL_ttf/external/plutovg"
+	}
+}

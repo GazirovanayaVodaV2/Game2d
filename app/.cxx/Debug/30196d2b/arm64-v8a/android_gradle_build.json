@@ -1,0 +1,161 @@
+{
+  "buildFiles": [
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/GuiLib/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/Utils/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/3rdparty.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/FindLibUSB.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/GetGitRevisionDescription.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/GetGitRevisionDescription.cmake.in",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/PreseedEmscriptenCache.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/PreseedMSVCCache.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/PreseedNokiaNGageCache.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/SDL3Config.cmake.in",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/macros.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/sdlchecks.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/sdlcommands.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/sdlcompilers.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/sdlcpu.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/sdlmanpages.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/cmake/sdlplatform.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/include/build_config/SDL_build_config.h.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL3/include/build_config/SDL_revision.h.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/cmake/Findwebp.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/cmake/GetGitRevisionDescription.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/cmake/PrivateSdlFunctions.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/cmake/sdlcpu.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/cmake/sdlmanpages.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_image/cmake/sdlplatform.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/cmake/GetGitRevisionDescription.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/cmake/PkgConfigHelper.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/cmake/PrivateSdlFunctions.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/cmake/sdlcpu.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/cmake/sdlmanpages.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/cmake/sdlplatform.cmake",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/freetype/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/harfbuzz/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/plutosvg/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/plutovg/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/plutovg/cmake/plutovgConfig.cmake.in",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/nlohmann_json/CMakeLists.txt",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/nlohmann_json/cmake/config.cmake.in",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/nlohmann_json/cmake/nlohmann_jsonConfigVersion.cmake.in"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/usr/bin/ninja",
+      "-C",
+      "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/usr/bin/ninja",
+    "-C",
+    "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "Game2d::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "Game2d",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libGame2d.so",
+      "runtimeFiles": [
+        "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3_image.so",
+        "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3_ttf.so",
+        "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3.so"
+      ]
+    },
+    "GuiLib::@c549fc635893c309538c": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "GuiLib",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/dependencies/GuiLib/libGuiLib.a"
+    },
+    "SDL3-shared::@405c074760d2f6728126": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "SDL3-shared",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3.so",
+      "runtimeFiles": []
+    },
+    "SDL3_image-shared::@80cdc087d69ec7f1fccf": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "SDL3_image-shared",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3_image.so",
+      "runtimeFiles": [
+        "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3.so"
+      ]
+    },
+    "SDL3_test::@405c074760d2f6728126": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "SDL3_test",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3-build/libSDL3_test.a"
+    },
+    "SDL3_ttf-shared::@a7ebff90f4ae46fb890e": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "SDL3_ttf-shared",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3_ttf.so",
+      "runtimeFiles": [
+        "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/libs/arm64-v8a/libSDL3.so"
+      ]
+    },
+    "SDL_uclibc::@405c074760d2f6728126": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "SDL_uclibc",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3-build/libSDL_uclibc.a"
+    },
+    "UtilsLib::@68ace811efc74acdf7f4": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "UtilsLib",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/dependencies/Utils/libUtilsLib.a"
+    },
+    "freetype::@55144ca3e33b83ce2b3d": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "freetype",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/freetype-build/libfreetyped.a"
+    },
+    "harfbuzz::@1a7def39a45ad29b4df0": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "harfbuzz",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/harfbuzz-build/libharfbuzz.a"
+    },
+    "plutosvg::@569352382b7345ae1a9c": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "plutosvg",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/plutosvg-guild/libplutosvg.a"
+    },
+    "plutovg::@f4e53f3da16b5c3d62ed": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "plutovg",
+      "output": "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/plutovg-build/libplutovg.a"
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/home/vodapc/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/home/vodapc/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": [
+    "cpp",
+    "cxx",
+    "cc"
+  ]
+}

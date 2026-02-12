@@ -1,0 +1,208 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "_deps/sdl3_ttf-build/external/plutosvg-guild/libplutosvg.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"target_compile_definitions",
+			"target_include_directories",
+			"set_target_properties"
+		],
+		"files" : 
+		[
+			"dependencies/git/SDL_ttf/external/plutosvg/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 19,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 56,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 45,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 47,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 55,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 22,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -fno-limit-debug-info  -std=gnu99 -fPIC -fvisibility=hidden"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "PLUTOSVG_BUILD"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "PLUTOSVG_BUILD_STATIC"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "PLUTOSVG_HAS_FREETYPE"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "PLUTOVG_BUILD_STATIC"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 7,
+					"path" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/plutosvg/source"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a/_deps/sdl3_ttf-build/external/freetype-build/include"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/freetype/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/dependencies/git/SDL_ttf/external/plutovg/include"
+				}
+			],
+			"language" : "C",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					9
+				],
+				"standard" : "99"
+			},
+			"sourceIndexes" : 
+			[
+				2
+			],
+			"sysroot" : 
+			{
+				"path" : "/home/vodapc/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+			}
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "harfbuzz::@1a7def39a45ad29b4df0"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "plutovg::@f4e53f3da16b5c3d62ed"
+		}
+	],
+	"id" : "plutosvg::@569352382b7345ae1a9c",
+	"name" : "plutosvg",
+	"nameOnDisk" : "libplutosvg.a",
+	"paths" : 
+	{
+		"build" : "_deps/sdl3_ttf-build/external/plutosvg-guild",
+		"source" : "dependencies/git/SDL_ttf/external/plutosvg"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				2
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/git/SDL_ttf/external/plutosvg/source/plutosvg.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/git/SDL_ttf/external/plutosvg/source/plutosvg-ft.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/git/SDL_ttf/external/plutosvg/source/plutosvg.c",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

@@ -1,0 +1,440 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						8,
+						9,
+						10
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "_deps/sdl3-build",
+					"jsonFile" : "directory-_deps.sdl3-build-Debug-c7f7201864b77508f57a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "dependencies/git/SDL3",
+					"targetIndexes" : 
+					[
+						2,
+						4,
+						6
+					]
+				},
+				{
+					"build" : "_deps/sdl3_image-build",
+					"jsonFile" : "directory-_deps.sdl3_image-build-Debug-692571b4da24aaefd7dd.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "dependencies/git/SDL_image",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "_deps/sdl3_ttf-build",
+					"childIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.sdl3_ttf-build-Debug-4cb6207f67e65c1dd58d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "dependencies/git/SDL_ttf",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "_deps/sdl3_ttf-build/external/harfbuzz-build",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.sdl3_ttf-build.external.harfbuzz-build-Debug-d3fe14839769aa242c91.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 4,
+					"source" : "dependencies/git/SDL_ttf/external/harfbuzz",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "_deps/sdl3_ttf-build/external/freetype-build",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.sdl3_ttf-build.external.freetype-build-Debug-24440a820aa9e3272be2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 5,
+					"source" : "dependencies/git/SDL_ttf/external/freetype",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "_deps/sdl3_ttf-build/external/plutovg-build",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.sdl3_ttf-build.external.plutovg-build-Debug-c1dd9e49864beb8c0465.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 6,
+					"source" : "dependencies/git/SDL_ttf/external/plutovg",
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"build" : "_deps/sdl3_ttf-build/external/plutosvg-guild",
+					"jsonFile" : "directory-_deps.sdl3_ttf-build.external.plutosvg-guild-Debug-3aa13729c28e0c9f2f55.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 7,
+					"source" : "dependencies/git/SDL_ttf/external/plutosvg",
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"build" : "_deps/nlohmann_json-build",
+					"jsonFile" : "directory-_deps.nlohmann_json-build-Debug-5ee39acf245caed5d272.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 8,
+					"source" : "dependencies/git/nlohmann_json"
+				},
+				{
+					"build" : "dependencies/Utils",
+					"jsonFile" : "directory-dependencies.Utils-Debug-3224d7175f017ac2daa1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.31.6"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 9,
+					"source" : "dependencies/Utils",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "dependencies/GuiLib",
+					"jsonFile" : "directory-dependencies.GuiLib-Debug-37d8d2e1c310adf89e24.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.31.6"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 10,
+					"source" : "dependencies/GuiLib",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						8,
+						9,
+						10
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Game2d",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "SDL3",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						4,
+						6
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "SDL3_image",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7
+					],
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "SDL3_ttf",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "harfbuzz",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "freetype",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "plutovg",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7
+					],
+					"name" : "plutosvg",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						8
+					],
+					"name" : "nlohmann_json",
+					"parentIndex" : 0
+				},
+				{
+					"directoryIndexes" : 
+					[
+						9
+					],
+					"name" : "UtilsLib",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						10
+					],
+					"name" : "GuiLib",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Game2d::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Game2d-Debug-64fcafde0ad4fa73a8da.json",
+					"name" : "Game2d",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "GuiLib::@c549fc635893c309538c",
+					"jsonFile" : "target-GuiLib-Debug-899d22e5af966bf9aade.json",
+					"name" : "GuiLib",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL3-shared::@405c074760d2f6728126",
+					"jsonFile" : "target-SDL3-shared-Debug-6b7edff512d9d31f5291.json",
+					"name" : "SDL3-shared",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "SDL3_image-shared::@80cdc087d69ec7f1fccf",
+					"jsonFile" : "target-SDL3_image-shared-Debug-a87d37c7286906ad8cc8.json",
+					"name" : "SDL3_image-shared",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL3_test::@405c074760d2f6728126",
+					"jsonFile" : "target-SDL3_test-Debug-49527f662eac4870d8ff.json",
+					"name" : "SDL3_test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "SDL3_ttf-shared::@a7ebff90f4ae46fb890e",
+					"jsonFile" : "target-SDL3_ttf-shared-Debug-701492dc5cabcbbe4de9.json",
+					"name" : "SDL3_ttf-shared",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "SDL_uclibc::@405c074760d2f6728126",
+					"jsonFile" : "target-SDL_uclibc-Debug-b91e41816b6d79b607f2.json",
+					"name" : "SDL_uclibc",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "UtilsLib::@68ace811efc74acdf7f4",
+					"jsonFile" : "target-UtilsLib-Debug-4891599ddbf2f17d3274.json",
+					"name" : "UtilsLib",
+					"projectIndex" : 9
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "freetype::@55144ca3e33b83ce2b3d",
+					"jsonFile" : "target-freetype-Debug-30d84fa8ab79e0db1290.json",
+					"name" : "freetype",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "harfbuzz::@1a7def39a45ad29b4df0",
+					"jsonFile" : "target-harfbuzz-Debug-77008545ab324e5f5ae9.json",
+					"name" : "harfbuzz",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "plutosvg::@569352382b7345ae1a9c",
+					"jsonFile" : "target-plutosvg-Debug-80ef591e4d00b82f1a1e.json",
+					"name" : "plutosvg",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "plutovg::@f4e53f3da16b5c3d62ed",
+					"jsonFile" : "target-plutovg-Debug-e12ae09268fbb3aa4eea.json",
+					"name" : "plutovg",
+					"projectIndex" : 6
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d/app/.cxx/Debug/30196d2b/arm64-v8a",
+		"source" : "/media/vodapc/Hdd/projects/MetroidGame/Game2d"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
