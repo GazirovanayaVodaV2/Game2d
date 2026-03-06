@@ -1,10 +1,8 @@
-
-#include <memory>
-
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
 #include "SDL3/SDL_main.h"
 #include "SDL3_ttf/SDL_ttf.h"
 
+#include "sounds.h"
 #include "game.h"
 game* game_ = nullptr;
 
@@ -19,11 +17,10 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 
     TTF_Init();
 
-    std::cout << SDL_GetBasePath() << std::endl;
-
     //Init singletons 
     window::get_instance();
     camera::get_instance();
+    audio_engine::get_instance(); //I think i dont need to do this
     fps::get_instance();
     level_manager::get_instance();
     bench::get_instance();
@@ -53,6 +50,7 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result)
     delete game_;
 
     level_manager::unload_all();
+    audio_engine::unload_sounds();
 
     TTF_Quit();
 }

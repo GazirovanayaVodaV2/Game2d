@@ -13,6 +13,7 @@
 #include "animation.h"
 
 #include "raycast.h"
+#include "sounds.h"
 
 game::game()
 	: Gui(camera::get())
@@ -34,6 +35,8 @@ game::game()
 	txt_context = std::make_unique<atlas>(camera::get());
 	level_manager::set_atlas(txt_context.get());
 	level_manager::add("maps/test.level");
+
+	audio_engine::get_instance().load_sounds();
 
 	//main menu
 	
@@ -180,6 +183,7 @@ SDL_AppResult game::cycle()
 
 	camera::update(delta);
 	fps::update();
+	audio_engine::check_active_streams();
 	bench::get("game_update").stop();
 
 	

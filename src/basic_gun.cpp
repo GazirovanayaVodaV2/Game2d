@@ -3,6 +3,7 @@
 
 #include "map.h"
 
+#include "sounds.h"
 
 basic_gun::basic_gun(texture_from_atlas txt, int dmg, SHOOT_MODE smode, int mag_size)
 {
@@ -63,6 +64,8 @@ bool basic_gun::use_impl(entity* user)
 		level->add_bullet(m_damage, bullet_spawn_pos, bullet_speed, bullet_vel);
 
 		m_mag -= 1;
+
+		audio_engine::get_instance().play_sound("shoot");
 
 		return true;
 	}
