@@ -61,6 +61,12 @@ file(GLOB_RECURSE HEADERS "src/headers/*.h")
 
 add_executable(${PROJECT_NAME} "Main.cpp" ${SOURCES} ${HEADERS})
 
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _DEBUG)
+endif()
+
+
 target_include_directories(${PROJECT_NAME} PRIVATE 
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/headers"
