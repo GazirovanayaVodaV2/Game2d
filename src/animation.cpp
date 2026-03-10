@@ -1,7 +1,5 @@
 #include "animation.h"
-#include "Utils.h"
 
-#include <typeinfo>
 #include <nlohmann/json.hpp>
 #include <fstream>
 

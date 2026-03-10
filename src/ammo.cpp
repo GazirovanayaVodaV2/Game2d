@@ -1,6 +1,5 @@
-#include "ammo.h"
-
 #include "window.h"
+#include "ammo.h"
 
 ammo::ammo(texture_from_atlas txt, int ammo_type, int count)
 {

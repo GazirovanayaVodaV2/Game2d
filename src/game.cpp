@@ -1,18 +1,9 @@
-#include "game.h"
-
 #include <memory>
-#include <iostream>
-
 #include "SDL3/SDL_stdinc.h"
 #include "SDL3/SDL_timer.h"
-
-#include "Utils.h"
-#include <texture.h>
-#include <entity.h>
-#include "wall.h"
-#include "animation.h"
-
-#include "raycast.h"
+#include "game.h"
+#include "texture.h"
+#include "entity.h"
 #include "sounds.h"
 
 game::game()
@@ -114,10 +105,6 @@ game::game()
 	Gui.add("pause", pause_page);
 	Gui.add("main_menu", main_menu);
 
-	//test_wall = std::make_shared<wall>(txt_context->get("brick"));
-	//phys_player = std::make_shared<animation::physic_animation_player>();
-	//phys_player->add(new animation::linear(100, 100, 0, 1000));
-
 	print::decrease_level();
 	print::loaded("Game loaded");
 }
@@ -140,10 +127,8 @@ SDL_AppResult game::cycle()
 
 	/* Draw UI */
 
-//	camera::reset_viewport();
 	camera::draw_debug_info();
 
-//	camera::restore_viewport();
 	camera::reset_scale();
 	bench::get("game_draw").stop();
 
@@ -165,12 +150,6 @@ SDL_AppResult game::cycle()
 	}
 
 	bench::get("gui_draw").stop();
-/*#ifdef _DEBUG
-	SDL_RenderLine(camera::get(), camera::get_viewport().w / 2,
-		camera::get_viewport().h / 2,
-		last_raycasted_pos.x + camera::get_viewport().x,
-		last_raycasted_pos.y + camera::get_viewport().y);
-#endif // _DEBUG*/
 
 	camera::present();
 

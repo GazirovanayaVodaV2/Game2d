@@ -1,5 +1,6 @@
 #pragma once
 #include "base.h"
+#include "nlohmann/json.hpp"
 #include <game_object.h>
 #include <window.h>
 #include <texture.h>
@@ -61,6 +62,8 @@ private:
     int after_load_delay = 0;
 
     void load_level_format(std::string path_);
+
+    void load_objects_from_json(nlohmann::json& js, std::map<std::string, nlohmann::json>& blocks);
 
     size_t get_chunk_id(vec2 pos);
     void draw_rain(float time);

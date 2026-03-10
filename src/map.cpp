@@ -3,12 +3,11 @@
 #include <memory>
 #include <string>
 #include <fstream>
-#include <format>
 
 #include "nlohmann/json.hpp"
 #include "Utils.h"
 #include "SDL3/SDL_render.h"
-#include "SDL3_image/SDL_image.h"
+
 #include "wall.h"
 #include "texture.h"
 #include "background_sprite.h"
@@ -19,6 +18,8 @@
 #include "ammo.h"
 
 #define FIND_FIELD(json, type, name) if (json.find(#name) == json.end()) {print::warning("Error at line", __LINE__); print::error("Failed to find JSON field", #name);} auto name = json.at(#name).get<type>()
+
+using json = nlohmann::json;
 
 NLOHMANN_JSON_SERIALIZE_ENUM(map::weather_t, {
 			{map::weather_t::error, nullptr},
@@ -121,7 +122,7 @@ map::chunk* map::get_chunk(size_t id)
 	}
 	return chunk_.get();
 }
-
+ 
 map::chunk* map::get_chunk_or_null(vec2 pos)
 {
 	return get_chunk_or_null(get_chunk_id(pos));
@@ -292,6 +293,147 @@ player* map::get_player()
 }
 
 
+static json convert_old_format(json& layers_field) {
+	FIND_FIELD(layers_field, json, layers_info);
+	FIND_FIELD(layers_info, int, W);
+	FIND_FIELD(layers_info, int, H);
+	FIND_FIELD(layers_info, int, tile_size);
+
+	struct layer {
+		std::string name;
+		std::vector<int> ids;
+	};
+
+	struct object {
+		int id;
+		vec2 pos;
+		vec2 scale;
+		bool default_scale = true;
+	};
+
+	std::vector<layer> layers;
+	std::vector<object> raw_converted_objects;
+
+	for (auto& [name, data] : layers_field.items()) {
+		if (name == "level_switchers") continue;
+		if (name == "layers_info") continue;
+		layers.emplace_back(layer{
+			.name = name,
+			.ids = data.get<std::vector<int>>()
+			});
+	}
+
+	for (auto& layer : layers) {
+		int i = 0;
+		for (auto& id : layer.ids) {
+			raw_converted_objects.push_back((object){.id = id, 
+				.pos = vec2((i % W) * tile_size, (i / W) * tile_size), 
+				.scale = vec2(tile_size,tile_size),
+				.default_scale = true});
+
+			i++;
+		}
+	}
+
+	nlohmann::json result = nlohmann::json::array();
+	for (const auto& obj : raw_converted_objects) {
+		result.push_back({
+			{"id", obj.id},
+			{"pos", {obj.pos.x, obj.pos.y}},
+			{"scale", obj.default_scale ? json("default") : json({obj.scale.x, obj.scale.y})}
+   		 });	
+	}
+	return result;
+}
+
+void map::load_objects_from_json(json& js, std::map<std::string, json>& blocks)
+{
+	std::vector<int> ids;
+	for (const auto& obj : js) {
+		FIND_FIELD(obj, int, id);
+		FIND_FIELD(obj, std::vector<int>, pos);
+		bool default_scale = true; 
+		vec2 size = vec2(tile_size, tile_size);
+
+
+		auto raw_scale = obj.at("scale");
+		if (raw_scale.is_array()) {
+			size = vec2((int)raw_scale[0], (int)raw_scale[1]);
+			default_scale = false;
+		}
+
+		auto& block = blocks[std::to_string(id)];
+		auto& type = block.at("type");
+
+		auto _pos = vec2((int)pos[0], (int)pos[1]);
+
+
+		game_object* object = nullptr;
+
+		if (type == keyword_to_string(air)) {
+			continue;
+		}
+		else if (type == keyword_to_string(wall)) {
+			auto sprite_id = block.at("sprite_id").get<std::string>();
+
+			object = new wall(atl->get(sprite_id));
+			object->set_pos(_pos);
+			object->set_size(size);
+		}
+		else if (type == keyword_to_string(player)) {
+			size.y = size.y * 2;
+			pl->set_pos(_pos);
+			pl->set_size(size);
+
+			continue;
+		}
+		else if (type == keyword_to_string(light::source)) {
+			auto radius = block.at("radius").get<float>();
+			hex color = 0xffffffff;
+
+			if (block.find("color") != block.end()) {
+				auto str = block.at("color").dump();
+				str = str.substr(2, 8);
+				color = (hex)std::stoul(str, nullptr, 16);
+			}
+			light_system->add_light("textures/lightsource.png", radius, color);
+		}
+		else if (type == keyword_to_string(background_sprite)) {
+			auto sprite_id = block.at("sprite_id").get<std::string>();
+
+			object = new background_sprite(atl->get(sprite_id));
+			
+			object->set_pos(_pos);
+			object->set_size(size);
+		}
+		else if (type == keyword_to_string(dummy)) {
+			object = new dummy(atl->get(keyword_to_string(dummy)), 100);
+			object->set_pos(_pos);
+		}
+		else if (type == keyword_to_string(medkit)) {
+			object = new medkit(atl->get(keyword_to_string(medkit)));
+			object->set_pos(_pos);
+		}
+
+		else if (type == keyword_to_string(basic_gun)) {
+			FIND_FIELD(block, int, damage);
+			FIND_FIELD(block, basic_gun::SHOOT_MODE, mode);
+			FIND_FIELD(block, int, max_mag);
+
+			object = new basic_gun(atl->get(keyword_to_string(basic_gun)), damage, mode, max_mag);
+			object->set_pos(_pos);
+		}
+		else if (type == keyword_to_string(ammo)) {
+			FIND_FIELD(block, int, ammo_type);
+			FIND_FIELD(block, int, count);
+
+			object = new ammo(atl->get(keyword_to_string(ammo)), ammo_type, count);
+
+			object->set_pos(_pos);
+		}
+		add(object);
+	}	
+}
 
 void map::load_level_format(std::string path_)
 {
@@ -302,7 +444,7 @@ void map::load_level_format(std::string path_)
 		pl = std::make_unique<player>(camera::get(), "entity/player/animations.json");
 		light_system = std::make_unique<light::system>();
 
-		using json = nlohmann::json;
+		
 		std::ifstream file(path(path_));
 		if (!file.is_open()) {
 			print::error("Map open failed, path", path_);
@@ -312,15 +454,6 @@ void map::load_level_format(std::string path_)
 
 		json_level.at("name").get_to(name);
 		json_level.at("type").get_to(level_type);
-
-		json_level.at("W").get_to(W);
-		json_level.at("H").get_to(H);
-		json_level.at("tile_size").get_to(tile_size);
-
-		chunks_W = (size_t)convert::f2i(std::ceilf((float)W / chunk_size));
-		chunks_H = (size_t)convert::f2i(std::ceilf((float)H / chunk_size));
-
-		chunks.resize(chunks_W * chunks_H);
 
 		struct layer {
 			std::string name;
@@ -342,105 +475,45 @@ void map::load_level_format(std::string path_)
 		this->time_cycle = environment_settings.value("time_cycle", false);
 
 
-		if (json_level.find("level_switchers") != json_level.end()) {
+		/*if (json_level.find("level_switchers") != json_level.end()) {
 			for (auto& [name, id] : json_level.at("level_switchers").items()) {
 				level_switchers.emplace_back(level_switcher_data{
 					.id = id,
 					.level_name = name
 					});
 			}
-		}
+		}*/
+ 
+		json old_objects, objects;
+		objects = json_level.at("objects");
+		size_t maxW=0, maxH=0;
 
 		if (json_level.find("layers") != json_level.end()) {
-			for (auto& [name, data] : json_level.at("layers").items()) {
-				if (name == "level_switchers") continue;
-				layers.emplace_back(layer{
-					.name = name,
-					.ids = data.get<std::vector<int>>()
-					});
-			}
+			auto layers_info = json_level.at("layers").at("layers_info");
+			FIND_FIELD(layers_info, int, W);
+			FIND_FIELD(layers_info, int, H);
+			FIND_FIELD(layers_info, int, tile_size);
 
-			for (auto& layer : layers) {
-				int index = 0;
-				for (auto& id : layer.ids) {
-					auto& block = ids[std::to_string(id)];
+			maxW = W;
+			maxH = H;
 
-					auto& type = block.at("type");
+			old_objects = convert_old_format(json_level.at("layers"));
+		} 
 
-					auto pos = vec2((index % W) * tile_size, (index / W) * tile_size);
-					auto size = vec2(tile_size, tile_size);
-
-					index++;
-
-					game_object* object = nullptr;
-
-					if (type == keyword_to_string(air)) {
-						continue;
-					}
-					else if (type == keyword_to_string(wall)) {
-						auto sprite_id = block.at("sprite_id").get<std::string>();
-
-						object = new wall(atl->get(sprite_id));
-						object->set_pos(pos);
-						object->set_size(size);
-					}
-					else if (type == keyword_to_string(player)) {
-						size = vec2(tile_size, tile_size * 2);
-						pl->set_pos(pos);
-						pl->set_size(size);
-
-						continue;
-					}
-					else if (type == keyword_to_string(light::source)) {
-						auto radius = block.at("radius").get<float>();
-						hex color = 0xffffffff;
-
-						if (block.find("color") != block.end()) {
-							auto str = block.at("color").dump();
-							str = str.substr(2, 8);
-							color = (hex)std::stoul(str, nullptr, 16);
-						}
-
-				light_system->add_light("textures/lightsource.png", radius, color);
-					}
-					else if (type == keyword_to_string(background_sprite)) {
-						auto sprite_id = block.at("sprite_id").get<std::string>();
-
-						object = new background_sprite(atl->get(sprite_id));
-						
-						object->set_pos(pos);
-						object->set_size(size);
-					}
-					else if (type == keyword_to_string(dummy)) {
-						object = new dummy(atl->get(keyword_to_string(dummy)), 100);
-						object->set_pos(pos);
-					}
-					else if (type == keyword_to_string(medkit)) {
-						object = new medkit(atl->get(keyword_to_string(medkit)));
-						object->set_pos(pos);
-					}
-
-					else if (type == keyword_to_string(basic_gun)) {
-						FIND_FIELD(block, int, damage);
-						FIND_FIELD(block, basic_gun::SHOOT_MODE, mode);
-						FIND_FIELD(block, int, max_mag);
-
-						object = new basic_gun(atl->get(keyword_to_string(basic_gun)), damage, mode, max_mag);
-						object->set_pos(pos);
-					}
-					else if (type == keyword_to_string(ammo)) {
-						FIND_FIELD(block, int, ammo_type);
-						FIND_FIELD(block, int, count);
-
-						object = new ammo(atl->get(keyword_to_string(ammo)), ammo_type, count);
-
-						object->set_pos(pos);
-					}
-					add(object);
-				}
-			}
+		//Im very sorry for this code
+		for (const auto& obj : objects) {
+			int x = (int)obj["pos"][0] + 128;
+			int y = (int)obj["pos"][1] + 128;
+			maxW = x > maxW ? x : maxW;
+			maxH = y > maxH ? y : maxH;
 		}
-		
+
+		chunks_W = (size_t)convert::f2i(std::ceilf((float)maxW / chunk_size));
+		chunks_H = (size_t)convert::f2i(std::ceilf((float)maxH / chunk_size));
+		chunks.resize(chunks_W * chunks_H);
+
+		load_objects_from_json(objects, ids);
+		load_objects_from_json(old_objects, ids);
 
 		print::decrease_level();
 		print::loaded("Map loaded");
@@ -577,7 +650,7 @@ atlas* level_manager::atl = nullptr;
 std::string level_manager::get_level_name_from_file(std::string path_)
 {
 
-	using json = nlohmann::json;
+
 	std::ifstream file(path(path_));
 	if (!file.is_open()) {
 		print::error("Failed to open map for name reading", path_);
@@ -585,6 +658,7 @@ std::string level_manager::get_level_name_from_file(std::string path_)
 	auto json_level = json::parse(file);
 	file.close();
 
+	
 	return json_level.at("name");
 }
 

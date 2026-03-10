@@ -124,7 +124,8 @@ void inventory::inventory::try_use_item()
 
 inventory::item* inventory::inventory::get_item(int x, int y)
 {
-	return items.at(x + y * w);
+	size_t i = x + y * w;
+	return i >= items.size() ? nullptr : items.at(i);
 }
 
 inventory::item* inventory::inventory::get_item_in_hands()
@@ -182,10 +183,12 @@ void inventory::inventory::draw()
 		if (selected_item_id != -1) {
 			camera::set_color({ 255, 86, 68, 255 });
 		}
-		SDL_FRect cursor = { cursor_x * (cell_size + cell_margin) + cell_margin,
-			cursor_y* (cell_size + cell_margin) + cell_margin,
-			convert::i2f(cell_size),
-			convert::i2f(cell_size) };
+		float draw_X = (float)cursor_x * (cell_size + cell_margin) + cell_margin;
+		float draw_Y = (float)cursor_y * (cell_size + cell_margin) + cell_margin;
+		SDL_FRect cursor = { draw_X,
+			draw_Y,
+			(float)cell_size,
+			(float)cell_size};
 		SDL_RenderFillRect(camera::get(), &cursor);
 		
 
@@ -205,9 +208,12 @@ void inventory::inventory::draw()
 			auto saved_blend_mode = camera::get_blend_mode();
 			camera::set_blend_mode(SDL_BLENDMODE_BLEND);
 			camera::set_color({ 31, 163, 70, 127 });
-			SDL_FRect item_in_hands_rect = { (item_in_hands_id % w) * (cell_size + cell_margin) + cell_margin,
-							(item_in_hands_id / w) * (cell_size + cell_margin) + cell_margin,
-							cell_size, cell_size };
+
+			float item_draw_X = (item_in_hands_id % w) * (cell_size + cell_margin) + cell_margin;
+			float item_draw_Y = (item_in_hands_id / w) * (cell_size + cell_margin) + cell_margin;
+
+			SDL_FRect item_in_hands_rect = { item_draw_X, item_draw_Y,
+							(float)cell_size, (float)cell_size };
 			SDL_RenderFillRect(camera::get(), &item_in_hands_rect);
 			camera::set_blend_mode(saved_blend_mode);
 		}
