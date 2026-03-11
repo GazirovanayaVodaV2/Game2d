@@ -346,9 +346,8 @@ static json convert_old_format(json& layers_field) {
 	return result;
 }
 
-void map::load_objects_from_json(json& js, std::map<std::string, json>& blocks)
+void map::load_objects_from_json(json& js)
 {
-	std::vector<int> ids;
 	for (const auto& obj : js) {
 		FIND_FIELD(obj, int, id);
 		FIND_FIELD(obj, std::vector<int>, pos);
@@ -362,7 +361,7 @@ void map::load_objects_from_json(json& js, std::map<std::string, json>& blocks)
 			default_scale = false;
 		}
 
-		auto& block = blocks[std::to_string(id)];
+		auto& block = objects_ids[std::to_string(id)];
 		auto& type = block.at("type");
 
 		auto _pos = vec2((int)pos[0], (int)pos[1]);
@@ -467,7 +466,7 @@ void map::load_level_format(std::string path_)
 		std::vector<layer> layers;
 		std::vector<level_switcher_data> level_switchers;
 
-		auto ids = json_level.at("id").get<std::map<std::string, json>>();
+		objects_ids = json_level.at("id").get<std::map<std::string, json>>();
 
 		auto environment_settings = json_level.value("environment", nlohmann::json::object());
 		this->weather = environment_settings.value("weather", weather_t::clear);
@@ -512,8 +511,8 @@ void map::load_level_format(std::string path_)
 		chunks_H = (size_t)convert::f2i(std::ceilf((float)maxH / chunk_size));
 		chunks.resize(chunks_W * chunks_H);
 
-		load_objects_from_json(objects, ids);
-		load_objects_from_json(old_objects, ids);
+		load_objects_from_json(objects);
+		load_objects_from_json(old_objects);
 
 		print::decrease_level();
 		print::loaded("Map loaded");

@@ -36,6 +36,7 @@ private:
     size_t chunks_W = 0, chunks_H = 0;
     std::vector<std::unique_ptr<chunk>> chunks;
     std::vector<std::unique_ptr<game_object>> new_obj_buffer;
+    std::map<std::string, nlohmann::json> objects_ids; 
 
     atlas* atl;
 
@@ -63,7 +64,7 @@ private:
 
     void load_level_format(std::string path_);
 
-    void load_objects_from_json(nlohmann::json& js, std::map<std::string, nlohmann::json>& blocks);
+    void load_objects_from_json(nlohmann::json& js);
 
     size_t get_chunk_id(vec2 pos);
     void draw_rain(float time);
