@@ -4,6 +4,9 @@
 #include <string>
 #include <fstream>
 
+#include "base.h"
+#include "entity.h"
+#include "interactive_object.h"
 #include "nlohmann/json.hpp"
 #include "Utils.h"
 #include "SDL3/SDL_render.h"
@@ -61,6 +64,13 @@ void map::add(game_object* obj)
 	new_obj_buffer.push_back(std::unique_ptr<game_object>(obj));
 }
 
+void map::add(std::vector<game_object*> objs)
+{
+	for (auto& obj : objs) {
+		add(obj);
+	}
+}
+
 void map::add_bullet(int dmg, vec2 pos, float speed, vec2 vel)
 {
 	auto bullet = new projectile(atl->get("bullet"), vel * speed, dmg);
@@ -82,6 +92,12 @@ game_object* map::get(vec2 pos)
 		}
 	}
 
+	for (auto& obj : global_objects) {
+		if (obj->in(pos)) {
+			return obj.get();
+		}
+	}
+
 	return nullptr;
 }
 
@@ -95,7 +111,10 @@ game_object* map::get(size_t chunk_id, size_t id)
 
 size_t map::get_chunk_id(vec2 pos)
 {
-	return (size_t)convert::f2i((pos.x / tile_size / chunk_size) + (pos.y / tile_size / chunk_size) * chunks_W);;
+	int chX = convert::f2i(std::floor(pos.x / (tile_size * chunk_size)));
+    int chY = convert::f2i(std::floor(pos.y / (tile_size * chunk_size)));
+
+    return (size_t)(chX + chY * chunks_W);
 }
 
 void map::draw_rain(float time)
@@ -251,18 +270,24 @@ void map::draw()
 		}
 
 		pl->draw();
-		for (auto& chunk_ : chunks) {
-			for (auto& object : chunk_->objects) {
-				if (auto* int_obj = dynamic_cast<interactive_object_base*>(object.get())) {
+
+		auto draw_objects = [](auto& container) {
+			for (auto& obj : container) {
+				if (auto* int_obj = dynamic_cast<interactive_object_base*>(obj.get())) {
 					if (!int_obj->in_inventory()) {
 						int_obj->draw();
 					}
 				}
 				else {
-					object->draw();
+					obj->draw();
 				}
 			}
+		};
+
+		for (auto& chunk_ : chunks) {
+			draw_objects(chunk_->objects);
 		}
+		draw_objects(global_objects);
 
 		if (draw_debug_info) {
 			pl->draw_debug();
@@ -293,11 +318,10 @@ player* map::get_player()
 }
 
 
-static json convert_old_format(json& layers_field) {
+static json convert_old_format(json& layers_field, int tile_size) {
 	FIND_FIELD(layers_field, json, layers_info);
 	FIND_FIELD(layers_info, int, W);
 	FIND_FIELD(layers_info, int, H);
-	FIND_FIELD(layers_info, int, tile_size);
 
 	struct layer {
 		std::string name;
@@ -346,8 +370,10 @@ static json convert_old_format(json& layers_field) {
 	return result;
 }
 
-void map::load_objects_from_json(json& js)
+std::vector<game_object*> map::load_objects_from_json(json& js)
 {
+	std::vector<game_object*> res;
+	res.reserve(256);
 	for (const auto& obj : js) {
 		FIND_FIELD(obj, int, id);
 		FIND_FIELD(obj, std::vector<int>, pos);
@@ -430,8 +456,10 @@ void map::load_objects_from_json(json& js)
 
 			object->set_pos(_pos);
 		}
-		add(object);
+		//add(object);
+		res.push_back(object);
 	}	
+	return res;
 }
 
 void map::load_level_format(std::string path_)
@@ -487,32 +515,38 @@ void map::load_level_format(std::string path_)
 		objects = json_level.at("objects");
 		size_t maxW=0, maxH=0;
 
+		if (json_level.find("tile_size") == json_level.end()) {
+			print ::warning("Error at line", __LINE__);
+			print ::error("Failed to find JSON field", "tile_size");
+		}
+		tile_size = json_level.at("tile_size").get<int>();
+
 		if (json_level.find("layers") != json_level.end()) {
 			auto layers_info = json_level.at("layers").at("layers_info");
 			FIND_FIELD(layers_info, int, W);
 			FIND_FIELD(layers_info, int, H);
-			FIND_FIELD(layers_info, int, tile_size);
 
 			maxW = W;
 			maxH = H;
 
-			old_objects = convert_old_format(json_level.at("layers"));
+			old_objects = convert_old_format(json_level.at("layers"), tile_size);
 		} 
 
 		//Im very sorry for this code
 		for (const auto& obj : objects) {
-			int x = (int)obj["pos"][0] + 128;
-			int y = (int)obj["pos"][1] + 128;
+			int x = convert::f2i(std::ceilf((float)obj["pos"][0] / tile_size));
+			int y = convert::f2i(std::ceilf((float)obj["pos"][1] / tile_size));
 			maxW = x > maxW ? x : maxW;
 			maxH = y > maxH ? y : maxH;
 		}
+		maxW++; maxH++;
 
 		chunks_W = (size_t)convert::f2i(std::ceilf((float)maxW / chunk_size));
 		chunks_H = (size_t)convert::f2i(std::ceilf((float)maxH / chunk_size));
 		chunks.resize(chunks_W * chunks_H);
 
-		load_objects_from_json(objects);
-		load_objects_from_json(old_objects);
+		add(load_objects_from_json(objects));
+		add(load_objects_from_json(old_objects));
 
 		print::decrease_level();
 		print::loaded("Map loaded");
@@ -541,8 +575,8 @@ void map::unload()
 	if (loaded) {
 		print::info("Deleting map");
 
+		global_objects.clear();
 		chunks.clear();
-		chunks.shrink_to_fit();
 
 		light_system.reset();
 		pl.reset();
@@ -570,6 +604,20 @@ SDL_AppResult map::update(float delta_time)
 			}
 		}
 
+		for (auto& obj1 : global_objects) {
+			auto current_chunk = get_chunk_or_null(obj1->get_pos());
+
+			pl->check_collision(obj1.get());
+			obj1->update(delta_time);
+
+			if (current_chunk) {
+				for (auto& obj2 : current_chunk->objects) {
+					if (obj1.get() == obj2.get()) continue;
+					(obj1)->check_collision(obj2.get());
+				}
+			}
+		}
+
 		for (auto& chunk_ : chunks) {
 			auto& objects = chunk_->objects;
 			objects.erase(
@@ -580,10 +628,25 @@ SDL_AppResult map::update(float delta_time)
 				objects.end());
 		}
 
+		for (auto& obj : global_objects) {
+			global_objects.erase(
+				std::remove_if(global_objects.begin(), global_objects.end(),
+					[](const std::unique_ptr<game_object>& obj) {
+						return !obj->exist;
+					}),
+				global_objects.end());
+		}
+
 		for (auto& new_obj : new_obj_buffer) {
 			if (new_obj) {
-				auto chunk_ = get_chunk(new_obj->get_pos());
-				chunk_->objects.emplace_back(std::move(new_obj));
+				if (dynamic_cast<entity*>(new_obj.get()) 
+				|| dynamic_cast<interactive_object_base*>(new_obj.get())) {
+					this->global_objects.emplace_back(std::move(new_obj));
+				} else {
+					auto chunk_ = get_chunk(new_obj->get_pos());
+					chunk_->objects.emplace_back(std::move(new_obj));
+				}
+				
 			}	
 		}
 		new_obj_buffer.clear();
@@ -635,6 +698,40 @@ SDL_AppResult map::input(const SDL_Event* event)
 		return pl->input(event);
 	}
 	return SDL_APP_CONTINUE;
+}
+
+std::vector<int> map::get_objects_ids_i()
+{
+    std::vector<int> res;
+	res.reserve(64);
+
+	for (auto& id : objects_ids) {
+		res.push_back(std::stoi(id.first));
+	}
+
+	return res;
+}
+
+std::vector<std::string> map::get_objects_ids_s()
+{
+	std::vector<std::string> res;
+		for (auto& id : objects_ids) {
+		res.push_back(id.first);
+	}
+
+	return res;
+}
+
+std::vector<std::pair<std::string, std::string>> map::get_objects_ids_types()
+{
+
+	std::vector<std::pair<std::string, std::string>> res;
+
+	for (auto& id : objects_ids) {
+		res.push_back(std::pair<std::string, std::string>(id.first, id.second.at("type")));
+	}
+	
+	return res;
 }
 
 //Level manager

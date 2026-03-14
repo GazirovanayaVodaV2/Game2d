@@ -35,6 +35,7 @@ private:
     const size_t chunk_size = 4;
     size_t chunks_W = 0, chunks_H = 0;
     std::vector<std::unique_ptr<chunk>> chunks;
+    std::vector<std::unique_ptr<game_object>> global_objects;
     std::vector<std::unique_ptr<game_object>> new_obj_buffer;
     std::map<std::string, nlohmann::json> objects_ids; 
 
@@ -64,7 +65,7 @@ private:
 
     void load_level_format(std::string path_);
 
-    void load_objects_from_json(nlohmann::json& js);
+    std::vector<game_object*> load_objects_from_json(nlohmann::json& js);
 
     size_t get_chunk_id(vec2 pos);
     void draw_rain(float time);
@@ -85,6 +86,7 @@ public:
 
 	void draw();
     void add(game_object* obj);
+    void add(std::vector<game_object*> objs);
 
     void add_bullet(int dmg, vec2 pos, float speed, vec2 vel);
 
@@ -100,6 +102,10 @@ public:
     SDL_AppResult input(const SDL_Event* event);
 
     atlas* get_atlas() { return atl; };
+
+    std::vector<int> get_objects_ids_i();
+    std::vector<std::string> get_objects_ids_s();
+    std::vector<std::pair<std::string, std::string>> get_objects_ids_types();
 };
 
 class level_manager {

@@ -55,12 +55,11 @@
         "1": "second",
         "2": "first"
     },
-
+    "tile_size": 64,
     "layers": {
         "layers_info" : {
             "W":10,
-            "H":5,
-            "tile_size": 64
+            "H":5
         },
 
         "0": [

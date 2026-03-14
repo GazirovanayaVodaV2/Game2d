@@ -1,6 +1,10 @@
 #include "fps.h"
 
 #include "convert.h"
+#include <format>
+#include <fstream>
+#include <string>
+#include <regex>
 
 std::chrono::steady_clock::time_point fps::start;
 std::chrono::steady_clock::time_point fps::stop;
@@ -112,6 +116,7 @@ std::string bench::get_info_str(bool per)
                     bench_results += std::format("{}: {}% ({}ns)\n", key, round((aver_vals[key] / (delta_ * wait)) * 100), aver_vals[key] / wait);
                 }
             }
+            bench_results += std::format("Ram usage: {}\n", get_mem_usage_s());
 
             for (auto& [key, val] : aver_vals) {
                 aver_vals[key] = 0.0f;
@@ -161,4 +166,32 @@ bool bench::is_enabled()
     return enabled_;
 }
 
+std::string bench::get_mem_usage_s()
+{
+    #ifdef __linux__
+    std::ifstream file("/proc/self/status");
+    std::string res;
+       while (std::getline(file, res)) {
+        if (res.compare(0, 6, "VmRSS:") == 0) {
+            return res.substr(7);
+        }
+    }
+    #endif
+    return "1";
+}
+
+int bench::get_mem_usage_i()
+{
+    auto str = get_mem_usage_s();
+    
+    std::regex pattern(R"(\d+)");
+    std::smatch matches;
+    
+    if (std::regex_search(str, matches, pattern)) {
+        auto res_str = matches[1].str();
+        return std::stoi(res_str);
+    }
+
+    return 1;
+}
 

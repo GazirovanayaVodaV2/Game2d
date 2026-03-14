@@ -88,4 +88,7 @@ public:
     static void enable();
     static void disable();
     static bool is_enabled();
+
+    static std::string get_mem_usage_s();
+    static int get_mem_usage_i();
 };

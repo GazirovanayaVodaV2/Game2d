@@ -53,6 +53,7 @@ static std::string format_for_error(std::string text, std::string info, int prin
     return res;
 }
 
+/*
 #ifndef _DEBUG
 void print::increase_level() {}
 void print::decrease_level() {}
@@ -83,7 +84,7 @@ void print::error(std::string text, std::string info) {
 }
 #endif
 
-#ifdef _DEBUG
+#ifdef _DEBUG*/
 
 #define PRINT_LINE std::cout << "------------------" << std::endl
 
@@ -191,4 +192,4 @@ void print::error(std::string text, std::string info) {
 }
 
 #undef PRINT_LINE
-#endif
+//#endif

@@ -18,6 +18,7 @@ game::game()
 	bench::add("game_update");
 	bench::add("input");
 	bench::add("game_draw");
+	bench::add("audio");
 
 #ifdef _DEBUG
 	bench::enable();
@@ -162,7 +163,9 @@ SDL_AppResult game::cycle()
 
 	camera::update(delta);
 	fps::update();
+	bench::get("audio").start();
 	audio_engine::check_active_streams();
+	bench::get("audio").stop();
 	bench::get("game_update").stop();
 
 	
