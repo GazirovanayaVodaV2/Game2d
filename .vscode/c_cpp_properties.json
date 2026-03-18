@@ -1,12 +1,12 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Cmake",
             "includePath": [
                 "${workspaceFolder}/**"
             ],
             "defines": [],
-            "intelliSenseMode": "linux-gcc-x64",
+            "intelliSenseMode": "${default}",
             "configurationProvider": "ms-vscode.cmake-tools",
             "cStandard": "c17",
             "cppStandard": "c++23"
