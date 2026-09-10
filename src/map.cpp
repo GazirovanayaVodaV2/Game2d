@@ -350,7 +350,7 @@ static json convert_old_format(json& layers_field, int tile_size) {
 	for (auto& layer : layers) {
 		int i = 0;
 		for (auto& id : layer.ids) {
-			raw_converted_objects.push_back((object){.id = id, 
+			raw_converted_objects.push_back(object{.id = id, 
 				.pos = vec2((i % W) * tile_size, (i / W) * tile_size), 
 				.scale = vec2(tile_size,tile_size),
 				.default_scale = true});

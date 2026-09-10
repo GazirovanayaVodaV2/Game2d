@@ -9,6 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
@@ -21,9 +25,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/../Utils
-    ${SDL3_INCLUDE_DIRS}
-    ${SDL3_IMAGE_INCLUDE_DIRS}
-    ${SDL3_TTF_INCLUDE_DIRS}
 )
 
 target_precompile_headers(${PROJECT_NAME} 

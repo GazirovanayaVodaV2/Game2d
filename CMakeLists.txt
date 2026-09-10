@@ -30,6 +30,7 @@ FetchContent_Declare(SDL3
     GIT_TAG main
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/SDL3"
     UPDATE_DISCONNECTED ON
+    GIT_SHALLOW TRUE
 )
 
 FetchContent_Declare(SDL3_image
@@ -37,6 +38,7 @@ FetchContent_Declare(SDL3_image
     GIT_TAG main
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/SDL_image"
     UPDATE_DISCONNECTED ON
+    GIT_SHALLOW TRUE
 )
 
 FetchContent_Declare(SDL3_ttf
@@ -44,12 +46,14 @@ FetchContent_Declare(SDL3_ttf
     GIT_TAG main
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/SDL_ttf"
     UPDATE_DISCONNECTED ON
+    GIT_SHALLOW TRUE
 )
 FetchContent_Declare(nlohmann_json
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     GIT_TAG v3.11.3
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/git/nlohmann_json"
     UPDATE_DISCONNECTED ON
+    GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf nlohmann_json)
 
@@ -67,14 +71,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 
-target_include_directories(${PROJECT_NAME} PRIVATE 
+target_include_directories(${PROJECT_NAME} PUBLIC 
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/headers"
     "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GuiLib"
     "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Utils"
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME} PUBLIC 
     UtilsLib 
     GuiLib
     nlohmann_json::nlohmann_json

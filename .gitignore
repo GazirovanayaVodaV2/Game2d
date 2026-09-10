@@ -11,3 +11,7 @@ build
 dependencies/git
 .cache
 content/sounds/hw_shoot2.wav
+out
+build
+build-debug
+build-release
